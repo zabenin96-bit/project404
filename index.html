@@ -200,12 +200,6 @@ body {
 .reject-list li .x { color: var(--red); font-size: 12px; flex-shrink: 0; width: 12px; }
 .reject-list li .x::before { content: '✕'; }
 
-.reject-tally { margin-top: 24px; font-size: 11px; letter-spacing: 0.06em; color: var(--dim); text-transform: uppercase; }
-.reject-tally .n { color: var(--text); font-weight: 700; }
-.reject-unlock { margin-top: 18px; opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.35s ease, max-height 0.35s ease, margin-top 0.35s ease; }
-.reject-unlock.show { opacity: 1; max-height: 200px; margin-top: 24px; }
-.reject-unlock-msg { font-size: 13px; color: var(--text); margin-bottom: 16px; }
-
 /* ── TEST / QUIZ ── */
 .test-intro { font-size: 13px; color: var(--dim); line-height: 1.9; max-width: 480px; }
 .progress-wrap { margin: 40px 0; display: flex; align-items: center; gap: 16px; }
@@ -418,14 +412,11 @@ body { padding-bottom: 52px; }
       <div class="section-label"><span class="prefix" id="rj-pre">// NOT A FIT IF</span></div>
       <div class="reject-block">
         <ul class="reject-list reveal-child" id="reject-list">
-          <li><span class="x"></span><span id="rj1">You want to pitch your product to a captive audience.</span></li>
-          <li><span class="x"></span><span id="rj2">You're still "thinking about starting something."</span></li>
-          <li><span class="x"></span><span id="rj3">You consume more than you contribute anywhere you go.</span></li>
-          <li><span class="x"></span><span id="rj4">You need a community to feel legitimate.</span></li>
+          <li><span class="x"></span><span id="rj1">You want to use the members as a free lead list for your pitch.</span></li>
+          <li><span class="x"></span><span id="rj2">You're still "thinking about starting something" - with nothing real behind it.</span></li>
+          <li><span class="x"></span><span id="rj3">You take from everyone, but never share your wins or your failures.</span></li>
+          <li><span class="x"></span><span id="rj4">You need the club to prove to yourself - and everyone else - that you're worth something.</span></li>
         </ul>
-        <div class="reject-unlock show" id="reject-unlock">
-          <p class="reject-unlock-msg" id="reject-unlock-msg">None of that is you. Good - that's the bar.</p>
-        </div>
       </div>
     </div>
   </div>
@@ -665,11 +656,10 @@ const C = {
     faq3t:'Rejected?',faq3d:'You can reapply after one month.',
     faq4t:'Payment',faq4d:'If accepted, you get a link to pay via Tribute (subscription platform) - $39 charged monthly, cancel anytime.',
     rjPre:'// NOT A FIT IF',
-    rj1:'You want to pitch your product to a captive audience.',
-    rj2:'You\'re still "thinking about starting something."',
-    rj3:'You consume more than you contribute anywhere you go.',
-    rj4:'You need a community to feel legitimate.',
-    rejectUnlockMsg:'None of that is you. Good - that\'s the bar.',
+    rj1:'You want to use the members as a free lead list for your pitch.',
+    rj2:'You\'re still "thinking about starting something" - with nothing real behind it.',
+    rj3:'You take from everyone, but never share your wins or your failures.',
+    rj4:'You need the club to prove to yourself - and everyone else - that you\'re worth something.',
     ntPre:'// NOT READY YET',
     notifyText:'Not ready for the full application? Leave your Telegram and we\'ll ping you when a spot opens.',
     notifyPh:'Telegram / email',
@@ -741,11 +731,10 @@ const C = {
     faq3t:'Отказали?',faq3d:'Можно попробовать снова через месяц.',
     faq4t:'Оплата',faq4d:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок): $39 списывается ежемесячно, отменить можно в любой момент.',
     rjPre:'// НЕ ПОДОЙДЁТ, ЕСЛИ',
-    rj1:'Хочешь питчить свой продукт захваченной аудитории.',
-    rj2:'Ты всё ещё "думаешь начать что-то".',
-    rj3:'Везде потребляешь больше чем вкладываешь.',
-    rj4:'Тебе нужно сообщество чтобы чувствовать себя легитимно.',
-    rejectUnlockMsg:'Ничего из этого не про тебя. Хорошо - это и есть планка.',
+    rj1:'Хочешь использовать участников как бесплатную базу для своих питчей.',
+    rj2:'Всё ещё "думаешь начать что-то" - без реального проекта за спиной.',
+    rj3:'Берёшь у всех, но нигде не делишься ни кейсами, ни факапами.',
+    rj4:'Ищешь клуб, чтобы доказать себе и другим, что ты чего-то стоишь.',
     ntPre:'// ПОКА НЕ ГОТОВ',
     notifyText:'Не готов проходить полную анкету? Оставь Telegram - напишем, когда появится место.',
     notifyPh:'Telegram / email',
@@ -848,7 +837,6 @@ function render(){
   ['faq1t','faq1d','faq2t','faq2d','faq3t','faq3d','faq4t','faq4d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('rj-pre').textContent = t('rjPre');
   for(let i=1;i<=4;i++){ const e=g('rj'+i); if(e) e.textContent=t('rj'+i); }
-  g('reject-unlock-msg').textContent = t('rejectUnlockMsg');
   g('nt-pre').textContent = t('ntPre');
   g('notify-text').textContent = t('notifyText');
   g('notify-contact').placeholder = t('notifyPh');
