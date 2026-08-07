@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https: http:;">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.facebook.com; connect-src 'self' https://noresults-backend-production.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
 <title>no results.</title>
 <meta name="description" content="Закрытое сообщество для фаундеров и специалистов, которые уже что-то создали. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
@@ -20,23 +20,34 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 
-<!-- GA4 - замени G-XXXXXXXXXX на свой Measurement ID -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<!-- ── ANALYTICS IDs: единственное место, где их нужно менять ── -->
 <script>
+  const GA4_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // замени на свой GA4 Measurement ID
+  const META_PIXEL_ID = '000000000000000'; // замени на свой Meta Pixel ID
+</script>
+
+<!-- GA4 -->
+<script>
+  (function(){
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_MEASUREMENT_ID;
+    document.head.appendChild(s);
+  })();
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXXX');
+  gtag('config', GA4_MEASUREMENT_ID);
 </script>
 
-<!-- Meta Pixel - замени 000000000000000 на свой Pixel ID -->
+<!-- Meta Pixel -->
 <script>
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
   n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
   n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
   t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
   document,'script','https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', '000000000000000');
+  fbq('init', META_PIXEL_ID);
   fbq('track', 'PageView');
 </script>
 
@@ -103,7 +114,8 @@ body {
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
 .statusbar .founding { font-size: 10px; letter-spacing: 0.14em; color: var(--amber, #c8922a); text-transform: uppercase; white-space: nowrap; }
 .statusbar .sep { color: var(--dim); font-size: 10px; margin: 0 2px; }
-.statusbar .old-price { font-size: 11px; color: var(--dim); text-decoration: line-through; }
+.old-price { color: var(--dim); text-decoration: line-through; }
+.statusbar .old-price { font-size: 11px; }
 .statusbar .cur-price { font-size: 13px; font-weight: 700; color: var(--text); }
 .statusbar .deadline { font-size: 10px; color: var(--dim); letter-spacing: 0.06em; white-space: nowrap; }
 
@@ -165,19 +177,6 @@ body {
 .about-text p { font-size: 14px; color: var(--text); line-height: 2; margin-bottom: 14px; }
 .about-text p:last-child { margin-bottom: 0; }
 
-/* ── CAPACITY BAR (signature element) ── */
-.capacity-wrap { margin-top: 28px; }
-.capacity-bar { position: relative; font-family: var(--font); font-size: 15px; letter-spacing: 3px; line-height: 1; white-space: pre; overflow: hidden; }
-.capacity-track { color: var(--line); }
-.capacity-fill { position: absolute; top: 0; left: 0; color: var(--amber); width: 0; overflow: hidden; white-space: pre; transition: width 1.6s cubic-bezier(.16,.8,.24,1); }
-.capacity-meta { display: flex; justify-content: space-between; margin-top: 10px; font-size: 11px; color: var(--dim); letter-spacing: 0.05em; }
-.capacity-meta .num { color: var(--text); font-weight: 700; }
-
-.comp-wrap { display: flex; align-items: flex-start; gap: 56px; flex-wrap: wrap; }
-.comp-ticker { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; padding-top: 2px; }
-.ticker-line { font-size: 11px; color: var(--dim); letter-spacing: 0.02em; }
-.ticker-line:nth-child(2) { color: var(--green); }
-
 /* ── RULES / LISTS ── */
 .rules-list { list-style: none; max-width: 640px; }
 .rules-list li { display: grid; grid-template-columns: 180px 1fr; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 13px; align-items: start; transition: background 0.15s; padding-left: 8px; padding-right: 8px; margin-left: -8px; margin-right: -8px; }
@@ -205,11 +204,6 @@ body {
 .reject-unlock { margin-top: 18px; opacity: 0; max-height: 0; overflow: hidden; transition: opacity 0.35s ease, max-height 0.35s ease, margin-top 0.35s ease; }
 .reject-unlock.show { opacity: 1; max-height: 200px; margin-top: 24px; }
 .reject-unlock-msg { font-size: 13px; color: var(--text); margin-bottom: 16px; }
-
-/* ── TIMER ── */
-.timer-block { margin-top: 32px; padding: 16px 20px; border: 1px solid var(--line); display: inline-flex; flex-direction: column; gap: 6px; min-width: 260px; }
-.timer-label { font-size: 11px; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; }
-.timer-value { font-size: 22px; font-weight: 700; color: var(--text); letter-spacing: 0.03em; font-family: var(--font-mark); }
 
 /* ── TEST / QUIZ ── */
 .test-intro { font-size: 13px; color: var(--dim); line-height: 1.9; max-width: 480px; }
@@ -300,7 +294,6 @@ footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: fl
   .section { padding: 48px 6vw; }
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
   .rules-list li { grid-template-columns: 1fr; gap: 4px; }
-  .capacity-bar { font-size: 11px; letter-spacing: 2px; }
   footer { flex-direction: column; gap: 6px; padding-bottom: 72px; }
 }
 
@@ -514,7 +507,7 @@ body { padding-bottom: 52px; }
       <div class="q-opts">
         <label class="q-opt"><input type="checkbox" name="q6" value="a"><span id="q6a">People who push me harder than I push myself</span></label>
         <label class="q-opt"><input type="checkbox" name="q6" value="b"><span id="q6b">Access to specific skills or expertise</span></label>
-        <label class="q-opt"><input type="checkbox" name="q6" value="c"><span id="q6c">Real deals, partnerships, collaborations</span></label>
+        <label class="q-opt"><input type="checkbox" name="q6" value="c"><span id="q6c">Networking that might turn into something</span></label>
         <label class="q-opt"><input type="checkbox" name="q6" value="d"><span id="q6d">IRL human contact. Tired of being online only</span></label>
         <label class="q-opt"><input type="checkbox" name="q6" value="e"><span id="q6e">Accountability. Someone to answer to</span></label>
       </div>
@@ -637,6 +630,8 @@ const C = {
     sbStatus:'NOW ENROLLING', sbMembers:'cap: 200 members',
     sErr:'STATUS', sMsg:'application window open - now accepting',
     sErr2:'ACCESS', sMsg2:'paid membership - $39/mo, decided after review',
+    sMsg2Founding:'paid membership - <span class="old-price">$99</span> $39/mo through Aug 31, decided after review',
+    sbDeadline:'through Aug 31', sbCta:'Apply →',
     heroHl:'Applications are open. Cap is 200 seats.',
     heroBody:'Selection is by application and referral only. Places like this don\'t exist. This is one of them.',
     heroCta:'apply --start',
@@ -711,6 +706,8 @@ const C = {
     sbStatus:'ИДЁТ НАБОР', sbMembers:'лимит: 200 участников',
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
     sErr2:'ДОСТУП',sMsg2:'платное членство - $39/мес, решение после проверки',
+    sMsg2Founding:'платное членство - <span class="old-price">$99</span> $39/мес до 31 августа, решение после проверки',
+    sbDeadline:'до 31 авг.', sbCta:'Заявка →',
     heroHl:'Идёт набор. Лимит - 200 мест.',
     heroBody:'Отбор только по заявке и рекомендации. Таких мест не существует, но это одно из них.',
     heroCta:'подать заявку --start',
@@ -800,9 +797,11 @@ function trackEvent(gaName, fbName, params={}){
   try{ if(typeof fbq === 'function') fbq('track', fbName, params); }catch(e){}
 }
 const scV = {};
-const CAP_MEMBERS = 5;
-const CAP_TOTAL = 200;
-const CAP_CELLS = 50;
+
+// ── FOUNDING RATE OFFER: $99 → $39, valid through Aug 31, 2026 ──
+// Update FOUNDING_DEADLINE (and the sbDeadline/sMsg2Founding copy in C) for next year's run.
+const FOUNDING_DEADLINE = new Date('2026-09-01T00:00:00');
+function foundingActive(){ return new Date() < FOUNDING_DEADLINE; }
 
 function g(id){ return document.getElementById(id); }
 function t(k){ return C[lang][k] !== undefined ? C[lang][k] : C.en[k]; }
@@ -828,7 +827,7 @@ function render(){
   g('s-err').textContent = t('sErr');
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
-  g('s-msg2').textContent = t('sMsg2');
+  g('s-msg2').innerHTML = foundingActive() ? t('sMsg2Founding') : t('sMsg2');
   g('hero-hl').textContent = t('heroHl');
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
@@ -880,16 +879,24 @@ function render(){
   g('ft-ask').textContent=t('ftAsk');
   document.querySelectorAll('.q-warn.show').forEach(w=>{ w.textContent = t(w.dataset.key || 'reqWarn'); });
 
-  // sticky bar lang update
-  var sbS = document.getElementById('sb-spots');
-  var sbC = document.getElementById('sb-cta');
-  if(lang === 'ru') {
-    if(sbS) sbS.textContent = 'до авг.';
-    if(sbC) sbC.textContent = 'Заявка →';
-  } else {
-    if(sbS) sbS.textContent = 'Aug only';
-    if(sbC) sbC.textContent = 'Apply →';
+  renderStatusBar();
+}
+
+// ── STATUS BAR: founding-rate pricing only shows while the offer is live ──
+function renderStatusBar(){
+  const active = foundingActive();
+  const founding = g('sb-founding');
+  const old = g('sb-old');
+  const spots = g('sb-spots');
+  const cta = g('sb-cta');
+  document.querySelectorAll('.statusbar .sep').forEach(s=>{ s.style.display = active ? '' : 'none'; });
+  if(founding) founding.style.display = active ? '' : 'none';
+  if(old) old.style.display = active ? '' : 'none';
+  if(spots){
+    spots.style.display = active ? '' : 'none';
+    spots.textContent = t('sbDeadline');
   }
+  if(cta) cta.textContent = t('sbCta');
 }
 
 // ── REJECT SELF-CHECK ──
@@ -1202,32 +1209,6 @@ async function submitForm(){
 
 // ── (timer countdown removed: no fixed monthly cycle exists yet, see render() for the static status text) ──
 
-// ── CAPACITY BAR (signature element: real seat count, not decoration) ──
-function initCapacityBar(){
-  const track = g('cap-track');
-  const fill = g('cap-fill');
-  const curEl = g('cap-current');
-  const totEl = g('cap-total');
-  if(!track || !fill) return;
-  track.textContent = '·'.repeat(CAP_CELLS);
-  fill.textContent = '█'.repeat(CAP_CELLS);
-  curEl.textContent = CAP_MEMBERS;
-  totEl.textContent = CAP_TOTAL;
-  const filledCells = Math.max(1, Math.round(CAP_CELLS * CAP_MEMBERS / CAP_TOTAL));
-  const targetWidth = (filledCells / CAP_CELLS * 100) + '%';
-  const bar = g('cap-bar');
-  if(!('IntersectionObserver' in window)){ fill.style.width = targetWidth; return; }
-  const io = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting){
-        fill.style.width = targetWidth;
-        io.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.4 });
-  io.observe(bar);
-}
-
 // ── SCROLL REVEAL ──
 function initReveal(){
   const targets = document.querySelectorAll('.reveal, .reveal-child');
@@ -1292,7 +1273,6 @@ updProg(1);
 restoreDraft();
 initAutosave();
 initReveal();
-initCapacityBar();
 initFormFeedback();
 initValidationClear();
 initFlip();
