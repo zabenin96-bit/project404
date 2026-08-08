@@ -186,7 +186,7 @@ body {
 
 .q-text { font-size: clamp(16px, 1.9vw, 21px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; }
 
-.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: var(--font); font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
+.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
 .q-textarea { min-height: 90px; }
 .q-textarea::placeholder, .q-input::placeholder { color: var(--dim); font-size: 13px; }
 .q-textarea:focus, .q-input:focus { border-bottom-color: var(--amber); }
@@ -253,6 +253,9 @@ footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: fl
 .reveal-child.in-view > *:nth-child(6) { transition-delay: 0.25s; }
 
 /* ── RESPONSIVE ── */
+/* space reserved for the fixed status bar */
+body { padding-bottom: 52px; }
+
 @media (max-width: 700px) {
   body { font-size: 16px; }
   .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li { font-size: 15px; }
@@ -261,16 +264,14 @@ footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: fl
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
   .rules-list li { grid-template-columns: 1fr; gap: 4px; }
   footer { flex-direction: column; gap: 6px; padding-bottom: 72px; }
-  .founding-wrap { display: none; }
-  .statusbar { padding: 8px 4vw; gap: 4px; }
+  .statusbar { padding: 8px 4vw; gap: 4px; flex-wrap: wrap; row-gap: 6px; }
+  .statusbar .left { flex-wrap: wrap; overflow: visible; white-space: normal; flex-basis: 100%; row-gap: 4px; }
+  .statusbar .founding { font-size: 9px; }
   .statusbar .cur-price { font-size: 12px; }
   .statusbar .old-price, .statusbar .deadline { font-size: 9px; }
-  .sticky-btn { padding: 6px 9px; font-size: 9px; }
+  .sticky-btn { margin-left: auto; padding: 6px 10px; font-size: 10px; }
+  body { padding-bottom: 96px; }
 }
-
-
-/* space reserved for the fixed status bar */
-body { padding-bottom: 52px; }
 </style>
 </head>
 <body>
@@ -369,7 +370,7 @@ body { padding-bottom: 52px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="val-pre">// VALUE</span></div>
       <div class="about-text" id="value-body">
-        <p>Spent a year sitting on this - get founders, AI folks, SEO people, and the like in one place: marketers, designers, 3D and motion people. A place to talk shop, without the marketing gloss and "look how far I've come" case studies. No deal flow promised - if something comes out of it, it's a bonus. You're paying for the filter: no one gets in with a credit card, only through the form.</p>
+        <p>Spent a year sitting on this - get founders, AI folks, SEO specialists, and the like in one place: marketers, designers, 3D and motion artists. A place to talk shop, without the marketing gloss and "look how far I've come" case studies. No deal flow promised - if something comes out of it, it's a bonus. You're paying for the filter: no one gets in with a credit card, only through the form.</p>
       </div>
     </div>
   </div>
@@ -493,7 +494,7 @@ body { padding-bottom: 52px; }
 
     <div class="q-block" id="q8">
       <div class="q-tag" id="q8l">08 / 12 - FILTER</div>
-      <div class="q-text" id="q8t">You get a call with someone smarter than you in your field. 20 minutes. What do you ask?</div>
+      <div class="q-text" id="q8t">You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?</div>
       <textarea class="q-textarea" id="q8v" placeholder="Write the actual questions. Not 'I'd ask about their journey.'"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(8)">← Back</button><button class="btn-p" onclick="nx(8)">Next →</button></div>
     </div>
@@ -617,7 +618,7 @@ const C = {
     r6t:'No unsolicited pitching',r6d:"Don't pitch your services unless someone asks.",
     r7t:'Paid',r7d:'$39/mo. No free tier.',
     valPre:'// VALUE',
-    valueBody:["Spent a year sitting on this - get founders, AI folks, SEO people, and the like in one place: marketers, designers, 3D and motion people. A place to talk shop, without the marketing gloss and \"look how far I've come\" case studies. No deal flow promised - if something comes out of it, it's a bonus. You're paying for the filter: no one gets in with a credit card, only through the form."],
+    valueBody:["Spent a year sitting on this - get founders, AI folks, SEO specialists, and the like in one place: marketers, designers, 3D and motion artists. A place to talk shop, without the marketing gloss and \"look how far I've come\" case studies. No deal flow promised - if something comes out of it, it's a bonus. You're paying for the filter: no one gets in with a credit card, only through the form."],
     fitPre:'// WHO THIS IS FOR',
     fitBody:["You fit if you've created or helped create something valuable - employed, on your own, wherever. Job title, age, country - none of that matters. The rest, the application decides."],
     fmtPre:'// FORMAT',
@@ -649,12 +650,12 @@ const C = {
     testIntro:'First step: answer 12 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Accepted members pay $39/mo.',
     q1l:'01 / 12 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
     q2l:'02 / 12 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
-    q3l:'03 / 12 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','First clients, finding fit','Stable, building systems','Scaling, team in place'],
+    q3l:'03 / 12 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
     q4l:'04 / 12 - DEPTH',q4t:"What's the hardest decision you've made in your work in the last 12 months?",q4p:'Be specific. Vague answers tell us nothing.',
     q5l:'05 / 12 - DEPTH',q5t:'What have you failed at this year? What did you learn?',q5p:'Not looking for a redemption arc. Just honesty.',
-    q6l:'06 / 12 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who push me harder than I push myself','Access to specific skills or expertise','Networking that might turn into something','IRL human contact. Tired of being online only','Accountability. Someone to answer to'],
+    q6l:'06 / 12 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who inspire me to push harder than I would on my own','Access to specific skills or expertise','Networking that might turn into something','IRL human contact. Tired of being online only','Accountability. Someone to answer to'],
     q7l:'07 / 12 - CONTEXT',q7t:'Where are you based?',q7p:'City, Country',
-    q8l:'08 / 12 - FILTER',q8t:'You get a call with someone smarter than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions, not something like 'I'd ask about their journey.'",
+    q8l:'08 / 12 - FILTER',q8t:'You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions, not something like 'I'd ask about their journey.'",
     q9l:'09 / 12 - FILTER',q9t:"What's something most people in your field are wrong about?",q9p:'One specific thing - genuinely yours, not a general observation.',
     q10l:'10 / 12 - FILTER',q10t:"Rate how much you contribute vs. consume in communities you're in.",scLo:'Pure consumer',scHi:'Pure contributor',
     q11l:'11 / 12 - FINAL',q11t:'Why should we let you in over someone else on the waitlist?',q11p:'Not looking for humility or arrogance - just clarity.',
@@ -726,12 +727,12 @@ const C = {
     testIntro:'Первый шаг: ответь на 12 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Принятые участники платят $39/мес.',
     q1l:'01 / 12 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 12 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
-    q3l:'03 / 12 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Первые клиенты, ищу fit','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
+    q3l:'03 / 12 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
     q4l:'04 / 12 - ГЛУБИНА',q4t:'Какое было самое трудное решение в твоей работе за последние 12 месяцев?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
     q5l:'05 / 12 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',q5p:'Не ищем историю искупления, просто честный ответ.',
-    q6l:'06 / 12 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, которые давят сильнее, чем я давлю на себя','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Живого общения - надоел только онлайн','Ответственность. Чтобы было перед кем отчитываться'],
+    q6l:'06 / 12 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, рядом с которыми хочется выкладываться сильнее','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Живого общения - надоел только онлайн','Ответственность. Чтобы было перед кем отчитываться'],
     q7l:'07 / 12 - КОНТЕКСТ',q7t:'Где ты находишься?',q7p:'Город, страна',
-    q8l:'08 / 12 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком умнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы, а не в духе "я бы спросил про его путь".',
+    q8l:'08 / 12 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы, а не в духе "я бы спросил про его путь".',
     q9l:'09 / 12 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',q9p:'Одна конкретная мысль - именно твоя, а не общее наблюдение.',
     q10l:'10 / 12 - ФИЛЬТР',q10t:'Оцени, насколько ты вкладываешь vs потребляешь в сообществах, где состоишь.',scLo:'Чистый потребитель',scHi:'Чистый вкладчик',
     q11l:'11 / 12 - ФИНАЛ',q11t:'Почему мы должны взять тебя, а не другого из очереди?',q11p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
