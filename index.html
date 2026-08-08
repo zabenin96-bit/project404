@@ -59,7 +59,7 @@ body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.7;
   overflow-x: hidden;
 }
@@ -96,7 +96,7 @@ body {
 .hero { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; padding: 100px 10vw 80px; }
 
 .sys-block { margin-bottom: 48px; display: flex; flex-direction: column; gap: 5px; }
-.sys-line { font-size: 12px; letter-spacing: 0.05em; color: var(--dim); display: flex; gap: 12px; }
+.sys-line { font-size: 13px; letter-spacing: 0.05em; color: var(--dim); display: flex; gap: 12px; }
 .sys-line .tag { color: var(--amber); min-width: 80px; }
 .sys-line .val { color: var(--text); }
 
@@ -130,7 +130,7 @@ body {
 
 
 .hero-headline { font-size: clamp(15px, 1.8vw, 20px); font-weight: 700; color: var(--text); margin-bottom: 10px; max-width: 560px; }
-.hero-body { font-size: 13px; color: var(--dim); line-height: 1.9; max-width: 460px; margin-bottom: 32px; }
+.hero-body { font-size: 14px; color: var(--dim); line-height: 1.9; max-width: 460px; margin-bottom: 32px; }
 
 .hero-cta { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; width: fit-content; font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.03em; color: var(--bg); background: var(--amber); border: none; padding: 14px 26px; transition: filter 0.15s ease, transform 0.1s ease, background-color 0.4s ease, color 0.4s ease; }
 .hero-cta:hover { filter: brightness(1.12); }
@@ -141,15 +141,15 @@ body {
 /* ── SECTIONS ── */
 .section { padding: 64px 10vw; border-top: 1px solid var(--line); }
 .section-grid { display: grid; grid-template-columns: 180px 1fr; gap: 48px; align-items: start; }
-.section-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); padding-top: 3px; display: flex; flex-direction: column; gap: 2px; }
+.section-label { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); padding-top: 3px; display: flex; flex-direction: column; gap: 2px; }
 .section-label .prefix { color: var(--amber); font-size: 10px; }
 
-.about-text p { font-size: 14px; color: var(--text); line-height: 2; margin-bottom: 14px; }
+.about-text p { font-size: 15px; color: var(--text); line-height: 2; margin-bottom: 14px; }
 .about-text p:last-child { margin-bottom: 0; }
 
 /* ── RULES / LISTS ── */
 .rules-list { list-style: none; max-width: 640px; }
-.rules-list li { display: grid; grid-template-columns: 180px 1fr; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 13px; align-items: start; transition: background 0.15s; padding-left: 8px; padding-right: 8px; margin-left: -8px; margin-right: -8px; }
+.rules-list li { display: grid; grid-template-columns: 180px 1fr; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 14px; align-items: start; transition: background 0.15s; padding-left: 8px; padding-right: 8px; margin-left: -8px; margin-right: -8px; }
 .rules-list li:first-child { border-top: 1px solid var(--line); }
 .rules-list li:hover { background: var(--surface); }
 .rule-key { font-weight: 700; color: var(--text); }
@@ -157,20 +157,20 @@ body {
 
 /* ── NOTIFY ── */
 .notify-wrap { max-width: 480px; }
-.notify-text { font-size: 13px; color: var(--dim); line-height: 1.9; margin-bottom: 20px; }
+.notify-text { font-size: 14px; color: var(--dim); line-height: 1.9; margin-bottom: 20px; }
 .notify-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
 .notify-input { flex: 1; min-width: 200px; margin-bottom: 0; }
 
 /* ── REJECT LIST ── */
 .reject-block { max-width: 640px; }
 .reject-list { list-style: none; margin-top: 20px; }
-.reject-list li { display: flex; align-items: baseline; gap: 12px; padding: 14px 4px; margin: 0 -4px; border-bottom: 1px solid var(--line); font-size: 13px; color: var(--dim); }
+.reject-list li { display: flex; align-items: baseline; gap: 12px; padding: 14px 4px; margin: 0 -4px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--dim); }
 .reject-list li:first-child { border-top: 1px solid var(--line); }
 .reject-list li .x { color: var(--red); font-size: 12px; flex-shrink: 0; width: 12px; }
 .reject-list li .x::before { content: '✕'; }
 
 /* ── TEST / QUIZ ── */
-.test-intro { font-size: 13px; color: var(--dim); line-height: 1.9; max-width: 480px; }
+.test-intro { font-size: 14px; color: var(--dim); line-height: 1.9; max-width: 480px; }
 .progress-wrap { margin: 40px 0; display: flex; align-items: center; gap: 16px; }
 .progress-track { flex: 1; height: 1px; background: var(--line); }
 .progress-fill { height: 100%; background: var(--amber); transition: width 0.35s ease; width: 0%; }
@@ -184,9 +184,9 @@ body {
 .q-tag .ok-mark { color: var(--green); margin-left: 8px; opacity: 0; transition: opacity 0.25s ease; }
 .q-tag .ok-mark.show { opacity: 1; }
 
-.q-text { font-size: clamp(15px, 1.8vw, 20px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; }
+.q-text { font-size: clamp(16px, 1.9vw, 21px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; }
 
-.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: var(--font); font-size: 14px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
+.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: var(--font); font-size: 15px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
 .q-textarea { min-height: 90px; }
 .q-textarea::placeholder, .q-input::placeholder { color: var(--dim); font-size: 13px; }
 .q-textarea:focus, .q-input:focus { border-bottom-color: var(--amber); }
@@ -196,7 +196,7 @@ body {
 .q-opt { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
 .q-opt:first-child { border-top: 1px solid var(--line); }
 .q-opt input { flex-shrink: 0; accent-color: var(--amber); width: 13px; height: 13px; cursor: pointer; }
-.q-opt span { font-size: 13px; color: var(--dim); line-height: 1.5; transition: color 0.15s; }
+.q-opt span { font-size: 14px; color: var(--dim); line-height: 1.5; transition: color 0.15s; }
 .q-opt:hover span, .q-opt.sel span { color: var(--text); }
 
 .q-scale { display: flex; gap: 5px; flex-wrap: wrap; max-width: 580px; }
@@ -222,8 +222,8 @@ body {
 
 .btn-p, .btn-sub { font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 22px; background: var(--text); color: var(--bg); border: none; cursor: pointer; transition: opacity 0.15s; }
 .btn-p:hover, .btn-sub:hover { opacity: 0.82; }
-.btn-b { font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; border: none; color: var(--dim); cursor: pointer; padding: 9px 0; transition: color 0.15s; }
-.btn-b:hover { color: var(--text); }
+.btn-b { font-family: var(--font); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; border: none; border-bottom: 1px solid var(--line); color: var(--dim); cursor: pointer; padding: 9px 0; transition: color 0.15s, border-color 0.15s; }
+.btn-b:hover { color: var(--text); border-color: var(--dim); }
 
 /* ── THANK YOU ── */
 #ty { display: none; padding: 80px 10vw 120px; border-top: 1px solid var(--line); }
@@ -259,6 +259,11 @@ footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: fl
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
   .rules-list li { grid-template-columns: 1fr; gap: 4px; }
   footer { flex-direction: column; gap: 6px; padding-bottom: 72px; }
+  .founding-wrap { display: none; }
+  .statusbar { padding: 8px 4vw; gap: 4px; }
+  .statusbar .cur-price { font-size: 12px; }
+  .statusbar .old-price, .statusbar .deadline { font-size: 9px; }
+  .sticky-btn { padding: 6px 9px; font-size: 9px; }
 }
 
 
@@ -282,8 +287,10 @@ body { padding-bottom: 52px; }
 <div class="statusbar" id="statusbar">
   <div class="left">
     <span class="pulse"></span>
-    <span class="founding" id="sb-founding">LIMITED EARLY ACCESS</span>
-    <span class="sep">·</span>
+    <span class="founding-wrap">
+      <span class="founding" id="sb-founding">LIMITED EARLY ACCESS</span>
+      <span class="sep">·</span>
+    </span>
     <span class="old-price" id="sb-old">$99</span>
     <span class="cur-price" id="sb-price">$39</span>
     <span class="sep">·</span>
@@ -645,10 +652,10 @@ const C = {
     q5l:'05 / 12 - DEPTH',q5t:'What have you failed at this year? What did you learn?',q5p:'Not looking for a redemption arc. Just honesty.',
     q6l:'06 / 12 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who push me harder than I push myself','Access to specific skills or expertise','Networking that might turn into something','IRL human contact. Tired of being online only','Accountability. Someone to answer to'],
     q7l:'07 / 12 - CONTEXT',q7t:'Where are you based?',q7p:'City, Country',
-    q8l:'08 / 12 - FILTER',q8t:'You get a call with someone smarter than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions. Not 'I'd ask about their journey.'",
-    q9l:'09 / 12 - FILTER',q9t:"What's something most people in your field are wrong about?",q9p:'One thing. Specific. Yours.',
+    q8l:'08 / 12 - FILTER',q8t:'You get a call with someone smarter than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions, not something like 'I'd ask about their journey.'",
+    q9l:'09 / 12 - FILTER',q9t:"What's something most people in your field are wrong about?",q9p:'One specific thing - genuinely yours, not a general observation.',
     q10l:'10 / 12 - FILTER',q10t:"Rate how much you contribute vs. consume in communities you're in.",scLo:'Pure consumer',scHi:'Pure contributor',
-    q11l:'11 / 12 - FINAL',q11t:'Why should we let you in over someone else on the waitlist?',q11p:'Not looking for humility. Not looking for arrogance. Looking for clarity.',
+    q11l:'11 / 12 - FINAL',q11t:'Why should we let you in over someone else on the waitlist?',q11p:'Not looking for humility or arrogance - just clarity.',
     q12l:'12 / 12 - CONTACT',q12t:'Last one. Your name and a way to reach you.',q12p1:'Name',q12p2:'Telegram / Instagram / Email',q12h:"We'll reach out if you make the waitlist. No spam, no newsletter.",
     consentLabel:'I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
@@ -675,7 +682,7 @@ const C = {
     heroBody:'Отбор только по заявке и рекомендации. Пройдут не все.',
     heroCta:'подать заявку --start',
     abPre:'// О НАС',
-    aboutBody:['Закрытое сообщество для фаундеров, творческих и технических специалистов со всего мира. Русско- и англоговорящие. Единственная валюта здесь - то, что ты реально сделал или активно строишь.'],
+    aboutBody:['Закрытое сообщество для фаундеров, творческих и технических специалистов со всего мира. Русско- и англоговорящие. Единственная валюта здесь - то, что уже сделано, или то, что ты активно строишь.'],
     ruPre:'// ПРАВИЛА',
     r1t:'Жёсткий лимит',r1d:'200 участников. Без исключений.',
     r2t:'Инвайт или очередь',r2d:'Тебя рекомендует участник, или ты проходишь тест.',
@@ -687,7 +694,7 @@ const C = {
     valPre:'// ЦЕННОСТЬ',
     valueBody:['Мысль зрела год - собрать в одном месте фаундеров, AI-спецов, сеошников и похожих: маркетологов, дизайнеров, ребят из 3D и моушна. Место, где говорят по существу, без рекламной шелухи и кейсиков "посмотрите как я вырос". Deal flow не обещаю - если что-то срастётся, будет бонусом. Платишь за отбор: сюда не заходят по кредитке, только через форму. И за людей, которые скажут прямо.'],
     fitPre:'// КОМУ ЭТО ПОДХОДИТ',
-    fitBody:['Ты подходишь, если создал или помог создать что-то ценное - в найме, в своём деле, где угодно. Профессия, возраст, страна - не имеет значения. Остальное решает форма.'],
+    fitBody:['Ты подходишь, если за тобой есть что-то ценное - созданное самостоятельно или с командой, в найме или в своём деле. Профессия, возраст, страна - не имеет значения. Остальное решает форма.'],
     fmtPre:'// ФОРМАТ',
     fmt1t:'Формат',fmt1d:'Онлайн + офлайн-встречи, если участники пересекаются по городу.',
     fmt2t:'Ядро',fmt2d:'Закрытый чат - работает постоянно.',
@@ -709,7 +716,7 @@ const C = {
     rj3:'Берёшь у всех, но нигде не делишься ни кейсами, ни факапами.',
     rj4:'Ищешь клуб, чтобы доказать себе и другим, что ты чего-то стоишь.',
     ntPre:'// ПОКА НЕ ГОТОВ',
-    notifyText:'Не готов проходить полную анкету? Оставь Telegram - напишем, когда появится место.',
+    notifyText:'Не готов(а) проходить полную анкету? Оставь Telegram - напишем, когда появится место.',
     notifyPh:'Telegram / email',
     notifyBtn:'Уведомить меня',
     notifySent:'Записали - напишем, если появится место.',
@@ -718,14 +725,14 @@ const C = {
     q1l:'01 / 12 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 12 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 12 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Первые клиенты, ищу fit','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
-    q4l:'04 / 12 - ГЛУБИНА',q4t:'Какое самое трудное решение ты принял в работе за последние 12 месяцев?',q4p:'Конкретно. Расплывчатые ответы ничего не говорят.',
-    q5l:'05 / 12 - ГЛУБИНА',q5t:'В чём облажался в этом году? Что понял?',q5p:'Не ищем историю искупления. Просто честно.',
-    q6l:'06 / 12 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, которые давят сильнее, чем я давлю на себя','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Живые люди. Устал только от онлайна','Ответственность. Чтобы было перед кем отчитываться'],
+    q4l:'04 / 12 - ГЛУБИНА',q4t:'Какое было самое трудное решение в твоей работе за последние 12 месяцев?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
+    q5l:'05 / 12 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',q5p:'Не ищем историю искупления, просто честный ответ.',
+    q6l:'06 / 12 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, которые давят сильнее, чем я давлю на себя','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Живого общения - надоел только онлайн','Ответственность. Чтобы было перед кем отчитываться'],
     q7l:'07 / 12 - КОНТЕКСТ',q7t:'Где ты находишься?',q7p:'Город, страна',
-    q8l:'08 / 12 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком умнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы. Не "я бы спросил про его путь".',
-    q9l:'09 / 12 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',q9p:'Одно. Конкретное. Твоё.',
+    q8l:'08 / 12 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком умнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы, а не в духе "я бы спросил про его путь".',
+    q9l:'09 / 12 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',q9p:'Одна конкретная мысль - именно твоя, а не общее наблюдение.',
     q10l:'10 / 12 - ФИЛЬТР',q10t:'Оцени, насколько ты вкладываешь vs потребляешь в сообществах, где состоишь.',scLo:'Чистый потребитель',scHi:'Чистый вкладчик',
-    q11l:'11 / 12 - ФИНАЛ',q11t:'Почему мы должны взять тебя, а не другого из очереди?',q11p:'Не ищем скромность. Не ищем самолюбование. Ищем ясность.',
+    q11l:'11 / 12 - ФИНАЛ',q11t:'Почему мы должны взять тебя, а не другого из очереди?',q11p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
     q12l:'12 / 12 - КОНТАКТ',q12t:'Последнее. Имя и способ связи.',q12p1:'Имя',q12p2:'Telegram / Instagram / Email',q12h:'Напишем, если ты попадёшь в очередь. Спама нет.',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
@@ -974,14 +981,14 @@ function nx(n){
   if(!isAnswered(n)){ showWarn(n); return; }
   g('q'+n).classList.remove('active');
   const nxEl=g('q'+(n+1));
-  if(nxEl){ nxEl.classList.add('active'); updProg(n+1); nxEl.scrollIntoView({behavior:'smooth',block:'start'}); }
+  if(nxEl){ nxEl.classList.add('active'); updProg(n+1); nxEl.scrollIntoView({behavior:'smooth',block:'nearest'}); }
   saveDraft();
 }
 
 function bk(n){
   g('q'+n).classList.remove('active');
   const pv=g('q'+(n-1));
-  if(pv){ pv.classList.add('active'); updProg(n-1); pv.scrollIntoView({behavior:'smooth',block:'start'}); }
+  if(pv){ pv.classList.add('active'); updProg(n-1); pv.scrollIntoView({behavior:'smooth',block:'nearest'}); }
   saveDraft();
 }
 
