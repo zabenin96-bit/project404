@@ -625,6 +625,7 @@ const C = {
     faq2t:'Your data',faq2d:'Not shared with third parties.',
     faq3t:'Rejected?',faq3d:'You can reapply after one month.',
     faq4t:'Payment',faq4d:'If accepted, you get a link to pay via Tribute (subscription platform) - $39 charged monthly, cancel anytime.',
+    faq4dFounding:'If accepted, you get a link to pay via Tribute (subscription platform). Right now it\'s Limited Early Access - $39/mo through Aug 31 (regular price is $99), charged monthly after that, cancel anytime.',
     rjPre:'// NOT A FIT IF',
     rj1:'You want to use the members as a free lead list for your pitch.',
     rj2:'You\'re still "thinking about starting something" - with nothing real behind it.',
@@ -701,6 +702,7 @@ const C = {
     faq2t:'Твои данные',faq2d:'Третьим лицам не передаются.',
     faq3t:'Отказали?',faq3d:'Можно попробовать снова через месяц.',
     faq4t:'Оплата',faq4d:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок): $39 списывается ежемесячно, отменить можно в любой момент.',
+    faq4dFounding:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок). Сейчас действует лимитированный ранний доступ - $39/мес до 31 августа (обычная цена $99), дальше списывается ежемесячно, отменить можно в любой момент.',
     rjPre:'// НЕ ПОДОЙДЁТ, ЕСЛИ',
     rj1:'Хочешь использовать участников как бесплатную базу для своих питчей.',
     rj2:'Всё ещё "думаешь начать что-то" - без реального проекта за спиной.',
@@ -800,7 +802,9 @@ function render(){
   g('proc-pre').textContent = t('procPre');
   ['proc1t','proc1d','proc2t','proc2d','proc3t','proc3d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('faq-pre').textContent = t('faqPre');
-  ['faq1t','faq1d','faq2t','faq2d','faq3t','faq3d','faq4t','faq4d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  ['faq1t','faq1d','faq2t','faq2d','faq3t','faq3d','faq4t'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  const faq4dEl = g('faq4d');
+  if(faq4dEl) faq4dEl.textContent = foundingActive() ? t('faq4dFounding') : t('faq4d');
   g('rj-pre').textContent = t('rjPre');
   for(let i=1;i<=4;i++){ const e=g('rj'+i); if(e) e.textContent=t('rj'+i); }
   g('nt-pre').textContent = t('ntPre');
