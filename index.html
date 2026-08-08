@@ -1223,19 +1223,54 @@ function initFormFeedback(){
 }
 
 // ── THEME FLIP (dark → light past the midpoint) ──
+// Dark/light endpoints, matched to :root and html.flip above - kept in sync manually.
+const THEME_DARK = { bg:'#0a0a09', surface:'#121210', text:'#ececea', dim:'#97968c', line:'#232320', amber:'#d99a3f', green:'#4caf7d', red:'#c9694f' };
+const THEME_LIGHT = { bg:'#ddd6bf', surface:'#d9d2bb', text:'#17160f', dim:'#59574d', line:'#c9c1ab', amber:'#7d4a11', green:'#175933', red:'#853423' };
+// bg/surface/line carry no text on them directly, so they can fade smoothly across the whole
+// scroll range. text/dim/amber/green/red sit *on* that background and would cross a
+// near-unreadable contrast dip if blended in step with it (dark text + light text both land on
+// similar mid-grey around the midpoint) - so they snap through a narrow band around the point
+// where the background is already closest to its final contrast on either side.
+const THEME_SURFACE_KEYS = ['bg','surface','line'];
+const THEME_CONTENT_KEYS = ['text','dim','amber','green','red'];
+
+function hexToRgbArr(hex){
+  const h = hex.replace('#','');
+  return [0,2,4].map(i => parseInt(h.substr(i,2),16));
+}
+function lerpHex(hexA, hexB, t){
+  const a = hexToRgbArr(hexA), b = hexToRgbArr(hexB);
+  return '#' + a.map((v,i) => Math.round(v + (b[i]-v)*t).toString(16).padStart(2,'0')).join('');
+}
 function initFlip(){
   const trigger = document.getElementById('flip-trigger');
   if(!trigger) return;
+  const root = document.documentElement;
+  const RANGE = 420; // px of scroll distance the whole fade plays out over
   let ticking = false;
-  function check(){
-    const shouldFlip = trigger.getBoundingClientRect().top < 0;
-    document.documentElement.classList.toggle('flip', shouldFlip);
+
+  function apply(){
+    const rect = trigger.getBoundingClientRect();
+    const t = Math.min(1, Math.max(0, -rect.top / RANGE));
+    root.classList.toggle('flip', t > 0.5);
+    THEME_SURFACE_KEYS.forEach(k => {
+      root.style.setProperty('--'+k, lerpHex(THEME_DARK[k], THEME_LIGHT[k], t));
+    });
+    // Hard switch (not blended) at the point where the fading background is
+    // roughly equidistant from both text colors - the existing global
+    // `transition: color 0.4s` rule still eases the visual change, but the
+    // custom property itself never sits at a 50/50 mix that would wash both
+    // dark-mode and light-mode text out against a mid-grey background.
+    const ct = t > 0.5 ? 1 : 0;
+    THEME_CONTENT_KEYS.forEach(k => {
+      root.style.setProperty('--'+k, lerpHex(THEME_DARK[k], THEME_LIGHT[k], ct));
+    });
     ticking = false;
   }
   window.addEventListener('scroll', ()=>{
-    if(!ticking){ requestAnimationFrame(check); ticking = true; }
+    if(!ticking){ requestAnimationFrame(apply); ticking = true; }
   }, { passive: true });
-  check();
+  apply();
 }
 
 // ── INIT ──
