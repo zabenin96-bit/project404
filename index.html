@@ -186,7 +186,7 @@ body {
 
 .q-text { font-size: clamp(16px, 1.9vw, 21px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; }
 
-.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: var(--font); font-size: 15px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
+.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: var(--font); font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
 .q-textarea { min-height: 90px; }
 .q-textarea::placeholder, .q-input::placeholder { color: var(--dim); font-size: 13px; }
 .q-textarea:focus, .q-input:focus { border-bottom-color: var(--amber); }
@@ -254,6 +254,8 @@ footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: fl
 
 /* ── RESPONSIVE ── */
 @media (max-width: 700px) {
+  body { font-size: 16px; }
+  .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li { font-size: 15px; }
   .hero { padding: 90px 6vw 60px; min-height: 80vh; }
   .section { padding: 48px 6vw; }
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
