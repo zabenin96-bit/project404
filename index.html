@@ -68,11 +68,11 @@ body {
 #main.show { opacity: 1; transform: translateY(0); }
 
 /* ── LANG ── */
-.lang-bar { position: fixed; top: 0; right: 0; padding: 14px 20px; z-index: 100; background: var(--bg); }
+.lang-bar { position: fixed; top: 0; right: 0; padding: 14px 20px; z-index: 100; }
 .lang-toggle { position: relative; display: flex; align-items: center; gap: 6px; }
-.lang-sep { color: var(--dim); font-size: 12px; user-select: none; }
-.lang-indicator { position: absolute; bottom: 0; left: 0; height: 2px; width: 0; background: var(--amber); transition: left 0.3s cubic-bezier(.65,0,.35,1), width 0.3s cubic-bezier(.65,0,.35,1), background-color 0.4s ease; }
-.lang-btn { background: none; border: none; font-family: var(--font); font-size: 12px; cursor: pointer; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 12px; min-width: 44px; transition: color 0.2s ease; }
+.lang-sep { color: var(--dim); font-size: 12px; user-select: none; text-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg), 0 0 16px var(--bg); }
+.lang-indicator { position: absolute; bottom: 0; left: 0; height: 2px; width: 0; background: var(--amber); box-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg); transition: left 0.3s cubic-bezier(.65,0,.35,1), width 0.3s cubic-bezier(.65,0,.35,1), background-color 0.4s ease; }
+.lang-btn { background: none; border: none; font-family: var(--font); font-size: 12px; cursor: pointer; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 12px; min-width: 44px; transition: color 0.2s ease; text-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg), 0 0 16px var(--bg); }
 .lang-btn:hover { color: var(--text); }
 .lang-btn.active { color: var(--text); font-weight: 700; }
 .lang-btn:focus-visible, .hero-cta:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, .q-opt:focus-within { outline: 1px solid var(--amber); outline-offset: 2px; }
