@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.facebook.com; connect-src 'self' https://noresults-backend-production.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com; frame-ancestors 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://noresults-backend-production.up.railway.app; frame-ancestors 'self';">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
 <title>no results.</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -20,37 +20,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
-
-<!-- ── ANALYTICS IDs: единственное место, где их нужно менять ── -->
-<script>
-  const GA4_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // замени на свой GA4 Measurement ID
-  const META_PIXEL_ID = '000000000000000'; // замени на свой Meta Pixel ID
-</script>
-
-<!-- GA4 -->
-<script>
-  (function(){
-    var s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA4_MEASUREMENT_ID;
-    document.head.appendChild(s);
-  })();
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', GA4_MEASUREMENT_ID);
-</script>
-
-<!-- Meta Pixel -->
-<script>
-  !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
-  n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
-  document,'script','https://connect.facebook.net/en_US/fbevents.js');
-  fbq('init', META_PIXEL_ID);
-  fbq('track', 'PageView');
-</script>
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -342,7 +311,7 @@ body { padding-bottom: 52px; }
 
     <h1 class="hero-headline" id="hero-hl">Applications are open. Cap is 200 seats.</h1>
     <p class="hero-body" id="hero-body">200 seats total, hard cap. Selection is by application and referral only. Once the cap is hit, it's waitlist and monthly review from there.</p>
-    <a href="#test-section" class="hero-cta" id="hero-cta" onclick="trackEvent('start_application','InitiateCheckout')"><span id="hero-cta-text">apply --start</span><span class="cli-cursor"></span></a>
+    <a href="#test-section" class="hero-cta" id="hero-cta"><span id="hero-cta-text">apply --start</span><span class="cli-cursor"></span></a>
   </div>
 
   <!-- ABOUT -->
@@ -623,7 +592,8 @@ const C = {
     sErr:'STATUS', sMsg:'application window open - now accepting',
     sErr2:'ACCESS', sMsg2:'paid membership - $39/mo, decided after review',
     sMsg2Founding:'paid membership - <span class="old-price">$99</span> $39/mo through Aug 31, decided after review',
-    sbDeadline:'through Aug 31', sbCta:'Apply →',
+    sbFounding:'FOUNDING RATE', sbDeadline:'through Aug 31', sbCta:'Apply →',
+    navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
     heroHl:'Applications are open. Cap is 200 seats.',
     heroBody:'Selection is by application and referral only. Places like this don\'t exist. This is one of them.',
     heroCta:'apply --start',
@@ -698,7 +668,8 @@ const C = {
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
     sErr2:'ДОСТУП',sMsg2:'платное членство - $39/мес, решение после проверки',
     sMsg2Founding:'платное членство - <span class="old-price">$99</span> $39/мес до 31 августа, решение после проверки',
-    sbDeadline:'до 31 авг.', sbCta:'Заявка →',
+    sbFounding:'Набор идёт, лимит 200 мест', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
+    navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
     heroHl:'Идёт набор. Лимит - 200 мест.',
     heroBody:'Отбор только по заявке и рекомендации. Таких мест не существует, но это одно из них.',
     heroCta:'подать заявку --start',
@@ -781,11 +752,6 @@ const utmParams = (function(){
   return out;
 })();
 
-// ── единая точка отправки событий в GA4 и Meta Pixel ──
-function trackEvent(gaName, fbName, params={}){
-  try{ if(typeof gtag === 'function') gtag('event', gaName, params); }catch(e){}
-  try{ if(typeof fbq === 'function') fbq('track', fbName, params); }catch(e){}
-}
 const scV = {};
 
 // ── FOUNDING RATE OFFER: $99 → $39, valid through Aug 31, 2026 ──
@@ -859,6 +825,10 @@ function render(){
   g('q12c').placeholder=t('q12p2');
   g('q12h').textContent=t('q12h');
   g('q12cl').innerHTML=t('consentLabel');
+  document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
+  document.querySelectorAll('#test-section .btn-b').forEach(b=>{ b.textContent = t('navBack'); });
+  const submitBtn = g('submit-btn');
+  if(submitBtn && !submitBtn.disabled) submitBtn.textContent = t('navSubmit');
   g('ty-t1').textContent=t('tyT1'); g('ty-v1').textContent=t('tyV1');
   g('ty-t2').textContent=t('tyT2'); g('ty-v2').textContent=t('tyV2');
   g('ty-t3').textContent=t('tyT3'); g('ty-v3').textContent=t('tyV3');
@@ -879,7 +849,7 @@ function renderStatusBar(){
   const spots = g('sb-spots');
   const cta = g('sb-cta');
   document.querySelectorAll('.statusbar .sep').forEach(s=>{ s.style.display = active ? '' : 'none'; });
-  if(founding) founding.style.display = active ? '' : 'none';
+  if(founding){ founding.style.display = active ? '' : 'none'; founding.textContent = t('sbFounding'); }
   if(old) old.style.display = active ? '' : 'none';
   if(spots){
     spots.style.display = active ? '' : 'none';
@@ -1031,7 +1001,6 @@ async function submitNotify(){
 
     btn.textContent = t('notifySent');
     input.disabled = true;
-    trackEvent('sign_up', 'CompleteRegistration', { content_name:'waitlist' });
   } catch(e){
     console.error(e);
     btn.disabled = false;
@@ -1180,7 +1149,6 @@ async function submitForm(){
     });
     if(!res.ok) throw new Error('submit failed: '+res.status);
 
-    trackEvent('generate_lead', 'Lead', { utm_source: utmParams.utm_source||'', utm_campaign: utmParams.utm_campaign||'' });
     clearDraft();
     g('pfill').style.width='100%';
     g('pnum').textContent='12 / 12';
