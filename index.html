@@ -365,6 +365,10 @@ body { padding-bottom: 52px; }
     </div>
   </div>
 
+  <!-- FLIP TRIGGER: placed so the ~900px scroll-linked fade finishes settling
+       well before the application form starts, not while someone's mid-answer -->
+  <div id="flip-trigger" style="position:relative; height:1px;"></div>
+
   <!-- VALUE -->
   <div class="section reveal">
     <div class="section-grid">
@@ -411,9 +415,6 @@ body { padding-bottom: 52px; }
       </ul>
     </div>
   </div>
-
-  <!-- FLIP TRIGGER -->
-  <div id="flip-trigger" style="position:relative; height:1px;"></div>
 
   <!-- TEST -->
   <div class="section reveal" id="test-section">
