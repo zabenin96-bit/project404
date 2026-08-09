@@ -32,6 +32,7 @@
   --dim: #97968c;
   --line: #232320;
   --amber: #d99a3f;
+  --amber-vivid: #d99a3f;
   --green: #4caf7d;
   --red: #c9694f;
   --font: 'IBM Plex Mono', 'Courier New', monospace;
@@ -91,6 +92,7 @@ body {
 
 .sticky-btn { background: transparent; color: var(--amber); border: 1px solid var(--amber); padding: 9px 18px; font-family: var(--font); font-size: 13px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; transition: border-color 0.2s, color 0.2s, background-color 0.2s; white-space: nowrap; flex-shrink: 0; }
 .sticky-btn:hover { background: var(--amber); color: var(--bg); }
+html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); border-color: var(--amber-vivid); }
 
 /* ── HERO ── */
 .hero { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; padding: 100px 10vw 80px; }
