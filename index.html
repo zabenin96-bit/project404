@@ -267,7 +267,6 @@ body { padding-bottom: 60px; }
   .statusbar { padding: 8px 4vw; gap: 4px; flex-wrap: wrap; row-gap: 6px; }
   .statusbar .left { flex-wrap: wrap; overflow: visible; white-space: normal; flex-basis: 100%; row-gap: 4px; }
   .sticky-btn { width: 100%; padding: 13px 10px; font-size: 14px; text-align: center; }
-  .fw-hide-mobile { display: none; }
   body { padding-bottom: 112px; }
 }
 </style>
@@ -289,11 +288,10 @@ body { padding-bottom: 60px; }
   <div class="left">
     <span class="pulse"></span>
     <span class="founding-wrap">
-      <span class="founding" id="sb-founding"><span class="fw-hide-mobile">LIMITED </span>EARLY ACCESS</span>
+      <span class="founding" id="sb-founding">LIMITED EARLY ACCESS</span>
     </span>
     <span class="old-price" id="sb-old">$99</span>
     <span class="cur-price" id="sb-price">$39</span>
-    <span class="sep">·</span>
     <span class="deadline" id="sb-spots">до авг.</span>
   </div>
   <button class="sticky-btn" onclick="document.getElementById('test-section').scrollIntoView({behavior:'smooth'})">
@@ -600,7 +598,7 @@ const C = {
     sErr:'STATUS', sMsg:'application window open - now accepting',
     sErr2:'ACCESS', sMsg2:'by application only - $39/mo, admission decided after review',
     sMsg2Founding:'by application only - <span class="old-price">$99</span> $39/mo through Aug 31, admission decided after review',
-    sbFounding:'<span class="fw-hide-mobile">LIMITED </span>EARLY ACCESS', sbDeadline:'thru Aug 31', sbCta:'Apply →',
+    sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'through Aug 31', sbCta:'Apply →',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
     heroHl:'Applications are open. Cap is 200 seats.',
     heroBody:'Selection is by application and referral only.',
@@ -677,7 +675,7 @@ const C = {
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
     sErr2:'ДОСТУП',sMsg2:'только по заявке - $39/мес, приём решается после проверки',
     sMsg2Founding:'только по заявке - <span class="old-price">$99</span> $39/мес до 31 августа, приём решается после проверки',
-    sbFounding:'<span class="fw-hide-mobile">Лимитированный </span>ранний доступ', sbDeadline:'до 31.08', sbCta:'Заявка →',
+    sbFounding:'Лимитированный ранний доступ', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
     heroHl:'Набор идёт, лимит 200 мест.',
     heroBody:'Отбор только по заявке и рекомендации.',
@@ -861,7 +859,7 @@ function renderStatusBar(){
   const spots = g('sb-spots');
   const cta = g('sb-cta');
   document.querySelectorAll('.statusbar .sep').forEach(s=>{ s.style.display = active ? '' : 'none'; });
-  if(founding){ founding.style.display = active ? '' : 'none'; founding.innerHTML = t('sbFounding'); }
+  if(founding){ founding.style.display = active ? '' : 'none'; founding.textContent = t('sbFounding'); }
   if(old) old.style.display = active ? '' : 'none';
   if(spots){
     spots.style.display = active ? '' : 'none';
