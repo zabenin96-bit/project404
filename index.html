@@ -232,7 +232,7 @@ body {
 .ty-sys .tag { color: var(--green); min-width: 80px; }
 .ty-code { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--line); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
-.ty-body { font-size: 13px; color: var(--dim); line-height: 1.9; max-width: 440px; }
+.ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; }
 
 /* ── FOOTER ── */
 footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); letter-spacing: 0.05em; }
@@ -258,7 +258,7 @@ body { padding-bottom: 60px; }
 
 @media (max-width: 700px) {
   body { font-size: 16px; }
-  .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li { font-size: 15px; }
+  .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li, .q-opt span, .ty-body { font-size: 15px; }
   .hero { padding: 90px 6vw 60px; min-height: 80vh; }
   .section { padding: 48px 6vw; }
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
@@ -266,9 +266,6 @@ body { padding-bottom: 60px; }
   footer { flex-direction: column; gap: 6px; padding-bottom: 72px; }
   .statusbar { padding: 8px 4vw; gap: 4px; flex-wrap: wrap; row-gap: 6px; }
   .statusbar .left { flex-wrap: wrap; overflow: visible; white-space: normal; flex-basis: 100%; row-gap: 4px; }
-  .statusbar .founding { font-size: 9px; }
-  .statusbar .cur-price { font-size: 12px; }
-  .statusbar .old-price, .statusbar .deadline { font-size: 9px; }
   .sticky-btn { width: 100%; padding: 13px 10px; font-size: 14px; text-align: center; }
   body { padding-bottom: 112px; }
 }
