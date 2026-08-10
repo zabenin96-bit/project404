@@ -161,7 +161,9 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
 .sample-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
 .tip-carousel { overflow: hidden; }
 .tip-carousel:focus-visible { outline: 1px solid var(--amber); outline-offset: 2px; }
-.chat-bubble { min-width: 0; background: var(--surface); border: 1px solid var(--line); padding: 14px 16px; min-height: 76px; display: flex; align-items: center; }
+.chat-bubble { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; min-height: 76px; }
+.tip-name { width: 56px; height: 9px; background: var(--dim); border-radius: 2px; filter: blur(4px); opacity: 0.55; margin-bottom: 10px; transition: opacity 0.35s ease; }
+.tip-name.tip-out, .tip-name.tip-in { opacity: 0; }
 .chat-bubble p { font-size: 13px; color: var(--text); line-height: 1.6; transition: transform 0.35s ease, opacity 0.35s ease; }
 .chat-bubble p.tip-out { transform: translateX(-24px); opacity: 0; }
 .chat-bubble p.tip-in { transform: translateX(24px); opacity: 0; transition: none; }
@@ -356,7 +358,7 @@ body { padding-bottom: 60px; }
       <div class="sample-chat reveal-child">
         <div class="sample-label" id="sample-label">// shared in chat</div>
         <div class="tip-carousel" id="tip-carousel" tabindex="0">
-          <div class="chat-bubble"><p id="tip-text">I don't look at resumes. I give a test: email me with the subject line "Blue Tractor" and attach a table of the 5 best coworking spaces in your city. 80% drop out right there - templated spam.</p></div>
+          <div class="chat-bubble"><div class="tip-name" id="tip-name"></div><p id="tip-text">I don't look at resumes. I give a test: email me with the subject line "Blue Tractor" and attach a table of the 5 best coworking spaces in your city. 80% drop out right there - templated spam.</p></div>
         </div>
       </div>
     </div>
@@ -1254,6 +1256,11 @@ let tipPaused = false;
 function renderCurrentTip(){
   const el = g('tip-text');
   if(el) el.textContent = TIPS[tipIndex][lang] || TIPS[tipIndex].en;
+  const nameEl = g('tip-name');
+  // Purely decorative - a blurred bar standing in for "a member's name", not
+  // actual blurred text, so it never implies a specific real identity is
+  // being hidden. Width varies a bit per tip just so it doesn't look static.
+  if(nameEl) nameEl.style.width = (40 + Math.round(Math.random() * 40)) + 'px';
 }
 
 function tipDuration(str){
@@ -1266,14 +1273,20 @@ function scheduleNextTip(){
   tipTimer = setTimeout(()=>{
     if(tipPaused){ scheduleNextTip(); return; }
     const el = g('tip-text');
+    const nameEl = g('tip-name');
     if(!el){ return; }
     el.classList.add('tip-out');
+    if(nameEl) nameEl.classList.add('tip-out');
     setTimeout(()=>{
       tipIndex = (tipIndex + 1) % TIPS.length;
       renderCurrentTip();
       el.classList.remove('tip-out');
       el.classList.add('tip-in');
-      requestAnimationFrame(()=>{ requestAnimationFrame(()=>{ el.classList.remove('tip-in'); }); });
+      if(nameEl){ nameEl.classList.remove('tip-out'); nameEl.classList.add('tip-in'); }
+      requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
+        el.classList.remove('tip-in');
+        if(nameEl) nameEl.classList.remove('tip-in');
+      }); });
       scheduleNextTip();
     }, 350);
   }, tipDuration(TIPS[tipIndex][lang] || TIPS[tipIndex].en));
