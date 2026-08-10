@@ -261,7 +261,7 @@ body { padding-bottom: 60px; }
 @media (max-width: 700px) {
   body { font-size: 16px; }
   .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li, .q-opt span, .ty-body { font-size: 15px; }
-  .hero { padding: 90px 6vw 60px; min-height: 80vh; }
+  .hero { padding: 72px 6vw 48px; min-height: auto; justify-content: flex-start; }
   .section { padding: 48px 6vw; }
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
   .rules-list li { grid-template-columns: 1fr; gap: 4px; }
@@ -599,7 +599,6 @@ const C = {
     sbStatus:'NOW ENROLLING', sbMembers:'cap: 200 members',
     sErr:'STATUS', sMsg:'application window open - now accepting',
     sErr2:'ACCESS', sMsg2:'by application only - $39/mo, admission decided after review',
-    sMsg2Founding:'by application only - <span class="old-price">$99</span> $39/mo through Aug 31, admission decided after review',
     sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'through Aug 31', sbCta:'Apply →',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
     heroHl:'Applications are open. Cap is 200 seats.',
@@ -676,7 +675,6 @@ const C = {
     sbStatus:'ИДЁТ НАБОР', sbMembers:'лимит: 200 участников',
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
     sErr2:'ДОСТУП',sMsg2:'только по заявке - $39/мес, приём решается после проверки',
-    sMsg2Founding:'только по заявке - <span class="old-price">$99</span> $39/мес до 31 августа, приём решается после проверки',
     sbFounding:'Лимитированный ранний доступ', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
     heroHl:'Набор идёт, лимит 200 мест.',
@@ -793,7 +791,7 @@ function render(){
   g('s-err').textContent = t('sErr');
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
-  g('s-msg2').innerHTML = foundingActive() ? t('sMsg2Founding') : t('sMsg2');
+  g('s-msg2').innerHTML = t('sMsg2');
   g('hero-hl').textContent = t('heroHl');
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
