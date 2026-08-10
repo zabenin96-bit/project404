@@ -79,7 +79,8 @@ body {
 .lang-btn:focus-visible, .hero-cta:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, .q-opt:focus-within { outline: 1px solid var(--amber); outline-offset: 2px; }
 
 /* ── STATUS BAR ── */
-.statusbar { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid var(--line); background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 8px 4vw; font-size: 11px; color: var(--dim); letter-spacing: 0.06em; z-index: 50; gap: 6px; box-sizing: border-box; }
+.statusbar { position: fixed; bottom: 0; left: 0; right: 0; border-top: 1px solid var(--line); background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 8px 4vw; font-size: 11px; color: var(--dim); letter-spacing: 0.06em; z-index: 50; gap: 6px; box-sizing: border-box; transform: translateY(100%); opacity: 0; pointer-events: none; transition: transform 0.3s cubic-bezier(.16,.8,.24,1), opacity 0.3s ease, background-color 0.4s ease, color 0.4s ease; }
+.statusbar.visible { transform: translateY(0); opacity: 1; pointer-events: auto; }
 .statusbar .left { display: flex; align-items: center; gap: 5px; flex-wrap: nowrap; overflow: hidden; min-width: 0; }
 .statusbar .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: pulse 2.4s infinite; flex-shrink: 0; }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
@@ -1194,6 +1195,17 @@ function initReveal(){
   targets.forEach(t=>io.observe(t));
 }
 
+// ── STICKY BAR: shows once the hero CTA scrolls out of view, hides again if scrolled back ──
+function initStickyBar(){
+  const bar = document.getElementById('statusbar');
+  const cta = document.querySelector('.hero-cta');
+  if(!bar || !cta || !('IntersectionObserver' in window)){ if(bar) bar.classList.add('visible'); return; }
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{ bar.classList.toggle('visible', !entry.isIntersecting); });
+  }, { threshold: 0 });
+  io.observe(cta);
+}
+
 // ── FORM MICRO-FEEDBACK ──
 function initFormFeedback(){
   document.querySelectorAll('.q-textarea, .q-input').forEach(inp=>{
@@ -1315,6 +1327,7 @@ updProg(1);
 restoreDraft();
 initAutosave();
 initReveal();
+initStickyBar();
 initFormFeedback();
 initValidationClear();
 initFlip();
