@@ -610,8 +610,8 @@ body { padding-bottom: 60px; }
   <footer>
     <span>no results. _ 2026</span>
     <div class="ft-links">
-      <a href="mailto:noresults.supp@gmail.com">contact</a>
-      <a href="privacy-policy.html" target="_blank" rel="noopener">privacy</a>
+      <a href="mailto:noresults.supp@gmail.com" id="ft-contact">contact</a>
+      <a href="privacy-policy.html" target="_blank" rel="noopener" id="ft-privacy">privacy</a>
       <a href="https://t.me/CreativesManager" target="_blank" rel="noopener" id="ft-ask">support</a>
     </div>
     <span id="ft-r">connection closed</span>
@@ -694,6 +694,8 @@ const C = {
     tyHead:'Accepted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     ftR:'connection closed',
+    ftContact:'contact',
+    ftPrivacy:'privacy',
     ftAsk:'support',
     reqWarn:'Answer this one before moving on.',
     reqWarnFinal:'Fill in both fields to submit.'
@@ -771,6 +773,8 @@ const C = {
     tyHead:'Принято, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     ftR:'соединение закрыто',
+    ftContact:'контакты',
+    ftPrivacy:'конфиденциальность',
     ftAsk:'поддержка',
     reqWarn:'Ответь на этот вопрос, чтобы продолжить.',
     reqWarnFinal:'Заполни оба поля, чтобы отправить.'
@@ -876,6 +880,8 @@ function render(){
   g('ty-body').textContent=t('tyBody');
   g('ft-r').textContent=t('ftR');
   g('ft-ask').textContent=t('ftAsk');
+  g('ft-contact').textContent=t('ftContact');
+  g('ft-privacy').textContent=t('ftPrivacy');
   document.querySelectorAll('.q-warn.show').forEach(w=>{ w.textContent = t(w.dataset.key || 'reqWarn'); });
 
   renderStatusBar();
