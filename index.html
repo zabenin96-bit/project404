@@ -155,6 +155,15 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
 .rules-list li { display: grid; grid-template-columns: 180px 1fr; gap: 16px; padding: 13px 0; border-bottom: 1px solid var(--line); font-size: 14px; align-items: start; transition: background 0.15s; padding-left: 8px; padding-right: 8px; margin-left: -8px; margin-right: -8px; }
 .rules-list li:first-child { border-top: 1px solid var(--line); }
 .rules-list li:hover { background: var(--surface); }
+
+/* ── SAMPLE CHAT (illustrative, not a real screenshot) ── */
+.sample-chat { grid-column: 2; margin-top: 28px; max-width: 480px; }
+.sample-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); margin-bottom: 14px; }
+.chat-msg { display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start; }
+.chat-msg:last-child { margin-bottom: 0; }
+.chat-avatar { flex-shrink: 0; width: 28px; height: 28px; border-radius: 50%; background: var(--surface); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: var(--dim); font-family: var(--font); }
+.chat-bubble { flex: 1; min-width: 0; background: var(--surface); border: 1px solid var(--line); padding: 10px 14px; }
+.chat-bubble p { font-size: 13px; color: var(--text); line-height: 1.6; }
 .rule-key { font-weight: 700; color: var(--text); }
 .rule-val { color: var(--dim); line-height: 1.6; }
 
@@ -265,6 +274,7 @@ body { padding-bottom: 60px; }
   .hero { padding: 72px 6vw 48px; min-height: auto; justify-content: flex-start; }
   .section { padding: 48px 6vw; }
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
+  .sample-chat { grid-column: 1; }
   .rules-list li { grid-template-columns: 1fr; gap: 4px; }
   footer { flex-direction: column; gap: 6px; padding-bottom: 72px; }
   .statusbar { padding: 8px 4vw; gap: 4px; flex-wrap: wrap; row-gap: 6px; }
@@ -342,6 +352,17 @@ body { padding-bottom: 60px; }
         <li><span class="rule-key" id="fmt3t">Calls</span><span class="rule-val" id="fmt3d">Ad-hoc group calls, a couple times a month.</span></li>
         <li><span class="rule-key" id="fmt5t">Networking</span><span class="rule-val" id="fmt5d">Organic, member to member. By design - no forced deal flow, no pitch decks.</span></li>
       </ul>
+      <div class="sample-chat reveal-child">
+        <div class="sample-label" id="sample-label">// sample thread</div>
+        <div class="chat-msg">
+          <span class="chat-avatar">A</span>
+          <div class="chat-bubble"><p id="sample-msg1">Anyone dealt with EU VAT for a US-based SaaS? Getting conflicting advice from two accountants.</p></div>
+        </div>
+        <div class="chat-msg">
+          <span class="chat-avatar">M</span>
+          <div class="chat-bubble"><p id="sample-msg2">Same boat 6 months ago. Sent you what worked - short version: OSS registration, not the reseller route.</p></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -622,6 +643,9 @@ const C = {
     fmt2t:'Core',fmt2d:'Private chat - always on.',
     fmt3t:'Calls',fmt3d:'Ad-hoc group calls, a couple times a month.',
     fmt5t:'Networking',fmt5d:'Organic, member to member. By design - no forced deal flow, no pitch decks.',
+    sampleLabel:'// sample thread',
+    sampleMsg1:'Anyone dealt with EU VAT for a US-based SaaS? Getting conflicting advice from two accountants.',
+    sampleMsg2:'Same boat 6 months ago. Sent you what worked - short version: OSS registration, not the reseller route.',
     procPre:'// PROCESS',
     proc1t:'01 - Apply',proc1d:'12 questions. No time limit, no auto-scoring - a person reads every answer.',
     proc2t:'02 - Review',proc2d:'Reviewed as applications come in for now (monthly once volume picks up). Response either way, not just on accept.',
@@ -698,6 +722,9 @@ const C = {
     fmt2t:'Ядро',fmt2d:'Закрытый чат - работает постоянно.',
     fmt3t:'Созвоны',fmt3d:'Групповые, нерегулярно, пару раз в месяц.',
     fmt5t:'Нетворкинг',fmt5d:'Органический, между участниками. Осознанно - без навязанного deal flow и питчей.',
+    sampleLabel:'// пример переписки',
+    sampleMsg1:'Кто-то разбирался с НДС в ЕС для SaaS на американской компании? Два бухгалтера дают противоположные советы.',
+    sampleMsg2:'Сам через это проходил полгода назад. Скинул в личку, что сработало - коротко: регистрация через OSS, не через реселлера.',
     procPre:'// ПРОЦЕСС',
     proc1t:'01 - Заявка',proc1d:'12 вопросов, читаем каждый ответ внимательно.',
     proc2t:'02 - Проверка',proc2d:'Пока рассматриваем по мере поступления (перейдём на месячный цикл при наборе объёма), ответ даём в любом случае.',
@@ -804,6 +831,9 @@ function render(){
   g('fit-body').innerHTML = t('fitBody').map(p=>`<p>${p}</p>`).join('');
   g('fmt-pre').textContent = t('fmtPre');
   ['fmt1t','fmt1d','fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  g('sample-label').textContent = t('sampleLabel');
+  g('sample-msg1').textContent = t('sampleMsg1');
+  g('sample-msg2').textContent = t('sampleMsg2');
   g('proc-pre').textContent = t('procPre');
   ['proc1t','proc1d','proc2t','proc2d','proc3t','proc3d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('faq-pre').textContent = t('faqPre');
