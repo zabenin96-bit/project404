@@ -1309,9 +1309,16 @@ function initFlip(){
     // Hard switch (not blended) at the crossover - the existing global `transition: color
     // 0.4s` rule still eases the visual change - then WCAG-checked live against bgNow/surfaceNow.
     const ct = t > CROSSOVER ? 1 : 0;
+    // Use `text` (the strictest threshold) as the one emergency-rescue signal - if the whole
+    // content set would otherwise be unreadable against bgNow, force ALL of it to the same
+    // black/white together, instead of letting each key rescue itself independently (which
+    // produced mismatched shades right around the muddiest part of the blend).
+    const textCandidate = lerpHex(THEME_DARK.text, THEME_LIGHT.text, ct);
+    const forcedText = readableColor(textCandidate, bgNow, surfaceNow, MIN_CONTRAST.text);
+    const rescueActive = forcedText !== textCandidate;
     THEME_CONTENT_KEYS.forEach(k => {
       const candidate = lerpHex(THEME_DARK[k], THEME_LIGHT[k], ct);
-      root.style.setProperty('--'+k, readableColor(candidate, bgNow, surfaceNow, MIN_CONTRAST[k]));
+      root.style.setProperty('--'+k, rescueActive ? forcedText : candidate);
     });
     ticking = false;
   }
