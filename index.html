@@ -1305,11 +1305,41 @@ function scheduleNextTip(){
   }, tipDuration(TIPS[tipIndex][lang] || TIPS[tipIndex].en));
 }
 
+function playTipEntrance(){
+  const el = g('tip-text');
+  const nameEl = g('tip-name');
+  if(!el) return;
+  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
+    el.classList.remove('tip-in');
+    if(nameEl) nameEl.classList.remove('tip-in');
+  }); });
+}
+
 function initTipCarousel(){
   const carousel = g('tip-carousel');
   if(!carousel) return;
   renderCurrentTip();
-  scheduleNextTip();
+  // Start in the same offset/invisible state used between rotations, so the
+  // very first tip slides in too - otherwise the block's first appearance
+  // looks like static text and the "this updates" cue only shows up if
+  // someone happens to linger ~10s+ without scrolling further.
+  const el = g('tip-text');
+  const nameEl = g('tip-name');
+  if(el) el.classList.add('tip-in');
+  if(nameEl) nameEl.classList.add('tip-in');
+
+  const startRotation = ()=>{ playTipEntrance(); scheduleNextTip(); };
+  if('IntersectionObserver' in window){
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){ startRotation(); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.4 });
+    io.observe(carousel);
+  } else {
+    startRotation();
+  }
+
   carousel.addEventListener('mouseenter', ()=>{ tipPaused = true; });
   carousel.addEventListener('mouseleave', ()=>{ tipPaused = false; });
   carousel.addEventListener('focusin', ()=>{ tipPaused = true; });
