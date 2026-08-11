@@ -1278,7 +1278,7 @@ function renderCurrentTip(){
 
 function tipDuration(str){
   const words = str.trim().split(/\s+/).length;
-  return Math.max(6000, Math.min(16000, (words / 200) * 60000 * 1.4));
+  return Math.max(5000, Math.min(9000, (words / 200) * 60000 * 1.4));
 }
 
 function scheduleNextTip(){
