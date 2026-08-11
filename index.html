@@ -684,7 +684,7 @@ const C = {
     q10l:'10 / 12 - FILTER',q10t:"Rate how much you contribute vs. consume in communities you're in.",scLo:'Pure consumer',scHi:'Pure contributor',
     q11l:'11 / 12 - FINAL',q11t:'Why should we let you in over someone else on the waitlist?',q11p:'Not looking for humility or arrogance - just clarity.',
     q12l:'12 / 12 - CONTACT',q12t:'Last one. Your name and a way to reach you.',q12p1:'Name',q12p2:'Telegram / Instagram / Email',q12h:"We'll reach out if you make the waitlist. No spam, no newsletter.",
-    consentLabel:'I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.',
+    consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
     submitting:'Sending...',
     submitError:'Something went wrong. Please try again, or message us on Telegram.',
@@ -763,7 +763,7 @@ const C = {
     q10l:'10 / 12 - ФИЛЬТР',q10t:'Оцени, насколько ты вкладываешь vs потребляешь в сообществах, где состоишь.',scLo:'Чистый потребитель',scHi:'Чистый вкладчик',
     q11l:'11 / 12 - ФИНАЛ',q11t:'Почему мы должны взять тебя, а не другого из очереди?',q11p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
     q12l:'12 / 12 - КОНТАКТ',q12t:'Последнее. Имя и способ связи.',q12p1:'Имя',q12p2:'Telegram / Instagram / Email',q12h:'Напишем, если ты попадёшь в очередь. Спама нет.',
-    consentLabel:'Я согласен(на) с <a href="privacy-policy.html" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой моих данных.',
+    consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
     submitting:'Отправляем...',
     submitError:'Что-то пошло не так. Попробуй ещё раз или напиши нам в Telegram.',
@@ -882,6 +882,7 @@ function render(){
   g('ft-ask').textContent=t('ftAsk');
   g('ft-contact').textContent=t('ftContact');
   g('ft-privacy').textContent=t('ftPrivacy');
+  g('ft-privacy').href='privacy-policy.html?lang='+lang;
   document.querySelectorAll('.q-warn.show').forEach(w=>{ w.textContent = t(w.dataset.key || 'reqWarn'); });
 
   renderStatusBar();
