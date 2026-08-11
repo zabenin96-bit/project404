@@ -216,12 +216,6 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
 .q-opt span { font-size: 14px; color: var(--dim); line-height: 1.5; transition: color 0.15s; }
 .q-opt:hover span, .q-opt.sel span { color: var(--text); }
 
-.q-scale { display: flex; gap: 5px; flex-wrap: wrap; max-width: 580px; }
-.scale-btn { width: 36px; height: 36px; border: 1px solid var(--line); border-radius: 4px; background: transparent; font-family: var(--font); font-size: 12px; cursor: pointer; color: var(--dim); transition: all 0.15s; }
-.scale-btn:hover { border-color: var(--text); color: var(--text); }
-.scale-btn.sel { background: var(--amber); color: var(--bg); border-color: var(--amber); }
-.scale-labels { display: flex; justify-content: space-between; max-width: 400px; margin-top: 8px; font-size: 11px; color: var(--dim); }
-
 .q-nav { display: flex; gap: 16px; margin-top: 28px; align-items: center; }
 .q-hint { font-size: 12px; color: var(--dim); margin-top: 10px; }
 .consent-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; font-size: 12px; color: var(--dim); line-height: 1.6; cursor: pointer; }
@@ -233,7 +227,6 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
 
 .q-textarea.q-error, .q-input.q-error { border-bottom-color: var(--red); }
 .q-opts.q-error .q-opt { border-color: var(--red); }
-.q-scale.q-error .scale-btn { border-color: var(--red); }
 .q-warn { display: none; font-size: 12px; color: var(--red); margin-top: 12px; letter-spacing: 0.03em; }
 .q-warn.show { display: block; animation: fadeup 0.2s ease; }
 
@@ -432,7 +425,7 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="proc-pre">// PROCESS</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="proc1t">01 - Apply</span><span class="rule-val" id="proc1d">12 questions. No time limit, no auto-scoring - a person reads every answer.</span></li>
+        <li><span class="rule-key" id="proc1t">01 - Apply</span><span class="rule-val" id="proc1d">14 questions. No time limit, no auto-scoring - a person reads every answer.</span></li>
         <li><span class="rule-key" id="proc2t">02 - Review</span><span class="rule-val" id="proc2d">Reviewed as applications come in for now (monthly once volume picks up). Response either way, not just on accept.</span></li>
         <li><span class="rule-key" id="proc3t">03 - Confirmation or waitlist</span><span class="rule-val" id="proc3d">Accepted - congrats. Not this round: you can reapply next month.</span></li>
       </ul>
@@ -443,23 +436,23 @@ body { padding-bottom: 60px; }
   <div class="section reveal" id="test-section">
     <div class="section-grid" style="margin-bottom:0">
       <div class="section-label"><span class="prefix" id="wl-pre">// APPLICATION</span></div>
-      <p class="test-intro" id="test-intro">First step: answer 12 questions. No time limit - answer honestly, that's what we're filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo.</p>
+      <p class="test-intro" id="test-intro">First step: answer 14 questions. No time limit - answer honestly, that's what we're filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo.</p>
     </div>
 
     <div class="progress-wrap">
       <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
-      <div class="progress-num" id="pnum">0 / 12</div>
+      <div class="progress-num" id="pnum">0 / 14</div>
     </div>
 
     <div class="q-block active" id="q1">
-      <div class="q-tag" id="q1l">01 / 12 - BASICS</div>
+      <div class="q-tag" id="q1l">01 / 14 - BASICS</div>
       <div class="q-text" id="q1t">What do you do? Describe your main project or work in one sentence.</div>
       <textarea class="q-textarea" id="q1v" placeholder="e.g. I run a production studio making AI video content for e-commerce brands."></textarea>
       <div class="q-nav"><button class="btn-p" onclick="nx(1)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q2">
-      <div class="q-tag" id="q2l">02 / 12 - BASICS</div>
+      <div class="q-tag" id="q2l">02 / 14 - BASICS</div>
       <div class="q-text" id="q2t">How long have you been doing it?</div>
       <div class="q-opts">
         <label class="q-opt"><input type="radio" name="q2" value="a"><span id="q2a">Less than 6 months</span></label>
@@ -471,7 +464,7 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="q-block" id="q3">
-      <div class="q-tag" id="q3l">03 / 12 - BASICS</div>
+      <div class="q-tag" id="q3l">03 / 14 - BASICS</div>
       <div class="q-text" id="q3t">Where are you right now?</div>
       <div class="q-opts">
         <label class="q-opt"><input type="radio" name="q3" value="a"><span id="q3a">Pre-revenue, building</span></label>
@@ -483,21 +476,21 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="q-block" id="q4">
-      <div class="q-tag" id="q4l">04 / 12 - DEPTH</div>
+      <div class="q-tag" id="q4l">04 / 14 - DEPTH</div>
       <div class="q-text" id="q4t">What's the hardest decision you've made in your work in the last 12 months?</div>
       <textarea class="q-textarea" id="q4v" placeholder="Be specific. Vague answers tell us nothing."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(4)">← Back</button><button class="btn-p" onclick="nx(4)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q5">
-      <div class="q-tag" id="q5l">05 / 12 - DEPTH</div>
+      <div class="q-tag" id="q5l">05 / 14 - DEPTH</div>
       <div class="q-text" id="q5t">What have you failed at this year? What did you learn?</div>
       <textarea class="q-textarea" id="q5v" placeholder="Not looking for a redemption arc. Just honesty."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(5)">← Back</button><button class="btn-p" onclick="nx(5)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q6">
-      <div class="q-tag" id="q6l">06 / 12 - DEPTH</div>
+      <div class="q-tag" id="q6l">06 / 14 - DEPTH</div>
       <div class="q-text" id="q6t">What do you actually want from a community like this?</div>
       <div class="q-opts">
         <label class="q-opt"><input type="checkbox" name="q6" value="a"><span id="q6a">People who push me harder than I push myself</span></label>
@@ -510,60 +503,62 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="q-block" id="q7">
-      <div class="q-tag" id="q7l">07 / 12 - CONTEXT</div>
+      <div class="q-tag" id="q7l">07 / 14 - CONTEXT</div>
       <div class="q-text" id="q7t">Where are you based?</div>
       <input class="q-input" id="q7v" type="text" placeholder="City, Country">
       <div class="q-nav"><button class="btn-b" onclick="bk(7)">← Back</button><button class="btn-p" onclick="nx(7)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q8">
-      <div class="q-tag" id="q8l">08 / 12 - FILTER</div>
+      <div class="q-tag" id="q8l">08 / 14 - FILTER</div>
       <div class="q-text" id="q8t">You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?</div>
       <textarea class="q-textarea" id="q8v" placeholder="Write the actual questions. Not 'I'd ask about their journey.'"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(8)">← Back</button><button class="btn-p" onclick="nx(8)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q9">
-      <div class="q-tag" id="q9l">09 / 12 - FILTER</div>
+      <div class="q-tag" id="q9l">09 / 14 - FILTER</div>
       <div class="q-text" id="q9t">What's something most people in your field are wrong about?</div>
       <textarea class="q-textarea" id="q9v" placeholder="One thing. Specific. Yours."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(9)">← Back</button><button class="btn-p" onclick="nx(9)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q10">
-      <div class="q-tag" id="q10l">10 / 12 - FILTER</div>
-      <div class="q-text" id="q10t">Rate how much you contribute vs. consume in communities you're in.</div>
-      <div class="q-scale">
-        <button class="scale-btn" onclick="setSc(10,1)">1</button>
-        <button class="scale-btn" onclick="setSc(10,2)">2</button>
-        <button class="scale-btn" onclick="setSc(10,3)">3</button>
-        <button class="scale-btn" onclick="setSc(10,4)">4</button>
-        <button class="scale-btn" onclick="setSc(10,5)">5</button>
-        <button class="scale-btn" onclick="setSc(10,6)">6</button>
-        <button class="scale-btn" onclick="setSc(10,7)">7</button>
-        <button class="scale-btn" onclick="setSc(10,8)">8</button>
-        <button class="scale-btn" onclick="setSc(10,9)">9</button>
-        <button class="scale-btn" onclick="setSc(10,10)">10</button>
-      </div>
-      <div class="scale-labels"><span id="sc-lo">Pure consumer</span><span id="sc-hi">Pure contributor</span></div>
+      <div class="q-tag" id="q10l">10 / 14 - FILTER</div>
+      <div class="q-text" id="q10t">What in this application felt unnecessary or manipulative?</div>
+      <textarea class="q-textarea" id="q10v" placeholder="Praising the form doesn't count as an answer."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(10)">← Back</button><button class="btn-p" onclick="nx(10)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q11">
-      <div class="q-tag" id="q11l">11 / 12 - FINAL</div>
-      <div class="q-text" id="q11t">Why should we let you in over someone else on the waitlist?</div>
-      <textarea class="q-textarea" id="q11v" placeholder="Not looking for humility. Not looking for arrogance. Looking for clarity."></textarea>
+      <div class="q-tag" id="q11l">11 / 14 - FILTER</div>
+      <div class="q-text" id="q11t">What tool or method do you talk about like an expert but are actually still learning?</div>
+      <textarea class="q-textarea" id="q11v" placeholder="One specific thing you'd normally gloss over."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(11)">← Back</button><button class="btn-p" onclick="nx(11)">Next →</button></div>
     </div>
 
     <div class="q-block" id="q12">
-      <div class="q-tag" id="q12l">12 / 12 - CONTACT</div>
-      <div class="q-text" id="q12t">Last one. Your name and a way to reach you.</div>
-      <input class="q-input" id="q12n" type="text" placeholder="Name" style="margin-bottom:18px;">
-      <input class="q-input" id="q12c" type="text" placeholder="Telegram / Instagram / Email">
-      <p class="q-hint" id="q12h">We'll reach out if you make the waitlist. No spam, no newsletter.</p>
-      <label class="consent-row" id="q12consentRow"><input type="checkbox" id="q12consent"><span id="q12cl">I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.</span></label>
-      <div class="q-nav"><button class="btn-b" onclick="bk(12)">← Back</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Submit →</button></div>
+      <div class="q-tag" id="q12l">12 / 14 - FILTER</div>
+      <div class="q-text" id="q12t">Name one thing you gave to a community - any community - expecting nothing back.</div>
+      <textarea class="q-textarea" id="q12v" placeholder="A specific instance, not a general habit."></textarea>
+      <div class="q-nav"><button class="btn-b" onclick="bk(12)">← Back</button><button class="btn-p" onclick="nx(12)">Next →</button></div>
+    </div>
+
+    <div class="q-block" id="q13">
+      <div class="q-tag" id="q13l">13 / 14 - FINAL</div>
+      <div class="q-text" id="q13t">Why should we let you in over someone else on the waitlist?</div>
+      <textarea class="q-textarea" id="q13v" placeholder="Not looking for humility. Not looking for arrogance. Looking for clarity."></textarea>
+      <div class="q-nav"><button class="btn-b" onclick="bk(13)">← Back</button><button class="btn-p" onclick="nx(13)">Next →</button></div>
+    </div>
+
+    <div class="q-block" id="q14">
+      <div class="q-tag" id="q14l">14 / 14 - CONTACT</div>
+      <div class="q-text" id="q14t">Last one. Your name and a way to reach you.</div>
+      <input class="q-input" id="q14n" type="text" placeholder="Name" style="margin-bottom:18px;">
+      <input class="q-input" id="q14c" type="text" placeholder="Telegram / Instagram / Email">
+      <p class="q-hint" id="q14h">We'll reach out if you make the waitlist. No spam, no newsletter.</p>
+      <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.</span></label>
+      <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Back</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Submit →</button></div>
     </div>
   </div>
 
@@ -651,7 +646,7 @@ const C = {
     fmt5t:'Networking',fmt5d:'Organic, member to member. By design - no forced deal flow, no pitch decks.',
     sampleLabel:'// shared in chat',
     procPre:'// PROCESS',
-    proc1t:'01 - Apply',proc1d:'12 questions. No time limit, no auto-scoring - a person reads every answer.',
+    proc1t:'01 - Apply',proc1d:'14 questions. No time limit, no auto-scoring - a person reads every answer.',
     proc2t:'02 - Review',proc2d:'Reviewed as applications come in for now (monthly once volume picks up). Response either way, not just on accept.',
     proc3t:'03 - Confirmation or waitlist',proc3d:"Accepted - congrats. Not this round: you can reapply next month.",
     faqPre:'// FAQ',
@@ -671,19 +666,21 @@ const C = {
     notifyBtn:'Notify me',
     notifySent:'Got it - we\'ll reach out if a spot opens.',
     wlPre:'// APPLICATION',
-    testIntro:'First step: answer 12 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo.',
-    q1l:'01 / 12 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
-    q2l:'02 / 12 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
-    q3l:'03 / 12 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
-    q4l:'04 / 12 - DEPTH',q4t:"What's the hardest decision you've made in your work in the last 12 months?",q4p:'Be specific. Vague answers tell us nothing.',
-    q5l:'05 / 12 - DEPTH',q5t:'What have you failed at this year? What did you learn?',q5p:'Not looking for a redemption arc. Just honesty.',
-    q6l:'06 / 12 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who inspire me to push harder than I would on my own','Access to specific skills or expertise','Networking that might turn into something','IRL human contact. Tired of being online only','Accountability. Someone to answer to'],
-    q7l:'07 / 12 - CONTEXT',q7t:'Where are you based?',q7p:'City, Country',
-    q8l:'08 / 12 - FILTER',q8t:'You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions, not something like 'I'd ask about their journey.'",
-    q9l:'09 / 12 - FILTER',q9t:"What's something most people in your field are wrong about?",q9p:'One specific thing - genuinely yours, not a general observation.',
-    q10l:'10 / 12 - FILTER',q10t:"Rate how much you contribute vs. consume in communities you're in.",scLo:'Pure consumer',scHi:'Pure contributor',
-    q11l:'11 / 12 - FINAL',q11t:'Why should we let you in over someone else on the waitlist?',q11p:'Not looking for humility or arrogance - just clarity.',
-    q12l:'12 / 12 - CONTACT',q12t:'Last one. Your name and a way to reach you.',q12p1:'Name',q12p2:'Telegram / Instagram / Email',q12h:"We'll reach out if you make the waitlist. No spam, no newsletter.",
+    testIntro:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo.',
+    q1l:'01 / 14 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
+    q2l:'02 / 14 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
+    q3l:'03 / 14 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
+    q4l:'04 / 14 - DEPTH',q4t:"What's the hardest decision you've made in your work in the last 12 months?",q4p:'Be specific. Vague answers tell us nothing.',
+    q5l:'05 / 14 - DEPTH',q5t:'What have you failed at this year? What did you learn?',q5p:'Not looking for a redemption arc. Just honesty.',
+    q6l:'06 / 14 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who inspire me to push harder than I would on my own','Access to specific skills or expertise','Networking that might turn into something','IRL human contact. Tired of being online only','Accountability. Someone to answer to'],
+    q7l:'07 / 14 - CONTEXT',q7t:'Where are you based?',q7p:'City, Country',
+    q8l:'08 / 14 - FILTER',q8t:'You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions, not something like 'I'd ask about their journey.'",
+    q9l:'09 / 14 - FILTER',q9t:"What's something most people in your field are wrong about?",q9p:'One specific thing - genuinely yours, not a general observation.',
+    q10l:'10 / 14 - FILTER',q10t:'What in this application felt unnecessary or manipulative?',q10p:"Praising the form doesn't count as an answer.",
+    q11l:'11 / 14 - FILTER',q11t:'What tool or method do you talk about like an expert but are actually still learning?',q11p:"One specific thing you'd normally gloss over.",
+    q12l:'12 / 14 - FILTER',q12t:'Name one thing you gave to a community - any community - expecting nothing back.',q12p:'A specific instance, not a general habit.',
+    q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else on the waitlist?',q13p:'Not looking for humility or arrogance - just clarity.',
+    q14l:'14 / 14 - CONTACT',q14t:'Last one. Your name and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14h:"We'll reach out if you make the waitlist. No spam, no newsletter.",
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
     submitting:'Sending...',
@@ -730,7 +727,7 @@ const C = {
     fmt5t:'Нетворкинг',fmt5d:'Органический, между участниками. Осознанно - без навязанного deal flow и питчей.',
     sampleLabel:'// делятся в чате',
     procPre:'// ПРОЦЕСС',
-    proc1t:'01 - Заявка',proc1d:'12 вопросов, читаем каждый ответ внимательно.',
+    proc1t:'01 - Заявка',proc1d:'14 вопросов, читаем каждый ответ внимательно.',
     proc2t:'02 - Проверка',proc2d:'Пока рассматриваем по мере поступления (перейдём на месячный цикл при наборе объёма), ответ даём в любом случае.',
     proc3t:'03 - Подтверждение либо очередь',proc3d:'Если приняли - поздравляем, если нет, можно подать на рассмотрение к следующему месяцу.',
     faqPre:'// FAQ',
@@ -750,19 +747,21 @@ const C = {
     notifyBtn:'Уведомить меня',
     notifySent:'Записали - напишем, если появится место.',
     wlPre:'// ОТБОР',
-    testIntro:'Первый шаг: ответь на 12 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $39/мес.',
-    q1l:'01 / 12 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
-    q2l:'02 / 12 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
-    q3l:'03 / 12 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
-    q4l:'04 / 12 - ГЛУБИНА',q4t:'Какое было самое трудное решение в твоей работе за последние 12 месяцев?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
-    q5l:'05 / 12 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',q5p:'Не ищем историю искупления, просто честный ответ.',
-    q6l:'06 / 12 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, рядом с которыми хочется выкладываться сильнее','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Живого общения - надоел только онлайн','Ответственность. Чтобы было перед кем отчитываться'],
-    q7l:'07 / 12 - КОНТЕКСТ',q7t:'Где ты находишься?',q7p:'Город, страна',
-    q8l:'08 / 12 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы, а не в духе "я бы спросил про его путь".',
-    q9l:'09 / 12 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',q9p:'Одна конкретная мысль - именно твоя, а не общее наблюдение.',
-    q10l:'10 / 12 - ФИЛЬТР',q10t:'Оцени, насколько ты вкладываешь vs потребляешь в сообществах, где состоишь.',scLo:'Чистый потребитель',scHi:'Чистый вкладчик',
-    q11l:'11 / 12 - ФИНАЛ',q11t:'Почему мы должны взять тебя, а не другого из очереди?',q11p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
-    q12l:'12 / 12 - КОНТАКТ',q12t:'Последнее. Имя и способ связи.',q12p1:'Имя',q12p2:'Telegram / Instagram / Email',q12h:'Напишем, если ты попадёшь в очередь. Спама нет.',
+    testIntro:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $39/мес.',
+    q1l:'01 / 14 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
+    q2l:'02 / 14 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
+    q3l:'03 / 14 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
+    q4l:'04 / 14 - ГЛУБИНА',q4t:'Какое было самое трудное решение в твоей работе за последние 12 месяцев?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
+    q5l:'05 / 14 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',q5p:'Не ищем историю искупления, просто честный ответ.',
+    q6l:'06 / 14 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, рядом с которыми хочется выкладываться сильнее','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Живого общения - надоел только онлайн','Ответственность. Чтобы было перед кем отчитываться'],
+    q7l:'07 / 14 - КОНТЕКСТ',q7t:'Где ты находишься?',q7p:'Город, страна',
+    q8l:'08 / 14 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы, а не в духе "я бы спросил про его путь".',
+    q9l:'09 / 14 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',q9p:'Одна конкретная мысль - именно твоя, а не общее наблюдение.',
+    q10l:'10 / 14 - ФИЛЬТР',q10t:'Что в этой анкете показалось тебе лишним или манипулятивным?',q10p:'Похвала анкете за ответ не считается.',
+    q11l:'11 / 14 - ФИЛЬТР',q11t:'Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?',q11p:'Одна конкретная вещь, которую обычно замалчиваешь.',
+    q12l:'12 / 14 - ФИЛЬТР',q12t:'Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.',q12p:'Конкретный случай, а не общая привычка.',
+    q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого из очереди?',q13p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
+    q14l:'14 / 14 - КОНТАКТ',q14t:'Последнее. Имя и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14h:'Напишем, если ты попадёшь в очередь. Спама нет.',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
     submitting:'Отправляем...',
@@ -792,7 +791,6 @@ const utmParams = (function(){
   return out;
 })();
 
-const scV = {};
 
 // ── FOUNDING RATE OFFER: $99 → $39, valid through Aug 31, 2026 ──
 // Update FOUNDING_DEADLINE (and the sbDeadline/sMsg2Founding copy in C) for next year's run.
@@ -853,22 +851,20 @@ function render(){
   g('notify-btn').textContent = t('notifyBtn');
   g('wl-pre').textContent = t('wlPre');
   g('test-intro').textContent = t('testIntro');
-  for(let i=1;i<=12;i++){
+  for(let i=1;i<=14;i++){
     const lel=g('q'+i+'l'), tel=g('q'+i+'t');
     if(lel) lel.textContent=t('q'+i+'l');
     if(tel) tel.textContent=t('q'+i+'t');
   }
-  [1,4,5,8,9,11].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
+  [1,4,5,8,9,10,11,12,13].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
   const q7v=g('q7v'); if(q7v) q7v.placeholder=t('q7p');
   [[2,'q2o'],[3,'q3o'],[6,'q6o']].forEach(([q,k])=>{
     t(k).forEach((o,i)=>{ const e=g('q'+q+'abcde'[i]); if(e) e.textContent=o; });
   });
-  g('sc-lo').textContent=t('scLo');
-  g('sc-hi').textContent=t('scHi');
-  g('q12n').placeholder=t('q12p1');
-  g('q12c').placeholder=t('q12p2');
-  g('q12h').textContent=t('q12h');
-  g('q12cl').innerHTML=t('consentLabel');
+  g('q14n').placeholder=t('q14p1');
+  g('q14c').placeholder=t('q14p2');
+  g('q14h').textContent=t('q14h');
+  g('q14cl').innerHTML=t('consentLabel');
   document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
   document.querySelectorAll('#test-section .btn-b').forEach(b=>{ b.textContent = t('navBack'); });
   const submitBtn = g('submit-btn');
@@ -924,18 +920,9 @@ document.querySelectorAll('.q-opts').forEach(group=>{
   });
 });
 
-function setSc(q,v){
-  scV[q]=v;
-  document.querySelectorAll('#q'+q+' .scale-btn').forEach((b,i)=>b.classList.toggle('sel',i+1===v));
-  const scaleEl = document.querySelector('#q'+q+' .q-scale');
-  if(scaleEl) scaleEl.classList.remove('q-error');
-  hideWarn('q'+q);
-  saveDraft();
-}
-
 function updProg(n){
-  g('pfill').style.width=((n-1)/12*100)+'%';
-  g('pnum').textContent=(n-1)+' / 12';
+  g('pfill').style.width=((n-1)/14*100)+'%';
+  g('pnum').textContent=(n-1)+' / 14';
 }
 
 // ── VALIDATION: every question must be answered before moving on ──
@@ -944,7 +931,6 @@ function isAnswered(n){
   if(ta) return ta.value.trim().length > 0;
   if(n===2 || n===3) return !!document.querySelector('input[name="q'+n+'"]:checked');
   if(n===6) return document.querySelectorAll('input[name="q6"]:checked').length > 0;
-  if(n===10) return scV[10] !== undefined;
   return true;
 }
 
@@ -987,9 +973,7 @@ function showWarn(n, msgKey){
   const ta = g('q'+n+'v');
   if(ta){ ta.classList.add('q-error'); return; }
   const opts = document.querySelector('#q'+n+' .q-opts');
-  if(opts){ opts.classList.add('q-error'); return; }
-  const scale = document.querySelector('#q'+n+' .q-scale');
-  if(scale){ scale.classList.add('q-error'); }
+  if(opts){ opts.classList.add('q-error'); }
 }
 
 function initValidationClear(){
@@ -1002,12 +986,12 @@ function initValidationClear(){
       }
     });
   });
-  const consentBox = g('q12consent');
+  const consentBox = g('q14consent');
   if(consentBox){
     consentBox.addEventListener('change', ()=>{
       if(consentBox.checked){
-        g('q12consentRow').classList.remove('q-error');
-        hideWarn('q12');
+        g('q14consentRow').classList.remove('q-error');
+        hideWarn('q14');
       }
     });
   }
@@ -1056,19 +1040,19 @@ async function submitNotify(){
   }
 }
 
-function q12Answered(){
-  return (g('q12n')?.value.trim().length||0) > 0 && (g('q12c')?.value.trim().length||0) > 0;
+function q14Answered(){
+  return (g('q14n')?.value.trim().length||0) > 0 && (g('q14c')?.value.trim().length||0) > 0;
 }
 
 function consentChecked(){
-  return !!g('q12consent')?.checked;
+  return !!g('q14consent')?.checked;
 }
 
 // ── DRAFT AUTOSAVE: survive page refresh mid-application ──
 const DRAFT_KEY = 'nr_app_draft_v1';
 
 function getActiveQ(){
-  for(let i=1;i<=12;i++){ const b=g('q'+i); if(b && b.classList.contains('active')) return i; }
+  for(let i=1;i<=14;i++){ const b=g('q'+i); if(b && b.classList.contains('active')) return i; }
   return 1;
 }
 
@@ -1084,10 +1068,12 @@ function collectDraft(){
     q7:g('q7v')?.value||'',
     q8:g('q8v')?.value||'',
     q9:g('q9v')?.value||'',
-    q10:scV[10],
+    q10:g('q10v')?.value||'',
     q11:g('q11v')?.value||'',
-    q12n:g('q12n')?.value||'',
-    q12c:g('q12c')?.value||'',
+    q12:g('q12v')?.value||'',
+    q13:g('q13v')?.value||'',
+    q14n:g('q14n')?.value||'',
+    q14c:g('q14c')?.value||'',
     consent:consentChecked(),
   };
 }
@@ -1121,11 +1107,13 @@ function restoreDraft(){
   if(g('q7v')) g('q7v').value = d.q7||'';
   if(g('q8v')) g('q8v').value = d.q8||'';
   if(g('q9v')) g('q9v').value = d.q9||'';
-  if(d.q10!==undefined && d.q10!==null) setSc(10, d.q10);
+  if(g('q10v')) g('q10v').value = d.q10||'';
   if(g('q11v')) g('q11v').value = d.q11||'';
-  if(g('q12n')) g('q12n').value = d.q12n||'';
-  if(g('q12c')) g('q12c').value = d.q12c||'';
-  if(d.consent && g('q12consent')) g('q12consent').checked = true;
+  if(g('q12v')) g('q12v').value = d.q12||'';
+  if(g('q13v')) g('q13v').value = d.q13||'';
+  if(g('q14n')) g('q14n').value = d.q14n||'';
+  if(g('q14c')) g('q14c').value = d.q14c||'';
+  if(d.consent && g('q14consent')) g('q14consent').checked = true;
 
   const target = d.activeQ || 1;
   if(target > 1){
@@ -1143,22 +1131,22 @@ function initAutosave(){
   document.querySelectorAll('input[name="q2"], input[name="q3"], input[name="q6"]').forEach(el=>{
     el.addEventListener('change', saveDraft);
   });
-  const consentBox = g('q12consent');
+  const consentBox = g('q14consent');
   if(consentBox) consentBox.addEventListener('change', saveDraft);
 }
 
 // ── SUBMISSION: single channel, awaited. The backend is responsible for
 // relaying to Telegram server-side — never put a bot token in client JS. ──
 async function submitForm(){
-  if(!q12Answered()){
-    showWarn(12, 'reqWarnFinal');
-    if(!g('q12n').value.trim()) g('q12n').classList.add('q-error');
-    if(!g('q12c').value.trim()) g('q12c').classList.add('q-error');
+  if(!q14Answered()){
+    showWarn(14, 'reqWarnFinal');
+    if(!g('q14n').value.trim()) g('q14n').classList.add('q-error');
+    if(!g('q14c').value.trim()) g('q14c').classList.add('q-error');
     return;
   }
   if(!consentChecked()){
-    showWarn(12, 'reqWarnConsent');
-    g('q12consentRow').classList.add('q-error');
+    showWarn(14, 'reqWarnConsent');
+    g('q14consentRow').classList.add('q-error');
     return;
   }
   const data={
@@ -1172,10 +1160,12 @@ async function submitForm(){
     q7:g('q7v')?.value||'',
     q8:g('q8v')?.value||'',
     q9:g('q9v')?.value||'',
-    q10:scV[10]||'',
+    q10:g('q10v')?.value||'',
     q11:g('q11v')?.value||'',
-    name:g('q12n')?.value||'',
-    contact:g('q12c')?.value||'',
+    q12:g('q12v')?.value||'',
+    q13:g('q13v')?.value||'',
+    name:g('q14n')?.value||'',
+    contact:g('q14c')?.value||'',
     ...utmParams,
   };
 
@@ -1186,7 +1176,7 @@ async function submitForm(){
   const originalBtnText = btn.textContent;
   btn.disabled = true;
   btn.textContent = t('submitting');
-  hideWarn(12);
+  hideWarn(14);
 
   try {
     const res = await fetch('https://noresults-backend-production.up.railway.app/submit',{
@@ -1198,7 +1188,7 @@ async function submitForm(){
 
     clearDraft();
     g('pfill').style.width='100%';
-    g('pnum').textContent='12 / 12';
+    g('pnum').textContent='14 / 14';
     g('test-section').style.display='none';
     const ty=g('ty');
     ty.style.display='block';
@@ -1207,7 +1197,7 @@ async function submitForm(){
     console.error(e);
     btn.disabled = false;
     btn.textContent = originalBtnText;
-    showWarn(12, 'submitError');
+    showWarn(14, 'submitError');
   }
 }
 
