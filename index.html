@@ -660,7 +660,7 @@ const C = {
     faqPre:'// FAQ',
     faq1t:'Response time',faq1d:'Right now applications are reviewed as they come in - no fixed schedule yet. We\'ll move to a set monthly cycle once volume picks up.',
     faq2t:'Your data',faq2d:'Not shared with third parties.',
-    faq3t:'Rejected?',faq3d:'You can reapply after one month.',
+    faq3t:'Rejected?',faq3d:"Up to 2 attempts per calendar month, per contact - counter resets on the 1st. Make each one count.",
     faq4t:'Payment',faq4d:'If accepted, you get a payment link - $39 charged monthly, cancel anytime.',
     faq4dFounding:'If accepted, you get a payment link. Right now it\'s Limited Early Access - $39/mo through Aug 31 (regular price is $99), charged monthly after that, cancel anytime.',
     rjPre:'// NOT A FIT IF',
@@ -693,6 +693,7 @@ const C = {
     reqWarnConsent:'Check the box to submit.',
     submitting:'Sending...',
     submitError:'Something went wrong. Please try again, or message us on Telegram.',
+    attemptLimitError:"You've used both attempts for this contact this month. Counter resets on the 1st.",
     tyT1:'RECEIVED',tyV1:'application logged - pending manual review',
     tyT2:'STATUS',tyV2:'202 accepted',
     tyT3:'NEXT',tyV3:"we'll reach out if you make it - reviews happen as applications come in",
@@ -741,7 +742,7 @@ const C = {
     faqPre:'// FAQ',
     faq1t:'Срок ответа',faq1d:'Сейчас рассматриваем по мере поступления - точного графика ещё нет. Перейдём на фиксированный месячный цикл, когда наберётся больше заявок.',
     faq2t:'Твои данные',faq2d:'Третьим лицам не передаются.',
-    faq3t:'Отказали?',faq3d:'Можно попробовать снова через месяц.',
+    faq3t:'Отказали?',faq3d:'До 2 попыток в календарный месяц на один контакт - счётчик обнуляется 1 числа. Заявку стоит делать вдумчиво.',
     faq4t:'Оплата',faq4d:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок): $39 списывается ежемесячно, отменить можно в любой момент.',
     faq4dFounding:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок). Сейчас действует лимитированный ранний доступ - $39/мес до 31 августа (обычная цена $99), дальше списывается ежемесячно, отменить можно в любой момент.',
     rjPre:'// НЕ ПОДОЙДЁТ, ЕСЛИ',
@@ -774,6 +775,7 @@ const C = {
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
     submitting:'Отправляем...',
     submitError:'Что-то пошло не так. Попробуй ещё раз или напиши нам в Telegram.',
+    attemptLimitError:'Обе попытки в этом месяце с этим контактом уже использованы. Счётчик обнулится 1 числа.',
     tyT1:'ПОЛУЧЕНО',tyV1:'заявка записана - ожидает проверки',
     tyT2:'СТАТУС',tyV2:'202 принято',
     tyT3:'ДАЛЕЕ',tyV3:'напишем лично если ты попадёшь - рассматриваем по мере поступления',
@@ -1193,7 +1195,11 @@ async function submitForm(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({ type:'application', ...data, q2:q2Text, q3:q3Text })
     });
-    if(!res.ok) throw new Error('submit failed: '+res.status);
+    if(!res.ok){
+      let errCode = '';
+      try{ errCode = (await res.json()).error || ''; }catch(e){}
+      throw new Error(errCode === 'attempt_limit' ? 'attempt_limit' : 'submit failed: '+res.status);
+    }
 
     clearDraft();
     g('pfill').style.width='100%';
@@ -1206,7 +1212,7 @@ async function submitForm(){
     console.error(e);
     btn.disabled = false;
     btn.textContent = originalBtnText;
-    showWarn(14, 'submitError');
+    showWarn(14, e.message === 'attempt_limit' ? 'attemptLimitError' : 'submitError');
   }
 }
 
