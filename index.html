@@ -845,6 +845,7 @@ function render(){
   ['fmt1t','fmt1d','fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('sample-label').textContent = t('sampleLabel');
   renderCurrentTip();
+  syncTipBubbleHeight();
   g('proc-pre').textContent = t('procPre');
   ['proc1t','proc1d','proc2t','proc2d','proc3t','proc3d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('faq-pre').textContent = t('faqPre');
@@ -1315,10 +1316,46 @@ function playTipEntrance(){
   }); });
 }
 
+// Locks the bubble to the tallest of all 7 tips (at the current width/lang)
+// so switching tips never resizes the card - otherwise everything below it
+// on the page shifts up/down on every rotation.
+function syncTipBubbleHeight(){
+  const bubble = document.querySelector('.chat-bubble');
+  if(!bubble) return;
+  bubble.style.minHeight = '0';
+  const measurer = bubble.cloneNode(true);
+  measurer.style.position = 'absolute';
+  measurer.style.visibility = 'hidden';
+  measurer.style.pointerEvents = 'none';
+  measurer.style.left = '-9999px';
+  measurer.style.top = '0';
+  measurer.style.height = 'auto';
+  measurer.style.width = bubble.offsetWidth + 'px';
+  document.body.appendChild(measurer);
+  const p = measurer.querySelector('p');
+  let maxH = 0;
+  if(p){
+    TIPS.forEach(tip=>{
+      p.textContent = tip[lang] || tip.en;
+      maxH = Math.max(maxH, measurer.scrollHeight);
+    });
+  }
+  document.body.removeChild(measurer);
+  bubble.style.minHeight = maxH + 'px';
+}
+
+let tipHeightResizeTimer = null;
+function scheduleTipHeightSync(){
+  clearTimeout(tipHeightResizeTimer);
+  tipHeightResizeTimer = setTimeout(syncTipBubbleHeight, 150);
+}
+
 function initTipCarousel(){
   const carousel = g('tip-carousel');
   if(!carousel) return;
   renderCurrentTip();
+  syncTipBubbleHeight();
+  window.addEventListener('resize', scheduleTipHeightSync);
   // Start in the same offset/invisible state used between rotations, so the
   // very first tip slides in too - otherwise the block's first appearance
   // looks like static text and the "this updates" cue only shows up if
@@ -1481,7 +1518,7 @@ initValidationClear();
 initFlip();
 positionLangIndicator();
 window.addEventListener('resize', positionLangIndicator);
-if(document.fonts && document.fonts.ready){ document.fonts.ready.then(positionLangIndicator); }
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(positionLangIndicator); document.fonts.ready.then(syncTipBubbleHeight); }
 requestAnimationFrame(()=>{ g('main').classList.add('show'); });
 </script>
 </body>
