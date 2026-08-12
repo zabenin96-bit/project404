@@ -359,10 +359,9 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="fmt-pre">// FORMAT</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="fmt1t">Mode</span><span class="rule-val" id="fmt1d">Online, plus offline meetups when members are in the same city.</span></li>
-        <li><span class="rule-key" id="fmt2t">Core</span><span class="rule-val" id="fmt2d">Private chat - always on.</span></li>
-        <li><span class="rule-key" id="fmt3t">Calls</span><span class="rule-val" id="fmt3d">Ad-hoc group calls, a couple times a month.</span></li>
-        <li><span class="rule-key" id="fmt5t">Networking</span><span class="rule-val" id="fmt5d">Organic, member to member. By design - no forced deal flow, no pitch decks.</span></li>
+        <li><span class="rule-key" id="fmt2t">Core</span><span class="rule-val" id="fmt2d">Private chat - questions, deep-dives, member-to-member intros.</span></li>
+        <li><span class="rule-key" id="fmt3t">Calls</span><span class="rule-val" id="fmt3d">Group calls, a few times a month.</span></li>
+        <li><span class="rule-key" id="fmt5t">Networking</span><span class="rule-val" id="fmt5d">Organic, person to person - no forced deal flow, no unsolicited pitches.</span></li>
       </ul>
       <div class="sample-chat reveal-child">
         <div class="sample-label" id="sample-label">// shared in chat</div>
@@ -648,10 +647,9 @@ const C = {
     fitPre:'// WHO THIS IS FOR',
     fitBody:["You fit if you've created or helped create something valuable - employed, on your own, however you got there. Job title, age, country - none of that matters. The rest, the application decides."],
     fmtPre:'// FORMAT',
-    fmt1t:'Mode',fmt1d:'Online, plus offline meetups when members are in the same city.',
-    fmt2t:'Core',fmt2d:'Private chat - always on.',
-    fmt3t:'Calls',fmt3d:'Ad-hoc group calls, a couple times a month.',
-    fmt5t:'Networking',fmt5d:'Organic, member to member. By design - no forced deal flow, no pitch decks.',
+    fmt2t:'Core',fmt2d:'Private chat - questions, deep-dives, member-to-member intros.',
+    fmt3t:'Calls',fmt3d:'Group calls, a few times a month.',
+    fmt5t:'Networking',fmt5d:'Organic, person to person - no forced deal flow, no unsolicited pitches.',
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
     proc1t:'01 - Apply',proc1d:'14 questions. No time limit, no auto-scoring - a person reads every answer.',
@@ -730,10 +728,9 @@ const C = {
     fitPre:'// КОМУ ЭТО ПОДХОДИТ',
     fitBody:['Ты подходишь, если за тобой есть что-то ценное - созданное самостоятельно или с командой, в найме или в своём деле. Профессия, возраст, страна - не имеет значения. Остальное решает форма.'],
     fmtPre:'// ФОРМАТ',
-    fmt1t:'Формат',fmt1d:'Онлайн + офлайн-встречи, если участники пересекаются по городу.',
-    fmt2t:'Ядро',fmt2d:'Закрытый чат - работает постоянно.',
-    fmt3t:'Созвоны',fmt3d:'Групповые, нерегулярно, пару раз в месяц.',
-    fmt5t:'Нетворкинг',fmt5d:'Органический, между участниками. Осознанно - без навязанного deal flow и питчей.',
+    fmt2t:'Ядро',fmt2d:'Закрытый чат - вопросы, разборы, интро между участниками.',
+    fmt3t:'Созвоны',fmt3d:'Групповые, пару раз в месяц.',
+    fmt5t:'Нетворкинг',fmt5d:'Органический, между людьми напрямую - без навязанного deal flow и питчей в личку.',
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
     proc1t:'01 - Заявка',proc1d:'14 вопросов, читаем каждый ответ внимательно.',
@@ -844,7 +841,7 @@ function render(){
   g('fit-pre').textContent = t('fitPre');
   g('fit-body').innerHTML = t('fitBody').map(p=>`<p>${p}</p>`).join('');
   g('fmt-pre').textContent = t('fmtPre');
-  ['fmt1t','fmt1d','fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  ['fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('sample-label').textContent = t('sampleLabel');
   renderCurrentTip();
   syncTipBubbleHeight();
