@@ -360,7 +360,8 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="fmt-pre">// FORMAT</span></div>
       <ul class="rules-list reveal-child">
         <li><span class="rule-key" id="fmt2t">Core</span><span class="rule-val" id="fmt2d">Private chat - questions, deep-dives, member-to-member intros.</span></li>
-        <li><span class="rule-key" id="fmt3t">Calls</span><span class="rule-val" id="fmt3d">Group calls, a few times a month.</span></li>
+        <li><span class="rule-key" id="fmt3t">Calibration</span><span class="rule-val" id="fmt3d">Drop a hard decision in chat - get a blunt, real take from people who've actually been through it.</span></li>
+        <li><span class="rule-key" id="fmt6t">Mutual aid</span><span class="rule-val" id="fmt6d">Need a contractor, a referral, a contact in a specific niche - ask in chat, get real help directly.</span></li>
         <li><span class="rule-key" id="fmt5t">Networking</span><span class="rule-val" id="fmt5d">Organic, person to person - no forced deal flow, no unsolicited pitches.</span></li>
       </ul>
       <div class="sample-chat reveal-child">
@@ -648,7 +649,8 @@ const C = {
     fitBody:["You fit if you've created or helped create something valuable - employed, on your own, however you got there. Job title, age, country - none of that matters. The rest, the application decides."],
     fmtPre:'// FORMAT',
     fmt2t:'Core',fmt2d:'Private chat - questions, deep-dives, member-to-member intros.',
-    fmt3t:'Calls',fmt3d:'Group calls, a few times a month.',
+    fmt3t:'Calibration',fmt3d:"Drop a hard decision in chat - get a blunt, real take from people who've actually been through it.",
+    fmt6t:'Mutual aid',fmt6d:'Need a contractor, a referral, a contact in a specific niche - ask in chat, get real help directly.',
     fmt5t:'Networking',fmt5d:'Organic, person to person - no forced deal flow, no unsolicited pitches.',
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
@@ -729,7 +731,8 @@ const C = {
     fitBody:['Ты подходишь, если за тобой есть что-то ценное - созданное самостоятельно или с командой, в найме или в своём деле. Профессия, возраст, страна - не имеет значения. Остальное решает форма.'],
     fmtPre:'// ФОРМАТ',
     fmt2t:'Ядро',fmt2d:'Закрытый чат - вопросы, разборы, интро между участниками.',
-    fmt3t:'Созвоны',fmt3d:'Групповые, пару раз в месяц.',
+    fmt3t:'Калибровка',fmt3d:'Скинул сложное решение в чат - получил жёсткий, но по делу разбор от тех, кто уже такое проходил.',
+    fmt6t:'Взаимовыручка',fmt6d:'Нужен подрядчик, рекомендация, контакт в нише - просишь в чате, получаешь помощь напрямую.',
     fmt5t:'Нетворкинг',fmt5d:'Органический, между людьми напрямую - без навязанного deal flow и питчей в личку.',
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
@@ -841,7 +844,7 @@ function render(){
   g('fit-pre').textContent = t('fitPre');
   g('fit-body').innerHTML = t('fitBody').map(p=>`<p>${p}</p>`).join('');
   g('fmt-pre').textContent = t('fmtPre');
-  ['fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  ['fmt2t','fmt2d','fmt3t','fmt3d','fmt6t','fmt6d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('sample-label').textContent = t('sampleLabel');
   renderCurrentTip();
   syncTipBubbleHeight();
