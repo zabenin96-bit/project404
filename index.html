@@ -164,9 +164,9 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
 .tip-carousel { overflow: hidden; }
 .tip-carousel:focus-visible { outline: 1px solid var(--amber); outline-offset: 2px; }
 .chat-bubble { min-width: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; min-height: 76px; }
-.tip-name { width: 56px; height: 9px; background: var(--dim); border-radius: 2px; filter: blur(4px); opacity: 0.55; margin-bottom: 10px; transition: opacity 0.35s ease; }
+.tip-name { width: 56px; height: 9px; background: var(--dim); border-radius: 2px; filter: blur(4px); opacity: 0.55; margin-bottom: 10px; transition: opacity 0.6s ease; }
 .tip-name.tip-out, .tip-name.tip-in { opacity: 0; }
-.chat-bubble p { font-size: 13px; color: var(--text); line-height: 1.6; transition: transform 0.35s ease, opacity 0.35s ease; }
+.chat-bubble p { font-size: 13px; color: var(--text); line-height: 1.6; transition: transform 0.6s ease, opacity 0.6s ease; }
 .chat-bubble p.tip-out { transform: translateX(-24px); opacity: 0; }
 .chat-bubble p.tip-in { transform: translateX(24px); opacity: 0; transition: none; }
 .rule-key { font-weight: 700; color: var(--text); }
@@ -1308,7 +1308,7 @@ function scheduleNextTip(){
         if(nameEl) nameEl.classList.remove('tip-in');
       }); });
       scheduleNextTip();
-    }, 350);
+    }, 600);
   }, tipDuration(TIPS[tipIndex][lang] || TIPS[tipIndex].en));
 }
 
