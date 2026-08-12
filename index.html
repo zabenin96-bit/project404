@@ -284,10 +284,9 @@ body { padding-bottom: 60px; }
   .rules-list li { grid-template-columns: 1fr; gap: 4px; }
   footer { flex-direction: column; gap: 6px; padding-bottom: 72px; }
   .statusbar { padding: 8px 4vw; gap: 4px; flex-wrap: wrap; row-gap: 6px; }
-  .statusbar .left { flex-wrap: wrap; overflow: visible; white-space: normal; flex-basis: 100%; row-gap: 4px; }
-  .founding-row { flex-basis: 100%; }
+  .statusbar .left { flex-wrap: wrap; overflow: visible; white-space: normal; flex-basis: 100%; row-gap: 4px; column-gap: 10px; }
   .sticky-btn { width: 100%; padding: 13px 10px; font-size: 14px; text-align: center; }
-  body { padding-bottom: calc(140px + env(safe-area-inset-bottom)); }
+  body { padding-bottom: calc(122px + env(safe-area-inset-bottom)); }
   .statusbar { padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
 }
 </style>
@@ -710,7 +709,7 @@ const C = {
     sbStatus:'ИДЁТ НАБОР', sbMembers:'лимит: 200 участников',
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
     sErr2:'ДОСТУП',sMsg2:'только по заявке - $39/мес, приём решается после проверки',
-    sbFounding:'Лимитированный ранний доступ', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
+    sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
     heroHl:'Набор идёт, лимит 200 мест.',
     heroBody:'Отбор только по заявке и рекомендации.',
