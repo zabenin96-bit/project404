@@ -434,8 +434,8 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="proc-pre">// PROCESS</span></div>
       <ul class="rules-list reveal-child">
         <li><span class="rule-key" id="proc1t">01 - Apply</span><span class="rule-val" id="proc1d">14 questions. No time limit, no auto-scoring - a person reads every answer.</span></li>
-        <li><span class="rule-key" id="proc2t">02 - Review</span><span class="rule-val" id="proc2d">Reviewed as applications come in for now (monthly once volume picks up). Response either way, not just on accept.</span></li>
-        <li><span class="rule-key" id="proc3t">03 - Confirmation or waitlist</span><span class="rule-val" id="proc3d">Accepted - congrats. Not this round: you can reapply next month.</span></li>
+        <li><span class="rule-key" id="proc2t">02 - Review</span><span class="rule-val" id="proc2d">Reviewed as applications come in, no fixed schedule. Response either way, not just on accept.</span></li>
+        <li><span class="rule-key" id="proc3t">03 - Accept or reapply</span><span class="rule-val" id="proc3d">Accepted - congrats. Not this round: you can try again, up to 2 attempts a month.</span></li>
       </ul>
     </div>
   </div>
@@ -554,7 +554,7 @@ body { padding-bottom: 60px; }
 
     <div class="q-block" id="q13">
       <div class="q-tag" id="q13l">13 / 14 - FINAL</div>
-      <div class="q-text" id="q13t">Why should we let you in over someone else on the waitlist?</div>
+      <div class="q-text" id="q13t">Why should we let you in over someone else who applied?</div>
       <textarea class="q-textarea" id="q13v" placeholder="Not looking for humility. Not looking for arrogance. Looking for clarity."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(13)">← Back</button><button class="btn-p" onclick="nx(13)">Next →</button></div>
     </div>
@@ -564,7 +564,7 @@ body { padding-bottom: 60px; }
       <div class="q-text" id="q14t">Last one. Your name and a way to reach you.</div>
       <input class="q-input" id="q14n" type="text" placeholder="Name" style="margin-bottom:18px;">
       <input class="q-input" id="q14c" type="text" placeholder="Telegram / Instagram / Email">
-      <p class="q-hint" id="q14h">We'll reach out if you make the waitlist. No spam, no newsletter.</p>
+      <p class="q-hint" id="q14h">We'll get back to you either way.</p>
       <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.</span></label>
       <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Back</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Submit →</button></div>
     </div>
@@ -588,7 +588,7 @@ body { padding-bottom: 60px; }
     <div class="ty-sys">
       <div class="line"><span class="tag" id="ty-t1">RECEIVED</span><span id="ty-v1">application logged - pending manual review</span></div>
       <div class="line"><span class="tag" id="ty-t2">STATUS</span><span id="ty-v2">202 accepted</span></div>
-      <div class="line"><span class="tag" id="ty-t3">NEXT</span><span id="ty-v3">we'll reach out if you make it - reviews happen as applications come in</span></div>
+      <div class="line"><span class="tag" id="ty-t3">NEXT</span><span id="ty-v3">we'll get back to you either way - reviews happen as applications come in</span></div>
     </div>
     <div class="ty-code">202</div>
     <h2 class="ty-head" id="ty-head">Accepted. Please wait.</h2>
@@ -655,8 +655,8 @@ const C = {
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
     proc1t:'01 - Apply',proc1d:'14 questions. No time limit, no auto-scoring - a person reads every answer.',
-    proc2t:'02 - Review',proc2d:'Reviewed as applications come in for now (monthly once volume picks up). Response either way, not just on accept.',
-    proc3t:'03 - Confirmation or waitlist',proc3d:"Accepted - congrats. Not this round: you can try again, up to 2 attempts a month.",
+    proc2t:'02 - Review',proc2d:'Reviewed as applications come in, no fixed schedule. Response either way, not just on accept.',
+    proc3t:'03 - Accept or reapply',proc3d:"Accepted - congrats. Not this round: you can try again, up to 2 attempts a month.",
     faqPre:'// FAQ',
     faq1t:'Response time',faq1d:'Applications are reviewed as they come in, no fixed schedule.',
     faq2t:'Your data',faq2d:'Not shared with third parties.',
@@ -687,8 +687,8 @@ const C = {
     q10l:'10 / 14 - FILTER',q10t:'What in this application felt unnecessary or manipulative?',q10p:"Praising the form doesn't count as an answer.",
     q11l:'11 / 14 - FILTER',q11t:'What tool or method do you talk about like an expert but are actually still learning?',q11p:"One specific thing you'd normally gloss over.",
     q12l:'12 / 14 - FILTER',q12t:'Name one thing you gave to a community - any community - expecting nothing back.',q12p:'A specific instance, not a general habit.',
-    q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else on the waitlist?',q13p:'Not looking for humility or arrogance - just clarity.',
-    q14l:'14 / 14 - CONTACT',q14t:'Last one. Your name and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14h:"We'll reach out if you make the waitlist. No spam, no newsletter.",
+    q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else who applied?',q13p:'Not looking for humility or arrogance - just clarity.',
+    q14l:'14 / 14 - CONTACT',q14t:'Last one. Your name and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14h:"We'll get back to you either way.",
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
     submitting:'Sending...',
@@ -696,7 +696,7 @@ const C = {
     attemptLimitError:"You've used both attempts for this contact this month. Counter resets on the 1st.",
     tyT1:'RECEIVED',tyV1:'application logged - pending manual review',
     tyT2:'STATUS',tyV2:'202 accepted',
-    tyT3:'NEXT',tyV3:"we'll reach out if you make it - reviews happen as applications come in",
+    tyT3:'NEXT',tyV3:"we'll get back to you either way - reviews happen as applications come in",
     tyHead:'Accepted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     ftR:'connection closed',
@@ -737,8 +737,8 @@ const C = {
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
     proc1t:'01 - Заявка',proc1d:'14 вопросов, читаем каждый ответ внимательно.',
-    proc2t:'02 - Проверка',proc2d:'Пока рассматриваем по мере поступления (перейдём на месячный цикл при наборе объёма), ответ даём в любом случае.',
-    proc3t:'03 - Подтверждение либо очередь',proc3d:'Если приняли - поздравляем. Если нет - можно попробовать снова, до 2 попыток в месяц.',
+    proc2t:'02 - Проверка',proc2d:'Рассматриваем по мере поступления, без фиксированного графика - ответ даём в любом случае.',
+    proc3t:'03 - Приём либо повторная заявка',proc3d:'Если приняли - поздравляем. Если нет - можно попробовать снова, до 2 попыток в месяц.',
     faqPre:'// FAQ',
     faq1t:'Срок ответа',faq1d:'Заявки рассматриваются по мере поступления, без фиксированного графика.',
     faq2t:'Твои данные',faq2d:'Третьим лицам не передаются.',
@@ -769,8 +769,8 @@ const C = {
     q10l:'10 / 14 - ФИЛЬТР',q10t:'Что в этой анкете показалось тебе лишним или манипулятивным?',q10p:'Похвала анкете за ответ не считается.',
     q11l:'11 / 14 - ФИЛЬТР',q11t:'Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?',q11p:'Одна конкретная вещь, которую обычно замалчиваешь.',
     q12l:'12 / 14 - ФИЛЬТР',q12t:'Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.',q12p:'Конкретный случай, а не общая привычка.',
-    q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого из очереди?',q13p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
-    q14l:'14 / 14 - КОНТАКТ',q14t:'Последнее. Имя и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14h:'Напишем, если ты попадёшь в очередь. Спама нет.',
+    q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого кандидата?',q13p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
+    q14l:'14 / 14 - КОНТАКТ',q14t:'Последнее. Имя и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14h:'Ответим в любом случае.',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
     submitting:'Отправляем...',
@@ -778,7 +778,7 @@ const C = {
     attemptLimitError:'Обе попытки в этом месяце с этим контактом уже использованы. Счётчик обнулится 1 числа.',
     tyT1:'ПОЛУЧЕНО',tyV1:'заявка записана - ожидает проверки',
     tyT2:'СТАТУС',tyV2:'202 принято',
-    tyT3:'ДАЛЕЕ',tyV3:'напишем лично если ты попадёшь - рассматриваем по мере поступления',
+    tyT3:'ДАЛЕЕ',tyV3:'ответим в любом случае - рассматриваем по мере поступления',
     tyHead:'Принято, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     ftR:'соединение закрыто',
