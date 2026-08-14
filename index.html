@@ -84,8 +84,7 @@ body {
 .statusbar .left { display: flex; align-items: center; gap: 5px; flex-wrap: nowrap; overflow: hidden; min-width: 0; }
 .founding-row { display: flex; align-items: center; gap: 5px; min-width: 0; }
 .price-row { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; }
-.statusbar .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); animation: pulse 2.4s infinite; flex-shrink: 0; }
-@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.25} }
+.statusbar .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
 .statusbar .founding { font-size: 10px; letter-spacing: 0.14em; color: var(--amber, #c8922a); text-transform: uppercase; white-space: nowrap; }
 .statusbar .sep { color: var(--dim); font-size: 10px; margin: 0 2px; }
 .old-price { color: var(--dim); text-decoration: line-through; }
@@ -382,7 +381,7 @@ body { padding-bottom: 60px; }
         <li><span class="rule-key" id="r4t">Worldwide</span><span class="rule-val" id="r4d">English and Russian speaking, no geography requirement.</span></li>
         <li><span class="rule-key" id="r5t">No hunting</span><span class="rule-val" id="r5d">If you're here just to poach members, this isn't for you.</span></li>
         <li><span class="rule-key" id="r6t">No unsolicited pitching</span><span class="rule-val" id="r6d">Don't pitch your services unless someone asks.</span></li>
-        <li><span class="rule-key" id="r7t">Paid</span><span class="rule-val" id="r7d">$39/mo, no free tier.</span></li>
+        <li><span class="rule-key" id="r7t">Paid</span><span class="rule-val" id="r7d">$39/mo through Aug 31 (regular price $99), no free tier.</span></li>
       </ul>
     </div>
   </div>
@@ -640,7 +639,7 @@ const C = {
     r4t:'Worldwide',r4d:'English and Russian speaking, no geography requirement.',
     r5t:'No hunting',r5d:"If you're here just to poach members, this isn't for you.",
     r6t:'No unsolicited pitching',r6d:"Don't pitch your services unless someone asks.",
-    r7t:'Paid',r7d:'$39/mo, no free tier.',
+    r7t:'Paid',r7d:'$39/mo, no free tier.',r7dFounding:'$39/mo through Aug 31 (regular price $99), no free tier.',
     valPre:'// VALUE',
     valueBody:["Spent a year sitting on this - the founding core already spans 3D art, SEO, lead engineering, and marketing systems, early enough that you'd help shape it, not just join it. A place to talk shop, without the marketing gloss and \"look how far I've come\" case studies. No deal flow promised - but when people who've built things are in one chat, connections happen on their own. You're paying for the filter: no one gets in with a credit card, only through the form."],
     fitPre:'// WHO THIS IS FOR',
@@ -721,7 +720,7 @@ const C = {
     r4t:'Весь мир',r4d:'Русско- и англоговорящие, без привязки к географии.',
     r5t:'Переманивание запрещено',r5d:'Если ты здесь только ради хантинга - тебе не сюда.',
     r6t:'Без питчинга',r6d:'Не предлагай свои услуги, если никто не просил.',
-    r7t:'Платно',r7d:'$39/мес, бесплатного тарифа нет.',
+    r7t:'Платно',r7d:'$39/мес, бесплатного тарифа нет.',r7dFounding:'$39/мес до 31 августа (обычная цена $99), бесплатного тарифа нет.',
     valPre:'// ЦЕННОСТЬ',
     valueBody:['Мысль зрела год - ядро уже есть: 3D, SEO, лид-разработка, маркетинговые системы, и мы в самом начале - ты не просто вступаешь, а формируешь, каким это станет. Место, где говорят по существу, без рекламной шелухи и кейсиков "посмотрите как я вырос". Deal flow не обещаю - но когда люди, которые строят, сидят в одном чате, связи возникают сами. Платишь за отбор: сюда не заходят по кредитке, только через форму.'],
     fitPre:'// КОМУ ЭТО ПОДХОДИТ',
@@ -834,7 +833,9 @@ function render(){
   g('ab-pre').textContent = t('abPre');
   g('about-body').innerHTML = t('aboutBody').map(p=>`<p>${p}</p>`).join('');
   g('ru-pre').textContent = t('ruPre');
-  ['r1t','r1d','r2t','r2d','r3t','r3d','r4t','r4d','r5t','r5d','r6t','r6d','r7t','r7d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  ['r1t','r1d','r2t','r2d','r3t','r3d','r4t','r4d','r5t','r5d','r6t','r6d','r7t'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  const r7dEl = g('r7d');
+  if(r7dEl) r7dEl.textContent = foundingActive() ? t('r7dFounding') : t('r7d');
   g('val-pre').textContent = t('valPre');
   g('value-body').innerHTML = t('valueBody').map(p=>`<p>${p}</p>`).join('');
   g('fit-pre').textContent = t('fitPre');
