@@ -560,9 +560,9 @@ body { padding-bottom: 60px; }
       <div class="q-tag" id="q14l">14 / 14 - CONTACT</div>
       <div class="q-text" id="q14t">Last one. Your name and a way to reach you.</div>
       <input class="q-input" id="q14n" type="text" placeholder="Name" style="margin-bottom:18px;">
+      <input class="q-input" id="q14age" type="number" inputmode="numeric" min="1" max="120" placeholder="Age" style="margin-bottom:18px;">
       <input class="q-input" id="q14c" type="text" placeholder="Telegram / Instagram / Email">
       <p class="q-hint" id="q14h">We'll get back to you either way.</p>
-      <label class="consent-row" id="q14ageRow"><input type="checkbox" id="q14age"><span id="q14al">I confirm I am 18 years or older.</span></label>
       <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.</span></label>
       <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Back</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Submit →</button></div>
     </div>
@@ -685,9 +685,8 @@ const C = {
     q11l:'11 / 14 - FILTER',q11t:'What tool or method do you talk about like an expert but are actually still learning?',q11p:"One specific thing you'd normally gloss over.",
     q12l:'12 / 14 - FILTER',q12t:'Name one thing you gave to a community - any community - expecting nothing back.',q12p:'A specific instance, not a general habit.',
     q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else who applied?',q13p:'Not looking for humility or arrogance - just clarity.',
-    q14l:'14 / 14 - CONTACT',q14t:'Last one. Your name and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14h:"We'll get back to you either way.",
-    q14al:'I confirm I am 18 years or older.',
-    reqWarnAge:'Confirm you\'re 18+ to submit.',
+    q14l:'14 / 14 - CONTACT',q14t:'Last one. Your name and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14p3:'Age',q14h:"We'll get back to you either way.",
+    reqWarnAge:'You must be 18 or older to apply.',
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
     submitting:'Sending...',
@@ -704,7 +703,7 @@ const C = {
     ftTerms:'terms',
     ftAsk:'support',
     reqWarn:'Answer this one before moving on.',
-    reqWarnFinal:'Fill in both fields to submit.'
+    reqWarnFinal:'Fill in all fields to submit.'
   },
   ru: {
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
@@ -768,9 +767,8 @@ const C = {
     q11l:'11 / 14 - ФИЛЬТР',q11t:'Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?',q11p:'Одна конкретная вещь, которую обычно замалчиваешь.',
     q12l:'12 / 14 - ФИЛЬТР',q12t:'Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.',q12p:'Конкретный случай, а не общая привычка.',
     q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого кандидата?',q13p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
-    q14l:'14 / 14 - КОНТАКТ',q14t:'Последнее. Имя и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14h:'Ответим в любом случае.',
-    q14al:'Подтверждаю, что мне есть 18 лет.',
-    reqWarnAge:'Подтверди, что тебе есть 18 лет, чтобы отправить.',
+    q14l:'14 / 14 - КОНТАКТ',q14t:'Последнее. Имя и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14p3:'Возраст',q14h:'Ответим в любом случае.',
+    reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
     submitting:'Отправляем...',
@@ -787,7 +785,7 @@ const C = {
     ftTerms:'условия',
     ftAsk:'поддержка',
     reqWarn:'Ответь на этот вопрос, чтобы продолжить.',
-    reqWarnFinal:'Заполни оба поля, чтобы отправить.'
+    reqWarnFinal:'Заполни все поля, чтобы отправить.'
   }
 };
 
@@ -876,9 +874,9 @@ function render(){
     t(k).forEach((o,i)=>{ const e=g('q'+q+'abcde'[i]); if(e) e.textContent=o; });
   });
   g('q14n').placeholder=t('q14p1');
+  g('q14age').placeholder=t('q14p3');
   g('q14c').placeholder=t('q14p2');
   g('q14h').textContent=t('q14h');
-  g('q14al').textContent=t('q14al');
   g('q14cl').innerHTML=t('consentLabel');
   document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
   document.querySelectorAll('#test-section .btn-b').forEach(b=>{ b.textContent = t('navBack'); });
@@ -1003,15 +1001,6 @@ function initValidationClear(){
       }
     });
   });
-  const ageBox = g('q14age');
-  if(ageBox){
-    ageBox.addEventListener('change', ()=>{
-      if(ageBox.checked){
-        g('q14ageRow').classList.remove('q-error');
-        hideWarn('q14');
-      }
-    });
-  }
   const consentBox = g('q14consent');
   if(consentBox){
     consentBox.addEventListener('change', ()=>{
@@ -1067,15 +1056,16 @@ async function submitNotify(){
 }
 
 function q14Answered(){
-  return (g('q14n')?.value.trim().length||0) > 0 && (g('q14c')?.value.trim().length||0) > 0;
+  return (g('q14n')?.value.trim().length||0) > 0 && (g('q14age')?.value.trim().length||0) > 0 && (g('q14c')?.value.trim().length||0) > 0;
 }
 
 function consentChecked(){
   return !!g('q14consent')?.checked;
 }
 
-function ageConfirmed(){
-  return !!g('q14age')?.checked;
+function ageValue(){
+  const v = parseInt(g('q14age')?.value, 10);
+  return Number.isFinite(v) ? v : null;
 }
 
 // ── DRAFT AUTOSAVE: survive page refresh mid-application ──
@@ -1103,8 +1093,8 @@ function collectDraft(){
     q12:g('q12v')?.value||'',
     q13:g('q13v')?.value||'',
     q14n:g('q14n')?.value||'',
+    q14age:g('q14age')?.value||'',
     q14c:g('q14c')?.value||'',
-    age18:ageConfirmed(),
     consent:consentChecked(),
   };
 }
@@ -1143,8 +1133,8 @@ function restoreDraft(){
   if(g('q12v')) g('q12v').value = d.q12||'';
   if(g('q13v')) g('q13v').value = d.q13||'';
   if(g('q14n')) g('q14n').value = d.q14n||'';
+  if(g('q14age')) g('q14age').value = d.q14age||'';
   if(g('q14c')) g('q14c').value = d.q14c||'';
-  if(d.age18 && g('q14age')) g('q14age').checked = true;
   if(d.consent && g('q14consent')) g('q14consent').checked = true;
 
   const target = d.activeQ || 1;
@@ -1163,8 +1153,6 @@ function initAutosave(){
   document.querySelectorAll('input[name="q2"], input[name="q3"], input[name="q6"]').forEach(el=>{
     el.addEventListener('change', saveDraft);
   });
-  const ageBox = g('q14age');
-  if(ageBox) ageBox.addEventListener('change', saveDraft);
   const consentBox = g('q14consent');
   if(consentBox) consentBox.addEventListener('change', saveDraft);
 }
@@ -1175,12 +1163,14 @@ async function submitForm(){
   if(!q14Answered()){
     showWarn(14, 'reqWarnFinal');
     if(!g('q14n').value.trim()) g('q14n').classList.add('q-error');
+    if(!g('q14age').value.trim()) g('q14age').classList.add('q-error');
     if(!g('q14c').value.trim()) g('q14c').classList.add('q-error');
     return;
   }
-  if(!ageConfirmed()){
+  const age = ageValue();
+  if(age === null || age < 18){
     showWarn(14, 'reqWarnAge');
-    g('q14ageRow').classList.add('q-error');
+    g('q14age').classList.add('q-error');
     return;
   }
   if(!consentChecked()){
@@ -1204,6 +1194,7 @@ async function submitForm(){
     q12:g('q12v')?.value||'',
     q13:g('q13v')?.value||'',
     name:g('q14n')?.value||'',
+    age:g('q14age')?.value||'',
     contact:g('q14c')?.value||'',
     ...utmParams,
   };

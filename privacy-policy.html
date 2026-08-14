@@ -103,6 +103,7 @@ footer { border-top: 1px solid var(--line); padding: 24px 10vw 64px; display: fl
     <ul class="rules-list">
       <li><span class="rule-key" id="s2-k1"></span><span class="rule-val" id="s2-v1"></span></li>
       <li><span class="rule-key" id="s2-k2"></span><span class="rule-val" id="s2-v2"></span></li>
+      <li><span class="rule-key" id="s2-k7"></span><span class="rule-val" id="s2-v7"></span></li>
       <li><span class="rule-key" id="s2-k3"></span><span class="rule-val" id="s2-v3"></span></li>
       <li><span class="rule-key" id="s2-k4"></span><span class="rule-val" id="s2-v4"></span></li>
       <li><span class="rule-key" id="s2-k5"></span><span class="rule-val" id="s2-v5"></span></li>
@@ -204,6 +205,7 @@ const C = {
     s2Pre: '// КАКИЕ ДАННЫЕ СОБИРАЕМ',
     s2K1: 'Анкета (14 вопросов)', s2V1: 'Текстовые ответы о твоей работе, решениях, неудачах и мотивации. Используются только для оценки заявки - не публикуются и не передаются третьим лицам.',
     s2K2: 'Контакты', s2V2: 'Имя и способ связи (Telegram / Instagram / email), которые ты указываешь в последнем вопросе анкеты.',
+    s2K7: 'Возраст', s2V7: 'Указываешь в последнем вопросе анкеты - нужен, чтобы подтвердить, что тебе есть 18 лет.',
     s2K3: 'Локация', s2V3: 'Город и страна - если указал(а) в анкете (вопрос "Where are you based?").',
     s2K4: 'Waitlist-форма', s2V4: 'Контакт (Telegram / email), который ты оставляешь в блоке "Not ready yet", чтобы узнать об открытии места.',
     s2K5: 'Технические данные', s2V5: 'IP-адрес и данные браузера, которые автоматически логирует сервер при отправке любой формы.',
@@ -222,7 +224,7 @@ const C = {
     s6Pre: '// ТВОИ ПРАВА',
     s6P1: 'В любой момент можешь запросить, какие данные о тебе есть, попросить их исправить или удалить - напиши на <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. Если ты находишься в ЕС - у тебя дополнительно есть право подать жалобу в свой надзорный орган по защите данных.',
     s7Pre: '// ВОЗРАСТ',
-    s7P1: 'Сообщество не предназначено для лиц младше 18 лет - при подаче анкеты нужно подтвердить это чекбоксом. Если выясняется, что заявку всё же подал несовершеннолетний - данные удаляются.',
+    s7P1: 'Сообщество не предназначено для лиц младше 18 лет - анкета требует указать возраст, и заявки от несовершеннолетних не рассматриваются. Если выясняется, что заявку всё же подал несовершеннолетний - данные удаляются.',
     s8Pre: '// COOKIE И АНАЛИТИКА',
     s8P1: 'На момент публикации сайт не использует cookie и трекеры. Если это изменится (например, добавим аналитику для оценки трафика) - обновим этот раздел и укажем, что именно и зачем.',
     s9Pre: '// ИЗМЕНЕНИЯ',
@@ -239,6 +241,7 @@ const C = {
     s2Pre: '// WHAT DATA WE COLLECT',
     s2K1: 'Application (14 questions)', s2V1: 'Text answers about your work, decisions, failures, and motivation. Used only to evaluate the application - not published or shared with third parties.',
     s2K2: 'Contact info', s2V2: 'Name and a way to reach you (Telegram / Instagram / email), which you provide in the last question of the application.',
+    s2K7: 'Age', s2V7: 'Provided in the last question of the application - used to confirm you\'re 18 or older.',
     s2K3: 'Location', s2V3: 'City and country - if you included it in the application (the "Where are you based?" question).',
     s2K4: 'Waitlist form', s2V4: 'Contact (Telegram / email) you leave in the "Not ready yet" block to hear when a spot opens.',
     s2K5: 'Technical data', s2V5: 'IP address and browser data automatically logged by the server on any form submission.',
@@ -257,7 +260,7 @@ const C = {
     s6Pre: '// YOUR RIGHTS',
     s6P1: 'You can ask at any time what data we hold on you, and ask us to correct or delete it - email <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. If you\'re in the EU, you also have the right to file a complaint with your local data protection authority.',
     s7Pre: '// AGE',
-    s7P1: 'The community isn\'t intended for anyone under 18 - the application requires checking a box confirming this. If we learn an applicant is a minor regardless, their data is deleted.',
+    s7P1: 'The community isn\'t intended for anyone under 18 - the application asks for your age, and applications from minors aren\'t considered. If we learn an applicant is a minor regardless, their data is deleted.',
     s8Pre: '// COOKIES AND ANALYTICS',
     s8P1: 'As of publishing, the site doesn\'t use cookies or trackers. If that changes (for example, we add analytics to measure traffic), we\'ll update this section with exactly what and why.',
     s9Pre: '// CHANGES',
@@ -292,7 +295,7 @@ function render(){
   g('s1-pre').textContent = t('s1Pre');
   g('s1-p1').innerHTML = t('s1P1');
   g('s2-pre').textContent = t('s2Pre');
-  ['1','2','3','4','5','6'].forEach(n=>{
+  ['1','2','7','3','4','5','6'].forEach(n=>{
     g('s2-k'+n).textContent = t('s2K'+n);
     g('s2-v'+n).innerHTML = t('s2V'+n);
   });
