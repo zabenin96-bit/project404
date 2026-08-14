@@ -117,6 +117,7 @@ footer { border-top: 1px solid var(--line); padding: 24px 10vw 64px; display: fl
     <div class="about-text">
       <p id="s3-p1"></p>
       <p id="s3-p2"></p>
+      <p id="s3-p3"></p>
     </div>
   </div>
 </div>
@@ -126,6 +127,7 @@ footer { border-top: 1px solid var(--line); padding: 24px 10vw 64px; display: fl
     <div class="section-label"><span class="prefix" id="s4-pre"></span></div>
     <div class="about-text">
       <p id="s4-p1"></p>
+      <p id="s4-p2"></p>
     </div>
   </div>
 </div>
@@ -209,8 +211,10 @@ const C = {
     s3Pre: '// ЗАЧЕМ',
     s3P1: 'Рассмотреть заявку и принять решение. Связаться с тобой по итогам - в любом случае, вне зависимости от решения. Вести список активных участников и выставлять ежемесячный счёт. Написать, если освободится место и ты оставил(а) контакт в waitlist-форме.',
     s3P2: 'Данные не используются для рекламы и никому не продаются.',
+    s3P3: 'Правовое основание обработки - твоё согласие при отправке анкеты (чекбокс перед отправкой), а для принятых участников также необходимость обработки для заключения и исполнения договора об участии.',
     s4Pre: '// С КЕМ ДЕЛИМСЯ',
     s4P1: 'Третьим лицам данные не передаются. Технический доступ есть только у сервиса, где размещён бэкенд (Railway), у платёжного провайдера - если тебя приняли, и у Telegram, куда доставляются заявки. Все обязаны обрабатывать данные конфиденциально и не использовать их для своих целей.',
+    s4P2: 'Часть используемых сервисов (Railway, Google, Telegram) может обрабатывать данные за пределами ЕС/ЕЭЗ. Каждый из них применяет собственные механизмы защиты при международной передаче данных - подробности в их политиках конфиденциальности.',
     s5Pre: '// СКОЛЬКО ХРАНИМ',
     s5K1: 'Отказали', s5V1: 'Ответы анкеты храним до возможной повторной подачи (около месяца), затем удаляем.',
     s5K2: 'Приняли', s5V2: 'Храним, пока ты активный участник, и ещё 1 год после выхода - на случай споров по оплате.',
@@ -218,13 +222,13 @@ const C = {
     s6Pre: '// ТВОИ ПРАВА',
     s6P1: 'В любой момент можешь запросить, какие данные о тебе есть, попросить их исправить или удалить - напиши на <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. Если ты находишься в ЕС - у тебя дополнительно есть право подать жалобу в свой надзорный орган по защите данных.',
     s7Pre: '// ВОЗРАСТ',
-    s7P1: 'Сообщество не предназначено для лиц младше 18 лет. Если выясняется, что заявку подал несовершеннолетний - данные удаляются.',
+    s7P1: 'Сообщество не предназначено для лиц младше 18 лет - при подаче анкеты нужно подтвердить это чекбоксом. Если выясняется, что заявку всё же подал несовершеннолетний - данные удаляются.',
     s8Pre: '// COOKIE И АНАЛИТИКА',
     s8P1: 'На момент публикации сайт не использует cookie и трекеры. Если это изменится (например, добавим аналитику для оценки трафика) - обновим этот раздел и укажем, что именно и зачем.',
     s9Pre: '// ИЗМЕНЕНИЯ',
     s9P1: 'Политика может обновляться по мере роста сообщества. Дата последнего изменения - в подвале страницы.',
     ftR: 'no results. _ privacy policy',
-    ftUpdated: 'обновлено: 12.08.2026 · вопросы: <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>'
+    ftUpdated: 'обновлено: 14.08.2026 · вопросы: <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>'
   },
   en: {
     sbLabel: 'privacy policy _ 2026',
@@ -242,8 +246,10 @@ const C = {
     s3Pre: '// WHY',
     s3P1: 'To review the application and make a decision. To follow up either way, regardless of the outcome. To maintain the active member list and issue the monthly charge. To reach out if a spot opens and you left a contact in the waitlist form.',
     s3P2: 'Data is never used for advertising or sold to anyone.',
+    s3P3: 'Legal basis for processing: your consent when you submit the application (checkbox before submitting), and for accepted members, also the necessity of processing to enter into and perform the membership agreement.',
     s4Pre: '// WHO WE SHARE IT WITH',
     s4P1: 'Not shared with third parties. Technical access is limited to the service hosting the backend (Railway), the payment provider (if you\'re accepted), and Telegram, where applications are delivered. All of them are required to handle data confidentially and never use it for their own purposes.',
+    s4P2: 'Some of the services we use (Railway, Google, Telegram) may process data outside the EU/EEA. Each applies its own safeguards for international data transfers - see their respective privacy policies for details.',
     s5Pre: '// HOW LONG WE KEEP IT',
     s5K1: 'Rejected', s5V1: 'Application answers are kept until a possible reapplication (about a month), then deleted.',
     s5K2: 'Accepted', s5V2: 'Kept while you\'re an active member, plus 1 year after you leave, in case of payment disputes.',
@@ -251,13 +257,13 @@ const C = {
     s6Pre: '// YOUR RIGHTS',
     s6P1: 'You can ask at any time what data we hold on you, and ask us to correct or delete it - email <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. If you\'re in the EU, you also have the right to file a complaint with your local data protection authority.',
     s7Pre: '// AGE',
-    s7P1: 'The community isn\'t intended for anyone under 18. If we learn an applicant is a minor, their data is deleted.',
+    s7P1: 'The community isn\'t intended for anyone under 18 - the application requires checking a box confirming this. If we learn an applicant is a minor regardless, their data is deleted.',
     s8Pre: '// COOKIES AND ANALYTICS',
     s8P1: 'As of publishing, the site doesn\'t use cookies or trackers. If that changes (for example, we add analytics to measure traffic), we\'ll update this section with exactly what and why.',
     s9Pre: '// CHANGES',
     s9P1: 'This policy may be updated as the community grows. The last-updated date is in the footer.',
     ftR: 'no results. _ privacy policy',
-    ftUpdated: 'updated: 12.08.2026 · questions: <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>'
+    ftUpdated: 'updated: 14.08.2026 · questions: <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>'
   }
 };
 
@@ -293,8 +299,10 @@ function render(){
   g('s3-pre').textContent = t('s3Pre');
   g('s3-p1').textContent = t('s3P1');
   g('s3-p2').textContent = t('s3P2');
+  g('s3-p3').textContent = t('s3P3');
   g('s4-pre').textContent = t('s4Pre');
   g('s4-p1').innerHTML = t('s4P1');
+  g('s4-p2').textContent = t('s4P2');
   g('s5-pre').textContent = t('s5Pre');
   ['1','2','3'].forEach(n=>{
     g('s5-k'+n).textContent = t('s5K'+n);
