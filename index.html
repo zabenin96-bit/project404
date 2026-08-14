@@ -441,7 +441,7 @@ body { padding-bottom: 60px; }
   <div class="section reveal" id="test-section">
     <div class="section-grid" style="margin-bottom:0">
       <div class="section-label"><span class="prefix" id="wl-pre">// APPLICATION</span></div>
-      <p class="test-intro" id="test-intro">First step: answer 14 questions. No time limit - answer honestly, that's what we're filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo.</p>
+      <p class="test-intro" id="test-intro">First step: answer 14 questions. No time limit - answer honestly, that's what we're filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo through Aug 31 (regular price $100).</p>
     </div>
 
     <div class="progress-wrap">
@@ -671,7 +671,8 @@ const C = {
     notifyBtn:'Notify me',
     notifySent:'Got it - we\'ll reach out if a spot opens.',
     wlPre:'// APPLICATION',
-    testIntro:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo.',
+    testIntro:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo.',
+    testIntroFounding:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo through Aug 31 (regular price $100).',
     q1l:'01 / 14 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
     q2l:'02 / 14 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 14 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
@@ -753,7 +754,8 @@ const C = {
     notifyBtn:'Уведомить меня',
     notifySent:'Записали - напишем, если появится место.',
     wlPre:'// ОТБОР',
-    testIntro:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $39/мес.',
+    testIntro:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес.',
+    testIntroFounding:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $39/мес до 31 августа (обычная цена $100).',
     q1l:'01 / 14 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 14 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 14 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
@@ -862,7 +864,7 @@ function render(){
   g('notify-contact').placeholder = t('notifyPh');
   g('notify-btn').textContent = t('notifyBtn');
   g('wl-pre').textContent = t('wlPre');
-  g('test-intro').textContent = t('testIntro');
+  g('test-intro').textContent = foundingActive() ? t('testIntroFounding') : t('testIntro');
   for(let i=1;i<=14;i++){
     const lel=g('q'+i+'l'), tel=g('q'+i+'t');
     if(lel) lel.textContent=t('q'+i+'l');
