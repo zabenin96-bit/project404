@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
+<title>terms of service. — no results.</title>
+<meta name="description" content="Terms of service for the no results. community.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #0a0a09;
+  --surface: #121210;
+  --text: #ececea;
+  --dim: #97968c;
+  --line: #232320;
+  --amber: #d99a3f;
+  --font: 'IBM Plex Mono', 'Courier New', monospace;
+  --font-mark: 'Space Mono', 'Courier New', monospace;
+}
+
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+a { color: var(--amber); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.statusbar { position: fixed; top: 0; left: 0; right: 0; border-bottom: 1px solid var(--line); background: var(--bg); display: flex; align-items: center; justify-content: space-between; padding: 14px 24px; font-size: 11px; color: var(--dim); letter-spacing: 0.06em; z-index: 50; gap: 12px; }
+.statusbar a { font-size: 11px; }
+.statusbar .right { display: flex; align-items: center; gap: 14px; }
+.lang-toggle { display: flex; align-items: center; gap: 6px; }
+.lang-sep { color: var(--dim); font-size: 11px; }
+.lang-btn { background: none; border: none; font-family: var(--font); font-size: 11px; cursor: pointer; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; padding: 4px; }
+.lang-btn.active { color: var(--text); font-weight: 700; }
+.lang-btn:hover { color: var(--text); }
+
+.hero { padding: 140px 10vw 60px; }
+.hero-name { font-family: var(--font-mark); font-size: clamp(32px, 6vw, 64px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 1; display: block; margin-bottom: 16px; }
+.hero-divider { width: 100%; height: 1px; background: var(--line); margin-bottom: 24px; }
+.hero-note { font-size: 13px; color: var(--dim); max-width: 560px; line-height: 1.8; }
+.hero-note .flag { color: var(--amber); }
+
+.section { padding: 48px 10vw; border-top: 1px solid var(--line); }
+.section-grid { display: grid; grid-template-columns: 200px 1fr; gap: 48px; align-items: start; }
+.section-label { font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); padding-top: 3px; }
+.section-label .prefix { color: var(--amber); font-size: 10px; }
+
+.about-text p { font-size: 14px; color: var(--text); line-height: 2; margin-bottom: 14px; max-width: 640px; }
+.about-text p:last-child { margin-bottom: 0; }
+
+footer { border-top: 1px solid var(--line); padding: 24px 10vw 64px; display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); letter-spacing: 0.05em; flex-wrap: wrap; gap: 8px; }
+
+@media (max-width: 700px) {
+  .hero { padding: 110px 6vw 40px; }
+  .section { padding: 36px 6vw; }
+  .section-grid { grid-template-columns: 1fr; gap: 16px; }
+  footer { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div class="statusbar">
+  <a href="/" id="back-link">← no results.</a>
+  <div class="right">
+    <span id="sb-label">terms of service _ 2026</span>
+    <div class="lang-toggle">
+      <button class="lang-btn" onclick="setLang('ru')" id="btn-ru">RU</button>
+      <span class="lang-sep">/</span>
+      <button class="lang-btn" onclick="setLang('en')" id="btn-en">EN</button>
+    </div>
+  </div>
+</div>
+
+<div class="hero">
+  <span class="hero-name">terms of service.</span>
+  <div class="hero-divider"></div>
+  <p class="hero-note" id="hero-note"></p>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s1-pre"></span></div>
+    <div class="about-text">
+      <p id="s1-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s2-pre"></span></div>
+    <div class="about-text">
+      <p id="s2-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s3-pre"></span></div>
+    <div class="about-text">
+      <p id="s3-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s4-pre"></span></div>
+    <div class="about-text">
+      <p id="s4-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s5-pre"></span></div>
+    <div class="about-text">
+      <p id="s5-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s6-pre"></span></div>
+    <div class="about-text">
+      <p id="s6-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s7-pre"></span></div>
+    <div class="about-text">
+      <p id="s7-p1"></p>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-grid">
+    <div class="section-label"><span class="prefix" id="s8-pre"></span></div>
+    <div class="about-text">
+      <p id="s8-p1"></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <span id="ft-r">no results. _ terms of service</span>
+  <span id="ft-updated"></span>
+</footer>
+
+<script>
+const C = {
+  ru: {
+    sbLabel: 'terms of service _ 2026',
+    backLink: '← no results.',
+    heroNote: 'Условия участия в "no results." - что это, как проходит оплата, и что происходит при отмене подписки.',
+    s1Pre: '// ЧТО ЭТО',
+    s1P1: '"no results." - закрытое сообщество по подписке для фаундеров, творческих и технических специалистов. Вход только через анкету и решение о приёме. Оператор тот же, что указан в <a href="privacy-policy.html?lang=ru">Privacy Policy</a>.',
+    s2Pre: '// ОПЛАТА',
+    s2P1: 'Участие платное, подписка списывается ежемесячно через <a href="https://web.tribute.tg/s/125y">Tribute</a> (сторонний платёжный сервис). Актуальная цена и условия любой временной акции - на главной странице сайта на момент подачи заявки. Списания начинаются после того, как заявку приняли.',
+    s3Pre: '// ПРАВО НА ОТКАЗ',
+    s3P1: 'Если ты находишься в ЕС - у тебя есть право отказаться от подписки в течение 14 дней с момента первого платежа без объяснения причин и получить полный возврат. Чтобы воспользоваться этим правом, напиши на <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. Если к моменту отказа ты уже пользовался(лась) сообществом, мы вправе удержать часть суммы пропорционально фактически оказанной услуге.',
+    s4Pre: '// ОТМЕНА',
+    s4P1: 'Отменить подписку можно в любой момент - через сам сервис оплаты (Tribute) или письмом на <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. За уже списанный текущий месяц возврат не производится, доступ сохраняется до конца оплаченного периода.',
+    s5Pre: '// ПРАВИЛА УЧАСТИЯ',
+    s5P1: 'Участие также означает согласие с правилами сообщества, перечисленными на главной странице (лимит участников, запрет переманивания, запрет непрошеного питчинга и так далее). Нарушение правил - основание для немедленного исключения без возврата средств за оставшийся период.',
+    s6Pre: '// ОТКАЗ ОТ ГАРАНТИЙ',
+    s6P1: 'Сообщество предоставляется "как есть". Мы не гарантируем конкретных результатов от участия - ни в бизнесе, ни в доходе, ни в связях. Ответственность за решения, принятые на основе общения в сообществе, лежит на самом участнике.',
+    s7Pre: '// ПРИМЕНИМОЕ ПРАВО',
+    s7P1: 'Эти условия регулируются законодательством Грузии, без ущерба для обязательных прав потребителя, которые могут действовать по законам страны твоего проживания.',
+    s8Pre: '// ИЗМЕНЕНИЯ',
+    s8P1: 'Условия могут обновляться по мере роста сообщества. Дата последнего изменения - в подвале страницы.',
+    ftR: 'no results. _ terms of service',
+    ftUpdated: 'обновлено: 14.08.2026 · вопросы: <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>'
+  },
+  en: {
+    sbLabel: 'terms of service _ 2026',
+    backLink: '← no results.',
+    heroNote: 'Terms for joining "no results." - what it is, how payment works, and what happens if you cancel.',
+    s1Pre: '// WHAT THIS IS',
+    s1P1: '"no results." is a paid, closed community for founders, creative and technical specialists. Entry is by application and admission decision only. Operated by the same entity named in the <a href="privacy-policy.html?lang=en">Privacy Policy</a>.',
+    s2Pre: '// PAYMENT',
+    s2P1: 'Membership is paid, billed monthly through <a href="https://web.tribute.tg/s/125y">Tribute</a> (a third-party payment service). Current pricing and any time-limited promotion are shown on the homepage at the time you apply. Billing starts once your application is accepted.',
+    s3Pre: '// RIGHT OF WITHDRAWAL',
+    s3P1: 'If you\'re in the EU, you have the right to withdraw from the subscription within 14 days of your first payment, without giving a reason, and receive a full refund. To use this right, email <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. If you\'ve already used the community by the time you withdraw, we may deduct an amount proportional to the service already provided.',
+    s4Pre: '// CANCELLATION',
+    s4P1: 'You can cancel anytime - directly through the payment service (Tribute) or by emailing <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>. Amounts already charged for the current month aren\'t refunded; access continues through the end of the paid period.',
+    s5Pre: '// MEMBERSHIP RULES',
+    s5P1: 'Membership also means agreeing to the community rules listed on the homepage (member cap, no poaching, no unsolicited pitching, and so on). Violating them is grounds for immediate removal without a refund for the remaining period.',
+    s6Pre: '// DISCLAIMER',
+    s6P1: 'The community is provided "as is." We don\'t guarantee specific results from participating - in business, income, or connections. Responsibility for decisions made based on community discussions rests with the member.',
+    s7Pre: '// GOVERNING LAW',
+    s7P1: 'These terms are governed by the laws of Georgia, without prejudice to any mandatory consumer-protection rights you may have under the laws of your country of residence.',
+    s8Pre: '// CHANGES',
+    s8P1: 'These terms may be updated as the community grows. The last-updated date is in the footer.',
+    ftR: 'no results. _ terms of service',
+    ftUpdated: 'updated: 14.08.2026 · questions: <a href="mailto:noresults.supp@gmail.com">noresults.supp@gmail.com</a>'
+  }
+};
+
+function paramLang(){
+  const p = new URLSearchParams(location.search).get('lang');
+  return p === 'en' ? 'en' : 'ru';
+}
+
+let lang = paramLang();
+
+function g(id){ return document.getElementById(id); }
+function t(k){ return C[lang][k] !== undefined ? C[lang][k] : C.en[k]; }
+
+function setLang(l){
+  lang = l;
+  document.documentElement.lang = l;
+  g('btn-ru').classList.toggle('active', l === 'ru');
+  g('btn-en').classList.toggle('active', l === 'en');
+  render();
+}
+
+function render(){
+  g('sb-label').textContent = t('sbLabel');
+  g('back-link').textContent = t('backLink');
+  g('hero-note').textContent = t('heroNote');
+  ['1','2','3','4','5','6','7','8'].forEach(n=>{
+    g('s'+n+'-pre').textContent = t('s'+n+'Pre');
+    g('s'+n+'-p1').innerHTML = t('s'+n+'P1');
+  });
+  g('ft-r').textContent = t('ftR');
+  g('ft-updated').innerHTML = t('ftUpdated');
+}
+
+g('btn-ru').classList.toggle('active', lang === 'ru');
+g('btn-en').classList.toggle('active', lang === 'en');
+document.documentElement.lang = lang;
+render();
+</script>
+
+</body>
+</html>
