@@ -563,7 +563,7 @@ body { padding-bottom: 60px; }
       <input class="q-input" id="q14c" type="text" placeholder="Telegram / Instagram / Email">
       <p class="q-hint" id="q14h">We'll get back to you either way.</p>
       <label class="consent-row" id="q14ageRow"><input type="checkbox" id="q14age"><span id="q14al">I confirm I am 18 years or older.</span></label>
-      <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.</span></label>
+      <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">I agree to the <a href="privacy-policy.html" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.</span></label>
       <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Back</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Submit →</button></div>
     </div>
   </div>
@@ -613,6 +613,7 @@ body { padding-bottom: 60px; }
     <div class="ft-links">
       <a href="mailto:noresults.supp@gmail.com" id="ft-contact">contact</a>
       <a href="privacy-policy.html" target="_blank" rel="noopener" id="ft-privacy">privacy</a>
+      <a href="terms.html" target="_blank" rel="noopener" id="ft-terms">terms</a>
       <a href="https://t.me/CreativesManager" target="_blank" rel="noopener" id="ft-ask">support</a>
     </div>
     <span id="ft-r">connection closed</span>
@@ -687,7 +688,7 @@ const C = {
     q14l:'14 / 14 - CONTACT',q14t:'Last one. Your name and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14h:"We'll get back to you either way.",
     q14al:'I confirm I am 18 years or older.',
     reqWarnAge:'Confirm you\'re 18+ to submit.',
-    consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a> and the processing of my data.',
+    consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
     submitting:'Sending...',
     submitError:'Something went wrong. Please try again, or message us on Telegram.',
@@ -700,6 +701,7 @@ const C = {
     ftR:'connection closed',
     ftContact:'contact',
     ftPrivacy:'privacy',
+    ftTerms:'terms',
     ftAsk:'support',
     reqWarn:'Answer this one before moving on.',
     reqWarnFinal:'Fill in both fields to submit.'
@@ -769,7 +771,7 @@ const C = {
     q14l:'14 / 14 - КОНТАКТ',q14t:'Последнее. Имя и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14h:'Ответим в любом случае.',
     q14al:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Подтверди, что тебе есть 18 лет, чтобы отправить.',
-    consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a> и обработкой моих данных.',
+    consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
     submitting:'Отправляем...',
     submitError:'Что-то пошло не так. Попробуй ещё раз или напиши нам в Telegram.',
@@ -782,6 +784,7 @@ const C = {
     ftR:'соединение закрыто',
     ftContact:'контакты',
     ftPrivacy:'конфиденциальность',
+    ftTerms:'условия',
     ftAsk:'поддержка',
     reqWarn:'Ответь на этот вопрос, чтобы продолжить.',
     reqWarnFinal:'Заполни оба поля, чтобы отправить.'
@@ -891,6 +894,8 @@ function render(){
   g('ft-contact').textContent=t('ftContact');
   g('ft-privacy').textContent=t('ftPrivacy');
   g('ft-privacy').href='privacy-policy.html?lang='+lang;
+  g('ft-terms').textContent=t('ftTerms');
+  g('ft-terms').href='terms.html?lang='+lang;
   document.querySelectorAll('.q-warn.show').forEach(w=>{ w.textContent = t(w.dataset.key || 'reqWarn'); });
 
   renderStatusBar();
