@@ -802,6 +802,17 @@ const utmParams = (function(){
   return out;
 })();
 
+// ── CLICK PING: best-effort visit count for tagged links, separate from
+// applications - lets a channel's traffic be compared to how much of it
+// converts. Fire-and-forget, never blocks or affects the page. ──
+if (utmParams.utm_source) {
+  fetch('https://noresults-backend-production.up.railway.app/click', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(utmParams)
+  }).catch(()=>{});
+}
+
 
 // ── FOUNDING RATE OFFER: $100 → $39, valid through Aug 31, 2026 ──
 // Update FOUNDING_DEADLINE (and the sbDeadline/sMsg2Founding copy in C) for next year's run.
