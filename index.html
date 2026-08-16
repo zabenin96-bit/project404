@@ -69,6 +69,9 @@ body {
 #main.show { opacity: 1; transform: translateY(0); }
 
 /* ── LANG ── */
+.scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200; pointer-events: none; }
+.scroll-progress-fill { height: 100%; width: 0%; background: var(--amber); }
+
 .lang-bar { position: fixed; top: 0; right: 0; padding: 14px 20px; z-index: 100; }
 .lang-toggle { position: relative; display: flex; align-items: center; gap: 6px; }
 .lang-sep { color: var(--dim); font-size: 12px; user-select: none; text-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg), 0 0 16px var(--bg); }
@@ -291,6 +294,9 @@ body { padding-bottom: 60px; }
 </style>
 </head>
 <body>
+
+<!-- SCROLL PROGRESS -->
+<div class="scroll-progress"><div class="scroll-progress-fill" id="scroll-fill"></div></div>
 
 <!-- LANG -->
 <div class="lang-bar">
@@ -1288,6 +1294,24 @@ function initReveal(){
   targets.forEach(t=>io.observe(t));
 }
 
+// ── SCROLL PROGRESS: thin bar fills left-to-right as the page scrolls ──
+function initScrollProgress(){
+  const fill = document.getElementById('scroll-fill');
+  if(!fill) return;
+  let ticking = false;
+  function apply(){
+    const docHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0;
+    fill.style.width = pct + '%';
+    ticking = false;
+  }
+  window.addEventListener('scroll', ()=>{
+    if(!ticking){ requestAnimationFrame(apply); ticking = true; }
+  }, { passive: true });
+  window.addEventListener('resize', apply);
+  apply();
+}
+
 // ── STICKY BAR: shows once the hero CTA scrolls out of view, hides again if scrolled back ──
 function initStickyBar(){
   const bar = document.getElementById('statusbar');
@@ -1569,6 +1593,7 @@ updProg(1);
 restoreDraft();
 initAutosave();
 initReveal();
+initScrollProgress();
 initStickyBar();
 initTipCarousel();
 initFormFeedback();
