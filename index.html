@@ -317,7 +317,7 @@ body { padding-bottom: 60px; }
       <span class="deadline" id="sb-spots">through Aug 31</span>
     </span>
   </div>
-  <button class="sticky-btn" onclick="document.getElementById('test-section').scrollIntoView({behavior:'smooth'})">
+  <button class="sticky-btn" onclick="goToApplication()">
     <span id="sb-cta">Apply →</span>
   </button>
 </div>
@@ -339,7 +339,7 @@ body { padding-bottom: 60px; }
 
     <h1 class="hero-headline" id="hero-hl">Applications are open. Cap is 200 seats.</h1>
     <p class="hero-body" id="hero-body">Selection is by application and referral only.</p>
-    <a href="#test-section" class="hero-cta" id="hero-cta"><span id="hero-cta-text">apply --start</span><span class="cli-cursor"></span></a>
+    <a href="#test-section" class="hero-cta" id="hero-cta" onclick="goToApplication(); return false;"><span id="hero-cta-text">apply --start</span><span class="cli-cursor"></span></a>
   </div>
 
   <!-- ABOUT -->
@@ -1172,12 +1172,32 @@ function initAutosave(){
 
 // ── SUBMISSION: single channel, awaited. The backend is responsible for
 // relaying to Telegram server-side — never put a bot token in client JS. ──
+function flagQ14Empty(){
+  showWarn(14, 'reqWarnFinal');
+  if(!g('q14n').value.trim()) g('q14n').classList.add('q-error');
+  if(!g('q14age').value.trim()) g('q14age').classList.add('q-error');
+  if(!g('q14c').value.trim()) g('q14c').classList.add('q-error');
+}
+
+// ── APPLY CTA: both the hero button and the sticky bar land here. Jumps to
+// whatever question is actually active (not just the section top) and, if
+// it's still unanswered, surfaces the same warning nx()/submitForm() would -
+// so clicking "apply" twice in a row gives visible feedback instead of a
+// no-op scroll when the section is already in view. ──
+function goToApplication(){
+  const activeQ = getActiveQ();
+  const target = g('q'+activeQ) || g('test-section');
+  target.scrollIntoView({behavior:'smooth', block:'center'});
+  if(activeQ === 14){
+    if(!q14Answered()) flagQ14Empty();
+  } else if(!isAnswered(activeQ)){
+    showWarn(activeQ);
+  }
+}
+
 async function submitForm(){
   if(!q14Answered()){
-    showWarn(14, 'reqWarnFinal');
-    if(!g('q14n').value.trim()) g('q14n').classList.add('q-error');
-    if(!g('q14age').value.trim()) g('q14age').classList.add('q-error');
-    if(!g('q14c').value.trim()) g('q14c').classList.add('q-error');
+    flagQ14Empty();
     return;
   }
   const age = ageValue();
