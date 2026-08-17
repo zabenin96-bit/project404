@@ -590,6 +590,7 @@ body { padding-bottom: 60px; }
         <li><span class="rule-key" id="faq2t">Your data</span><span class="rule-val" id="faq2d">Not shared with third parties.</span></li>
         <li><span class="rule-key" id="faq3t">Rejected?</span><span class="rule-val" id="faq3d">You can try again - up to 2 attempts a month, counter resets on the 1st.</span></li>
         <li><span class="rule-key" id="faq4t">Payment</span><span class="rule-val" id="faq4d">If accepted, you get a payment link - $39 charged monthly, cancel anytime.</span></li>
+        <li><span class="rule-key" id="faq5t">Why 200?</span><span class="rule-val" id="faq5d">Bigger groups turn into noise over time. 200 is the ceiling where we can still personally track the quality of every candidate.</span></li>
       </ul>
     </div>
   </div>
@@ -672,6 +673,7 @@ const C = {
     faq2t:'Your data',faq2d:'Not shared with third parties.',
     faq3t:'Rejected?',faq3d:"You can try again - up to 2 attempts a month, counter resets on the 1st.",
     faq4t:'Payment',faq4d:'If accepted, you get a payment link - $39 charged monthly, cancel anytime.',
+    faq5t:'Why 200?',faq5d:'Bigger groups turn into noise over time. 200 is the ceiling where we can still personally track the quality of every candidate.',
     faq4dFounding:'If accepted, you get a payment link. Right now it\'s Limited Early Access - $39/mo through Aug 31 (regular price is $100), charged monthly after that, cancel anytime.',
     rjPre:'// NOT A FIT IF',
     rj1:'You want to use the members as a free lead list for your pitch.',
@@ -755,6 +757,7 @@ const C = {
     faq2t:'Твои данные',faq2d:'Третьим лицам не передаются.',
     faq3t:'Отказали?',faq3d:'Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.',
     faq4t:'Оплата',faq4d:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок): $39 списывается ежемесячно, отменить можно в любой момент.',
+    faq5t:'Почему 200?',faq5d:'Большие группы со временем превращаются в шум. 200 - предел, при котором ещё можно лично отслеживать качество каждого кандидата.',
     faq4dFounding:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок). Сейчас действует лимитированный ранний доступ - $39/мес до 31 августа (обычная цена $100), дальше списывается ежемесячно, отменить можно в любой момент.',
     rjPre:'// НЕ ПОДОЙДЁТ, ЕСЛИ',
     rj1:'Хочешь использовать участников как бесплатную базу для своих питчей.',
@@ -878,7 +881,7 @@ function render(){
   g('proc-pre').textContent = t('procPre');
   ['proc1t','proc1d','proc2t','proc2d','proc3t','proc3d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('faq-pre').textContent = t('faqPre');
-  ['faq1t','faq1d','faq2t','faq2d','faq3t','faq3d','faq4t'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  ['faq1t','faq1d','faq2t','faq2d','faq3t','faq3d','faq4t','faq5t','faq5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   const faq4dEl = g('faq4d');
   if(faq4dEl) faq4dEl.textContent = foundingActive() ? t('faq4dFounding') : t('faq4d');
   g('rj-pre').textContent = t('rjPre');
