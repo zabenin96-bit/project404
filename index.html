@@ -312,7 +312,6 @@ body { padding-bottom: 60px; }
   .sys-block .sys-line { flex-direction: column; gap: 6px; }
   .sys-block .sys-line .tag { min-width: 0; font-size: 11px; letter-spacing: 0.14em; }
   .sys-block .sys-line .val { text-wrap: pretty; line-height: 1.6; }
-  .sys-block::after { content: ""; display: block; width: 7px; height: 14px; background: var(--amber); animation: blink-cur 1.1s step-end infinite; }
 }
 
 @media (max-width: 700px) {
@@ -329,6 +328,20 @@ body { padding-bottom: 60px; }
   .sticky-btn { width: 100%; padding: 13px 10px; font-size: 14px; text-align: center; }
   body { padding-bottom: calc(122px + env(safe-area-inset-bottom)); }
   .statusbar { padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
+
+  /* ── TOUCH TARGETS ──
+     Everything tappable clears 44px, the size a fingertip actually needs.
+     The form's Next button was 32px tall and gets pressed fourteen times to
+     finish an application, so it was the worst of these to leave small. */
+  .lang-btn { min-height: 44px; }
+  .btn-p, .btn-sub, .btn-b { min-height: 44px; }
+  .q-input, .q-textarea { min-height: 44px; }
+  .ft-links a { min-height: 44px; display: inline-flex; align-items: center; }
+
+  /* The four footer links were one non-wrapping row: with the longer Russian
+     labels they ran 60px past the screen edge at 320px and dragged the whole
+     page sideways. */
+  .ft-links { flex-wrap: wrap; column-gap: 18px; row-gap: 0; }
 }
 </style>
 </head>
