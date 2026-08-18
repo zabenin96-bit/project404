@@ -322,7 +322,9 @@ body { padding-bottom: 60px; }
      finish an application, so it was the worst of these to leave small. */
   .lang-btn { min-height: 44px; }
   .btn-p, .btn-sub, .btn-b { min-height: 44px; }
-  .q-input, .q-textarea { min-height: 44px; }
+  /* Single-line inputs only - .q-textarea already stands at 90px, and listing it
+     here overrode that and shrank the answer boxes instead of growing anything. */
+  .q-input { min-height: 44px; }
   .ft-links a { min-height: 44px; display: inline-flex; align-items: center; }
 
   /* The four footer links were one non-wrapping row: with the longer Russian
