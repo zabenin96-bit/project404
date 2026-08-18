@@ -1601,6 +1601,14 @@ function initFormFeedback(){
 function initLoader(){
   const loader = g('loader');
   if(!loader) return;
+  // Once per tab, not once ever - sessionStorage, not localStorage. A fresh
+  // tab/visit still gets the entrance; navigating or reloading within the
+  // same one doesn't replay it. No server round-trip, nothing identifying -
+  // same category of on-device flag as the draft autosave already uses.
+  try{
+    if(sessionStorage.getItem('nrLoaderSeen') === '1'){ loader.remove(); return; }
+    sessionStorage.setItem('nrLoaderSeen', '1');
+  }catch(e){}
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const revealDelay = reduced ? 50 : 950;
   setTimeout(()=>{
