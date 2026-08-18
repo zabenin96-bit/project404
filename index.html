@@ -360,7 +360,7 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="ab-pre">// ABOUT</span></div>
       <div class="about-text" id="about-body">
-        <p>This is a closed community for English- and Russian-speaking founders, creative and technical specialists worldwide. The name's the point: what matters isn't the result on display - it's what's behind it.</p>
+        <p>Members are worldwide, in Russian and English. The name's the point: what matters isn't the result on display - it's what's behind it.</p>
       </div>
     </div>
   </div>
@@ -639,14 +639,14 @@ body { padding-bottom: 60px; }
 const C = {
   en: {
     sErr:'STATUS', sMsg:'now accepting applications',
-    sErr2:'ACCESS', sMsg2:'by application only - $39/mo, we decide after review',
+    sErr2:'ACCESS', sMsg2:'by application or referral - $100/mo', sMsg2Founding:'by application or referral - $39/mo through Aug 31',
     sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'through Aug 31', sbCta:'Apply →',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
     heroHl:'A closed community for founders, creative people, and specialists from different fields.',
-    heroBody:'Applications are open. Cap is 200 seats, by application and referral only.',
+    heroBody:'Cap is 200 seats, by application and referral only.',
     heroCta:'qualify',
     abPre:'// ABOUT',
-    aboutBody:["This is a closed community for English- and Russian-speaking founders, creative and technical specialists worldwide. The name's the point: what matters isn't the result on display - it's what's behind it."],
+    aboutBody:["Members are worldwide, in Russian and English. The name's the point: what matters isn't the result on display - it's what's behind it."],
     ruPre:'// RULES',
     r1t:'Hard cap',r1d:'200 members, no exceptions.',
     r2t:'Invite',r2d:'A member can refer you - the test is still the same for everyone.',
@@ -723,14 +723,14 @@ const C = {
   },
   ru: {
     sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
-    sErr2:'ДОСТУП',sMsg2:'только по заявке - $39/мес, приём решается после проверки',
+    sErr2:'ДОСТУП',sMsg2:'по заявке либо рекомендации - $100/мес', sMsg2Founding:'по заявке либо рекомендации - $39/мес до конца авг',
     sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
     heroHl:'Закрытое сообщество для фаундеров, творческих деятелей и специалистов из разных сфер.',
-    heroBody:'Набор идёт, лимит 200 мест - отбор только по заявке и рекомендации.',
+    heroBody:'Лимит 200 мест - отбор только по заявке и рекомендации.',
     heroCta:'пройти отбор',
     abPre:'// О НАС',
-    aboutBody:['Это закрытое сообщество для русско- и англоговорящих фаундеров, творческих и технических специалистов со всего мира. Название - не случайность: важен не результат напоказ, а то, что за ним стоит.'],
+    aboutBody:['Участники - со всего мира, на русском и английском. Название - не случайность: важен не результат напоказ, а то, что за ним стоит.'],
     ruPre:'// ПРАВИЛА',
     r1t:'Жёсткий лимит',r1d:'200 участников, без исключений.',
     r2t:'Инвайт',r2d:'Тебя может порекомендовать участник - тест всё равно проходят все.',
@@ -859,7 +859,7 @@ function render(){
   g('s-err').textContent = t('sErr');
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
-  g('s-msg2').innerHTML = t('sMsg2');
+  g('s-msg2').innerHTML = foundingActive() ? t('sMsg2Founding') : t('sMsg2');
   g('hero-hl').textContent = t('heroHl');
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
