@@ -35,6 +35,8 @@
      against 16.7:1 for the white headline, so the hierarchy survives. */
   --dim-hi: #a9a89e;
   --line: #232320;
+  /* Borders of things you interact with: WCAG 1.4.11 wants 3:1, --line gives 1.26:1. */
+  --line-strong: #605e56;
   --amber: #d99a3f;
   --green: #4caf7d;
   --red: #c9694f;
@@ -206,11 +208,11 @@ body {
 
 .q-text { font-size: clamp(16px, 1.9vw, 21px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; }
 
-.q-textarea, .q-input { width: 100%; max-width: 580px; background: transparent; border: none; border-bottom: 1px solid var(--line); padding: 10px 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif; font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
+.q-textarea, .q-input { width: 100%; max-width: 580px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 4px; padding: 12px 14px; font-family: var(--font); font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
 .q-textarea { min-height: 90px; }
 .q-textarea::placeholder, .q-input::placeholder { color: var(--dim); font-size: 13px; }
-.q-textarea:focus, .q-input:focus { border-bottom-color: var(--amber); }
-.q-textarea.filled, .q-input.filled { border-bottom-color: var(--green); }
+.q-textarea:focus, .q-input:focus { border-color: var(--amber); }
+.q-textarea.filled, .q-input.filled { border-color: var(--green); }
 
 .q-opts { display: flex; flex-direction: column; max-width: 580px; }
 .q-opt { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
@@ -228,7 +230,7 @@ body {
 .consent-row.q-error span { color: var(--red); }
 .consent-row.q-error a { color: var(--red); }
 
-.q-textarea.q-error, .q-input.q-error { border-bottom-color: var(--red); }
+.q-textarea.q-error, .q-input.q-error { border-color: var(--red); }
 .q-opts.q-error .q-opt { border-color: var(--red); }
 .q-warn { display: none; font-size: 12px; color: var(--red); margin-top: 12px; letter-spacing: 0.03em; }
 .q-warn.show { display: block; animation: fadeup 0.2s ease; }
