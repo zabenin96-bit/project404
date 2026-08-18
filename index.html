@@ -7,16 +7,16 @@
 <meta name="theme-color" content="#0a0a09">
 <title>no results.</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
-<meta name="description" content="Закрытое сообщество для фаундеров и специалистов, которые уже что-то создали. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
+<meta name="description" content="Закрытое сообщество для фаундеров и креативных лидеров. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
 <meta property="og:title" content="no results.">
-<meta property="og:description" content="Закрытое сообщество для фаундеров и специалистов, которые уже что-то создали. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
+<meta property="og:description" content="Закрытое сообщество для фаундеров и креативных лидеров. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
 <meta property="og:type" content="website">
 <meta property="og:image" content="https://noresults.club/og-image.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="no results.">
-<meta name="twitter:description" content="Закрытое сообщество для фаундеров и специалистов, которые уже что-то создали. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
+<meta name="twitter:description" content="Закрытое сообщество для фаундеров и креативных лидеров. Отбор только по заявке и рекомендации. Лимит - 200 мест.">
 <meta name="twitter:image" content="https://noresults.club/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -111,6 +111,9 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
 .sys-line { font-size: 13px; letter-spacing: 0.05em; color: var(--dim); display: flex; gap: 12px; }
 .sys-line .tag { color: var(--amber); min-width: 80px; }
 .sys-line .val { color: var(--text); text-wrap: balance; }
+/* Keeps a price from splitting across lines - browsers happily break after the
+   slash, which turned "$39/мес" into "$39/" on one line and "мес" on the next. */
+.sys-line .nb { white-space: nowrap; }
 
 .hero-name { font-family: var(--font-mark); font-size: clamp(48px, 10vw, 118px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 0.9; display: block; margin-bottom: 8px; }
 .hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--amber); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite, cursorGate 10s step-end infinite; }
@@ -156,8 +159,6 @@ html.flip .sticky-btn { background: var(--amber-vivid); color: var(--text); bord
    so nothing shifts by a pixel on hover. */
 .hero-cta:hover { background: transparent; color: var(--amber); }
 .hero-cta:active { transform: scale(0.97); }
-.hero-cta .cli-cursor { display: inline-block; width: 7px; height: 15px; background: currentColor; }
-.hero-cta:hover .cli-cursor, .hero-cta:focus-visible .cli-cursor { animation: blink-cur 0.9s step-end infinite; }
 
 /* ── SECTIONS ── */
 .section { padding: 64px 10vw; border-top: 1px solid var(--line); }
@@ -387,7 +388,7 @@ body { padding-bottom: 60px; }
   <!-- HERO -->
   <div class="hero">
     <div class="sys-block">
-      <div class="sys-line"><span class="tag" id="s-err">СТАТУС</span><span class="val" id="s-msg">приём заявок открыт - идёт набор</span></div>
+      <div class="sys-line"><span class="tag" id="s-err">СТАТУС</span><span class="val" id="s-msg">приём заявок открыт</span></div>
       <div class="sys-line"><span class="tag" id="s-err2">ДОСТУП</span><span class="val" id="s-msg2">по заявке либо рекомендации</span></div>
     </div>
 
@@ -396,10 +397,10 @@ body { padding-bottom: 60px; }
     <div class="hero-divider"></div>
 
     <div class="hero-copy">
-      <h1 class="hero-headline" id="hero-hl">Закрытое сообщество для фаундеров и креативных лидеров, создающих масштабные продукты и проекты.</h1>
-      <p class="hero-body" id="hero-body">Лимит 200 мест - отбор только по заявке и рекомендации.</p>
+      <h1 class="hero-headline" id="hero-hl">Закрытое сообщество для фаундеров и креативных лидеров.</h1>
+      <p class="hero-body" id="hero-body">Лимит 200 мест.</p>
       <p class="hero-hook" id="hero-hook">Один из 14 вопросов анкеты - что в ней лишнее или манипулятивное.</p>
-      <a href="#test-section" class="hero-cta" id="hero-cta" onclick="goToApplication(); return false;"><span id="hero-cta-text">пройти отбор</span><span class="cli-cursor"></span></a>
+      <a href="#test-section" class="hero-cta" id="hero-cta" onclick="goToApplication(); return false;"><span id="hero-cta-text">пройти отбор</span></a>
     </div>
   </div>
 
@@ -687,12 +688,12 @@ body { padding-bottom: 60px; }
 const C = {
   en: {
     sErr:'STATUS', sMsg:'now accepting applications',
-    sErr2:'ACCESS', sMsg2:'by application or referral - $100/mo', sMsg2Founding:'by application or referral - $39/mo through Aug 31',
+    sErr2:'ACCESS', sMsg2:'by application or referral - <span class="nb">$100/mo</span>', sMsg2Founding:'by application or referral - <span class="nb">$39/mo</span> through Aug 31',
     sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'through Aug 31', sbCta:'Apply →',
     sbPrice:'$100', sbPriceFounding:'$39',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
-    heroHl:'A closed community for founders and creative leaders building large-scale products and projects.',
-    heroBody:'Cap is 200 seats, by application and referral only.',
+    heroHl:'A closed community for founders and creative leaders.',
+    heroBody:'Cap is 200 seats.',
     heroHook:"One of the 14 application questions - what's excessive or manipulative about it.",
     heroCta:'qualify',
     abPre:'// ABOUT',
@@ -772,13 +773,13 @@ const C = {
     reqWarnFinal:'Fill in all fields to submit.'
   },
   ru: {
-    sErr:'СТАТУС',sMsg:'приём заявок открыт - идёт набор',
-    sErr2:'ДОСТУП',sMsg2:'по заявке либо рекомендации - $100/мес', sMsg2Founding:'по заявке либо рекомендации - $39/мес до конца авг',
+    sErr:'СТАТУС',sMsg:'приём заявок открыт',
+    sErr2:'ДОСТУП',sMsg2:'по заявке либо рекомендации - <span class="nb">$100/мес</span>', sMsg2Founding:'по заявке либо рекомендации - <span class="nb">$39/мес</span> до конца авг',
     sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Заявка →',
     sbPrice:'$100', sbPriceFounding:'$39',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
-    heroHl:'Закрытое сообщество для фаундеров и креативных лидеров, создающих масштабные продукты и проекты.',
-    heroBody:'Лимит 200 мест - отбор только по заявке и рекомендации.',
+    heroHl:'Закрытое сообщество для фаундеров и креативных лидеров.',
+    heroBody:'Лимит 200 мест.',
     heroHook:'Один из 14 вопросов анкеты - что в ней лишнее или манипулятивное.',
     heroCta:'пройти отбор',
     abPre:'// О НАС',
