@@ -306,7 +306,15 @@ body { padding-bottom: 60px; }
 @media (max-width: 700px) {
   body { font-size: 16px; }
   .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li, .q-opt span, .ty-body { font-size: 15px; }
-  .hero { padding: 72px 6vw 48px; min-height: auto; justify-content: flex-start; }
+  /* Symmetric top and bottom: the 72px above clears the language switcher,
+     which ends at 58px, so the bottom matches it rather than the top shrinking. */
+  .hero { padding: 72px 6vw; min-height: auto; justify-content: flex-start; }
+  /* The wordmark is the brand's signature and stays on one line, so it is sized to
+     the width rather than pinned at the clamp floor of 48px. That floor was both too
+     big at 320px, where it wrapped on its own, and too small everywhere above 360px,
+     where it left the line short. */
+  .hero-name { font-size: min(13vw, 118px); white-space: nowrap; }
+  .hero-cursor { height: min(9.5vw, 88px); }
   .section { padding: 48px 6vw; }
   .section-grid { grid-template-columns: 1fr; gap: 20px; }
   .sample-chat { grid-column: 1; }
