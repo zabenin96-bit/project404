@@ -464,6 +464,7 @@ body { padding-bottom: 60px; }
         <li><span class="rule-key" id="fmt2t">Core</span><span class="rule-val" id="fmt2d">Private chat - questions, discussions, member-to-member intros.</span></li>
         <li><span class="rule-key" id="fmt3t">Sanity check</span><span class="rule-val" id="fmt3d">Drop a hard decision, get a real peer-level take from people who've shipped it.</span></li>
         <li><span class="rule-key" id="fmt5t">Networking</span><span class="rule-val" id="fmt5d">Organic, person to person - no forced deal flow, no unsolicited pitches.</span></li>
+        <li><span class="rule-key" id="fmt6t">Sprint / Retro</span><span class="rule-val" id="fmt6d">Monday you state what you're doing this week - no advice given. Friday you note what worked and what didn't.</span></li>
       </ul>
       <div class="sample-chat reveal-child">
         <div class="sample-label" id="sample-label">// from the chat</div>
@@ -752,6 +753,7 @@ const C = {
     fmt2t:'Core',fmt2d:'Private chat - questions, discussions, member-to-member intros.',
     fmt3t:'Sanity check',fmt3d:"Drop a hard decision, get a real peer-level take from people who've shipped it.",
     fmt5t:'Networking',fmt5d:'Organic, person to person - no forced deal flow, no unsolicited pitches.',
+    fmt6t:'Sprint / Retro',fmt6d:"Monday you state what you're doing this week - no advice given. Friday you note what worked and what didn't.",
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
     proc1t:'01 - Apply',proc1d:'14 questions. No time limit, no auto-scoring - a person reads every answer.',
@@ -838,6 +840,7 @@ const C = {
     fmt2t:'Ядро',fmt2d:'Закрытый чат - вопросы, обсуждения, интро между участниками.',
     fmt3t:'Sanity check',fmt3d:'Скинул сложный кейс - получил прямую, но профессиональную обратную связь от людей, которые уже такое проходили.',
     fmt5t:'Нетворкинг',fmt5d:'Органический, между людьми напрямую - без навязанного deal flow и питчей в личку.',
+    fmt6t:'Спринт / Ретро',fmt6d:'В понедельник фиксируешь, что делаешь на неделе - без советов. В пятницу коротко разбираешь, что сработало, а что нет.',
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
     proc1t:'01 - Заявка',proc1d:'14 вопросов, читаем каждый ответ внимательно.',
@@ -966,7 +969,7 @@ function render(){
   g('fit-pre').textContent = t('fitPre');
   g('fit-body').innerHTML = t('fitBody').map(p=>`<p>${p}</p>`).join('');
   g('fmt-pre').textContent = t('fmtPre');
-  ['fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
+  ['fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d','fmt6t','fmt6d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('sample-label').textContent = t('sampleLabel');
   renderCurrentTip();
   syncTipBubbleHeight();
