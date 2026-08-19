@@ -483,7 +483,7 @@ body { padding-bottom: 60px; }
       <ul class="rules-list reveal-child">
         <li><span class="rule-key" id="fmt2t">Ядро</span><span class="rule-val" id="fmt2d">Закрытый чат - вопросы, обсуждения, интро между участниками.</span></li>
         <li><span class="rule-key" id="fmt3t">Разбор решений</span><span class="rule-val" id="fmt3d">Скинул сложный кейс - получил прямую, но профессиональную обратную связь от людей, которые уже такое проходили.</span></li>
-        <li><span class="rule-key" id="fmt5t">Нетворкинг</span><span class="rule-val" id="fmt5d">Органический, между людьми напрямую - без обязаловки и питчей в личку.</span></li>
+        <li><span class="rule-key" id="fmt5t">Нетворкинг</span><span class="rule-val" id="fmt5d">Между людьми напрямую - из обсуждений, а не из списка контактов.</span></li>
         <li><span class="rule-key" id="fmt6t">Спринт / Ретро</span><span class="rule-val" id="fmt6d">В понедельник фиксируешь, что делаешь на неделе - без советов. В пятницу коротко разбираешь, что сработало, а что нет.</span></li>
       </ul>
       <div class="sample-chat reveal-child">
@@ -681,7 +681,7 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="faq-pre">// FAQ</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="faq1t">Когда рассмотрят</span><span class="rule-val" id="faq1d">По мере поступления, без очереди и фиксированных дат.</span></li>
+        <li><span class="rule-key" id="faq1t">Когда рассмотрят</span><span class="rule-val" id="faq1d">Обычно 1-3 дня.</span></li>
         <li><span class="rule-key" id="faq2t">Твои данные</span><span class="rule-val" id="faq2d">Третьим лицам не передаются.</span></li>
         <li><span class="rule-key" id="faq3t">Отказали?</span><span class="rule-val" id="faq3d">Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.</span></li>
         <li><span class="rule-key" id="faq4t">Оплата</span><span class="rule-val" id="faq4d">Если приняли - придёт ссылка на оплату через Tribute (сервис подписок). Сейчас действует лимитированный ранний доступ - $39/мес до 31 августа (обычная цена $100), дальше списывается ежемесячно, отменить можно в любой момент.</span></li>
@@ -762,7 +762,7 @@ const C = {
     fmtPre:'// FORMAT',
     fmt2t:'Core',fmt2d:'Private chat - questions, discussions, member-to-member intros.',
     fmt3t:'Sanity check',fmt3d:"Drop a hard decision, get a real peer-level take from people who've shipped it.",
-    fmt5t:'Networking',fmt5d:'Organic, person to person - no forced deal flow, no unsolicited pitches.',
+    fmt5t:'Networking',fmt5d:'Person to person - out of conversations, not out of a contact list.',
     fmt6t:'Sprint / Retro',fmt6d:"Monday you state what you're doing this week - no advice given. Friday you note what worked and what didn't.",
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
@@ -770,7 +770,7 @@ const C = {
     proc2t:'02 - Review',proc2d:'A person reads every answer, not an algorithm. You get a response either way.',
     proc3t:'03 - Accept or reapply',proc3d:"Accepted - congrats. Not this round: you can try again.",
     faqPre:'// FAQ',
-    faq1t:'When you hear back',faq1d:'As applications come in, no queue and no fixed dates.',
+    faq1t:'When you hear back',faq1d:'Usually 1-3 days.',
     faq2t:'Your data',faq2d:'Not shared with third parties.',
     faq3t:'Rejected?',faq3d:"You can try again - up to 2 attempts a month, counter resets on the 1st.",
     faq4t:'Payment',faq4d:'If accepted, you get a payment link - $100 charged monthly, cancel anytime.',
@@ -852,7 +852,7 @@ const C = {
     fmtPre:'// ФОРМАТ',
     fmt2t:'Ядро',fmt2d:'Закрытый чат - вопросы, обсуждения, интро между участниками.',
     fmt3t:'Разбор решений',fmt3d:'Скинул сложный кейс - получил прямую, но профессиональную обратную связь от людей, которые уже такое проходили.',
-    fmt5t:'Нетворкинг',fmt5d:'Органический, между людьми напрямую - без обязаловки и питчей в личку.',
+    fmt5t:'Нетворкинг',fmt5d:'Между людьми напрямую - из обсуждений, а не из списка контактов.',
     fmt6t:'Спринт / Ретро',fmt6d:'В понедельник фиксируешь, что делаешь на неделе - без советов. В пятницу коротко разбираешь, что сработало, а что нет.',
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
@@ -860,7 +860,7 @@ const C = {
     proc2t:'02 - Проверка',proc2d:'Каждый ответ читает человек, не алгоритм. Ответ даём в любом случае.',
     proc3t:'03 - Приём либо повторная заявка',proc3d:'Если приняли - поздравляем. Если нет - можно попробовать снова.',
     faqPre:'// FAQ',
-    faq1t:'Когда рассмотрят',faq1d:'По мере поступления, без очереди и фиксированных дат.',
+    faq1t:'Когда рассмотрят',faq1d:'Обычно 1-3 дня.',
     faq2t:'Твои данные',faq2d:'Третьим лицам не передаются.',
     faq3t:'Отказали?',faq3d:'Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.',
     faq4t:'Оплата',faq4d:'Если приняли - придёт ссылка на оплату через Tribute (сервис подписок): $100 списывается ежемесячно, отменить можно в любой момент.',
