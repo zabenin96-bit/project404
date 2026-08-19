@@ -470,6 +470,19 @@ body { padding-bottom: 60px; }
     </div>
   </div>
 
+  <!-- VALUE -->
+  <div class="section reveal">
+    <div class="section-grid">
+      <div class="section-label"><span class="prefix" id="val-pre">// VALUE</span></div>
+      <div class="about-text" id="value-body">
+        <p>The founding core already spans 3D art, SEO, lead engineering, and marketing systems. A year in the making, and early enough that you'd help shape it, not just join it.</p>
+        <p>A place to talk shop, without the marketing gloss and "look how far I've come" case studies.</p>
+        <p>No deal flow promised - but when people who've built things are in one chat, connections happen on their own.</p>
+        <p>You're paying for the filter: no one gets in with a credit card, only through the application.</p>
+      </div>
+    </div>
+  </div>
+
   <!-- FORMAT -->
   <div class="section reveal">
     <div class="section-grid">
@@ -485,31 +498,6 @@ body { padding-bottom: 60px; }
         <div class="tip-carousel" id="tip-carousel" tabindex="0">
           <div class="chat-bubble"><div class="tip-name" id="tip-name"></div><p id="tip-text">I don't look at resumes. I give a test: email me with the subject line "Blue Tractor" and attach a table of the 5 best coworking spaces in your city. 80% drop out right there - templated spam.</p></div>
         </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RULES -->
-  <div class="section reveal">
-    <div class="section-grid">
-      <div class="section-label"><span class="prefix" id="ru-pre">// RULES</span></div>
-      <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="r1t">Hard cap</span><span class="rule-val" id="r1d">200 members, no exceptions.</span></li>
-        <li><span class="rule-key" id="r2t">Invite</span><span class="rule-val" id="r2d">A member can refer you - everyone still fills out the same application.</span></li>
-        <li><span class="rule-key" id="r4t">Worldwide</span><span class="rule-val" id="r4d">English and Russian speaking, no geography requirement.</span></li>
-        <li><span class="rule-key" id="r5t">No hunting</span><span class="rule-val" id="r5d">If you're here just to poach members, this isn't for you.</span></li>
-        <li><span class="rule-key" id="r6t">No unsolicited pitching</span><span class="rule-val" id="r6d">Don't pitch your services unless someone asks.</span></li>
-        <li><span class="rule-key" id="r7t">Paid</span><span class="rule-val" id="r7d">$39/mo through Aug 31 (regular price $100), no free tier.</span></li>
-      </ul>
-    </div>
-  </div>
-
-  <!-- VALUE -->
-  <div class="section reveal">
-    <div class="section-grid">
-      <div class="section-label"><span class="prefix" id="val-pre">// VALUE</span></div>
-      <div class="about-text" id="value-body">
-        <p>Spent a year sitting on this - the founding core already spans 3D art, SEO, lead engineering, and marketing systems, early enough that you'd help shape it, not just join it. A place to talk shop, without the marketing gloss and "look how far I've come" case studies. No deal flow promised - but when people who've built things are in one chat, connections happen on their own. You're paying for the filter: no one gets in with a credit card, only through the form.</p>
       </div>
     </div>
   </div>
@@ -536,6 +524,21 @@ body { padding-bottom: 60px; }
       <div class="about-text" id="fit-body">
         <p>You fit if you've created or helped create something valuable - employed, on your own, however you got there. Job title, country, niche - none of that matters. The rest, the application decides.</p>
       </div>
+    </div>
+  </div>
+
+  <!-- RULES -->
+  <div class="section reveal">
+    <div class="section-grid">
+      <div class="section-label"><span class="prefix" id="ru-pre">// RULES</span></div>
+      <ul class="rules-list reveal-child">
+        <li><span class="rule-key" id="r1t">Hard cap</span><span class="rule-val" id="r1d">200 members, no exceptions.</span></li>
+        <li><span class="rule-key" id="r2t">Invite</span><span class="rule-val" id="r2d">A member can refer you - everyone still fills out the same application.</span></li>
+        <li><span class="rule-key" id="r4t">Worldwide</span><span class="rule-val" id="r4d">English and Russian speaking, no geography requirement.</span></li>
+        <li><span class="rule-key" id="r5t">No hunting</span><span class="rule-val" id="r5d">If you're here just to poach members, this isn't for you.</span></li>
+        <li><span class="rule-key" id="r6t">No unsolicited pitching</span><span class="rule-val" id="r6d">Don't pitch your services unless someone asks.</span></li>
+        <li><span class="rule-key" id="r7t">Paid</span><span class="rule-val" id="r7d">$39/mo through Aug 31 (regular price $100), no free tier.</span></li>
+      </ul>
     </div>
   </div>
 
@@ -757,7 +760,12 @@ const C = {
     r6t:'No unsolicited pitching',r6d:"If you're here to drive traffic to your own group or product, this isn't for you. Finding partners or clients through conversation is fine.",
     r7t:'Paid',r7d:'$100/mo, no free tier.',r7dFounding:'$39/mo through Aug 31 (regular price $100), no free tier.',
     valPre:'// VALUE',
-    valueBody:["Spent a year sitting on this - the founding core already spans 3D art, SEO, lead engineering, and marketing systems, early enough that you'd help shape it, not just join it. A place to talk shop, without the marketing gloss and \"look how far I've come\" case studies. No deal flow promised - but when people who've built things are in one chat, connections happen on their own. You're paying for the filter: no one gets in with a credit card, only through the form."],
+    valueBody:[
+      "The founding core already spans 3D art, SEO, lead engineering, and marketing systems. A year in the making, and early enough that you'd help shape it, not just join it.",
+      "A place to talk shop, without the marketing gloss and \"look how far I've come\" case studies.",
+      "No deal flow promised - but when people who've built things are in one chat, connections happen on their own.",
+      "You're paying for the filter: no one gets in with a credit card, only through the application."
+    ],
     fitPre:'// WHO THIS IS FOR',
     fitBody:["You fit if you've created or helped create something valuable - employed, on your own, however you got there. Job title, country, niche - none of that matters. The rest, the application decides."],
     fmtPre:'// FORMAT',
@@ -842,7 +850,12 @@ const C = {
     r6t:'Без питчинга',r6d:'Если хочешь нагнать трафик в свою группу или продукт - тебе не сюда. Искать партнёров и клиентов в разговоре - нормально.',
     r7t:'Платно',r7d:'$100/мес, бесплатного тарифа нет.',r7dFounding:'$39/мес до 31 августа (обычная цена $100), бесплатного тарифа нет.',
     valPre:'// ЦЕННОСТЬ',
-    valueBody:['Мысль зрела год - ядро уже есть: 3D, SEO, лид-разработка, маркетинговые системы, и мы в самом начале - ты не просто вступаешь, а формируешь, каким это станет. Место, где говорят по существу, без рекламной шелухи и кейсиков "посмотрите как я вырос". Готовых сделок не обещаем - но когда люди, которые строят, сидят в одном чате, связи возникают сами. Платишь за отбор: сюда не заходят по кредитке, только через анкету.'],
+    valueBody:[
+      'Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, и мы в самом начале - ты не просто вступаешь, а формируешь, каким это станет.',
+      'Место, где говорят по существу, без рекламной шелухи и кейсиков "посмотрите как я вырос".',
+      'Готовых сделок не обещаем - но когда люди, которые строят, сидят в одном чате, связи возникают сами.',
+      'Платишь за отбор: сюда не заходят по кредитке, только через анкету.'
+    ],
     fitPre:'// КОМУ ЭТО ПОДХОДИТ',
     fitBody:['Ты подходишь, если за тобой есть что-то ценное - созданное самостоятельно или с командой, в найме или в своём деле. Профессия, страна, ниша - не имеют значения. Остальное решает анкета.'],
     fmtPre:'// ФОРМАТ',
