@@ -1437,11 +1437,25 @@ function initScrollProgress(){
 function initStickyBar(){
   const bar = document.getElementById('statusbar');
   const cta = document.querySelector('.hero-cta');
+  const testSection = document.getElementById('test-section');
   if(!bar || !cta || !('IntersectionObserver' in window)){ if(bar) bar.classList.add('visible'); return; }
+  let heroGone = false, inForm = false;
+  // The bar's own CTA does the same thing test-section already lets you do,
+  // and its opaque fixed background sits right over the form's Next/Back
+  // buttons on short viewports - so it steps aside once you're in the form.
+  const update = () => bar.classList.toggle('visible', heroGone && !inForm);
   const io = new IntersectionObserver((entries)=>{
-    entries.forEach(entry=>{ bar.classList.toggle('visible', !entry.isIntersecting); });
+    entries.forEach(entry=>{ heroGone = !entry.isIntersecting; });
+    update();
   }, { threshold: 0 });
   io.observe(cta);
+  if(testSection){
+    const ioForm = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{ inForm = entry.isIntersecting; });
+      update();
+    }, { threshold: 0 });
+    ioForm.observe(testSection);
+  }
 }
 
 // ── TIP CAROUSEL: illustrative, not real chat history - see the "// shared
