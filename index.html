@@ -95,7 +95,7 @@ body {
 /* ── HERO ── */
 .hero { min-height: 92vh; display: flex; flex-direction: column; justify-content: center; padding: 100px 10vw 80px; }
 
-.sys-block { margin-bottom: 48px; display: flex; flex-direction: column; gap: 5px; }
+.sys-block { margin-bottom: 48px; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--line); border-radius: 4px; padding: 18px 20px 16px; width: fit-content; }
 .sys-line { font-size: 13px; letter-spacing: 0.05em; color: var(--dim); display: flex; gap: 12px; }
 .sys-line .tag { color: var(--amber); min-width: 80px; }
 .sys-line .val { color: var(--text); text-wrap: balance; }
@@ -341,7 +341,7 @@ body { padding-bottom: 60px; }
   .hero-copy { grid-column: 1; grid-row: 4; }
   .hero-scroll-cue { display: none; }
   .hero-headline, .hero-body { max-width: 100%; }
-  .sys-block { grid-column: 2; grid-row: 3 / span 2; align-self: start; margin-bottom: 0; gap: 18px; border: 1px solid var(--line); border-radius: 4px; padding: 22px 24px 20px; }
+  .sys-block { grid-column: 2; grid-row: 3 / span 2; align-self: start; margin-bottom: 0; gap: 18px; padding: 22px 24px 20px; width: auto; }
   /* Stacked key over value: at this width an inline tag column would force the
      Russian value to wrap after two or three words. */
   .sys-block .sys-line { flex-direction: column; gap: 6px; }
