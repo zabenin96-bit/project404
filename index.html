@@ -1391,6 +1391,17 @@ async function submitForm(){
   const q2Text = document.querySelector('input[name="q2"]:checked')?.parentElement.querySelector('span')?.textContent || '';
   const q3Text = document.querySelector('input[name="q3"]:checked')?.parentElement.querySelector('span')?.textContent || '';
 
+  // Question text paired with its answer, read straight from the DOM the
+  // applicant actually saw - the backend used to keep its own hardcoded copy
+  // of these questions to label them in Telegram, and that copy quietly drifted
+  // from the real wording here more than once. Sending the pairing removes the
+  // second copy instead of just keeping the two in sync by hand.
+  const qAnswerOverrides = { 2: q2Text, 3: q3Text };
+  const answers = [1,2,3,4,5,6,7,8,9,10,11,12,13].map(i => ({
+    q: g('q'+i+'t')?.textContent || '',
+    a: qAnswerOverrides[i] ?? (data['q'+i] || '')
+  }));
+
   const btn = g('submit-btn');
   const originalBtnText = btn.textContent;
   btn.disabled = true;
@@ -1401,7 +1412,7 @@ async function submitForm(){
     const res = await fetch('https://noresults-backend-production.up.railway.app/submit',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({ type:'application', ...data, q2:q2Text, q3:q3Text })
+      body:JSON.stringify({ type:'application', ...data, q2:q2Text, q3:q3Text, answers })
     });
     if(!res.ok){
       let errCode = '';
