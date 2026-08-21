@@ -815,6 +815,7 @@ const C = {
     notifyPh:'Telegram / email',
     notifyBtn:'Notify me',
     notifySent:'Got it - we\'ll reach out if a spot opens.',
+    notifyEmptyWarn:'Enter your Telegram or email.',
     wlPre:'// APPLICATION',
     testIntro:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo.',
     testIntroFounding:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $39/mo through Aug 31 (regular price $100).',
@@ -905,6 +906,7 @@ const C = {
     notifyPh:'Telegram / email',
     notifyBtn:'Уведомить меня',
     notifySent:'Записали - напишем, если появится место.',
+    notifyEmptyWarn:'Укажи Telegram или email.',
     wlPre:'// ОТБОР',
     testIntro:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес.',
     testIntroFounding:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $39/мес до 31 августа (обычная цена $100).',
@@ -1202,7 +1204,7 @@ function bk(n){
 
 async function submitNotify(){
   const contact = g('notify-contact')?.value.trim() || '';
-  if(!contact) return;
+  if(!contact){ showWarn2(g('notify-warn'), 'notifyEmptyWarn'); return; }
   const btn = g('notify-btn');
   const input = g('notify-contact');
   const originalBtnText = btn.textContent;
