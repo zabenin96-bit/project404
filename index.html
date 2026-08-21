@@ -7,6 +7,9 @@
 <meta name="theme-color" content="#0a0a09">
 <title>no results.</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="apple-touch-icon.png">
 <meta name="description" content="Закрытое сообщество для фаундеров и креативных лидеров. Отбор строго по анкете. Лимит - 200 мест.">
 <meta property="og:title" content="no results.">
 <meta property="og:description" content="Закрытое сообщество для фаундеров и креативных лидеров. Отбор строго по анкете. Лимит - 200 мест.">
@@ -850,7 +853,8 @@ const C = {
     ftTerms:'terms',
     ftAsk:'support',
     reqWarn:'Answer this one before moving on.',
-    reqWarnFinal:'Fill in all fields to submit.'
+    reqWarnFinal:'Fill in all fields to submit.',
+    consoleHint:"Since you're here - selection is strictly by application. noresults.club/#test-section"
   },
   ru: {
     sErr:'СТАТУС',sMsg:'приём заявок открыт',
@@ -941,7 +945,8 @@ const C = {
     ftTerms:'условия',
     ftAsk:'поддержка',
     reqWarn:'Ответь на этот вопрос, чтобы продолжить.',
-    reqWarnFinal:'Заполни все поля, чтобы отправить.'
+    reqWarnFinal:'Заполни все поля, чтобы отправить.',
+    consoleHint:'Раз ты здесь - отбор строго по анкете. noresults.club/#test-section'
   }
 };
 
@@ -1068,6 +1073,14 @@ function render(){
   document.querySelectorAll('.q-warn.show').forEach(w=>{ w.textContent = t(w.dataset.key || 'reqWarn'); });
 
   renderStatusBar();
+  logConsoleHint();
+}
+
+// Rewards whoever's curious enough to open devtools - the one place on the
+// site aimed at technical visitors specifically rather than everyone.
+function logConsoleHint(){
+  console.log('%cno results.', 'color:#d99a3f;font-family:monospace;font-weight:700;font-size:16px;');
+  console.log('%c' + t('consoleHint'), 'color:#97968c;font-family:monospace;font-size:12px;');
 }
 
 // ── STATUS BAR: founding-rate pricing only shows while the offer is live ──
