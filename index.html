@@ -968,7 +968,11 @@ if (utmParams.utm_source) {
 
 // ── FOUNDING RATE OFFER: $100 → $39, valid through Aug 31, 2026 ──
 // Update FOUNDING_DEADLINE (and the sbDeadline/sMsg2Founding copy in C) for next year's run.
-const FOUNDING_DEADLINE = new Date('2026-09-01T00:00:00');
+// Explicit +04:00 (not just a bare date, which parses in the visitor's own
+// browser timezone - Tokyo would flip to regular pricing ~10h before New
+// York) so the cutoff is the same instant everywhere. Georgia has had no DST
+// since 2005, so +04:00 is safe to hardcode rather than deriving it.
+const FOUNDING_DEADLINE = new Date('2026-09-01T00:00:00+04:00');
 function foundingActive(){ return new Date() < FOUNDING_DEADLINE; }
 
 function g(id){ return document.getElementById(id); }
