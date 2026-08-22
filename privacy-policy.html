@@ -297,7 +297,10 @@ function render(){
   g('s2-pre').textContent = t('s2Pre');
   ['1','2','7','3','4','5','6'].forEach(n=>{
     g('s2-k'+n).textContent = t('s2K'+n);
-    g('s2-v'+n).innerHTML = t('s2V'+n);
+    // Leading space: key+value are separated only by CSS grid gap, not an
+    // actual space character, so plain-text extraction (Google's snippet
+    // generator, screen readers) reads them glued together otherwise.
+    g('s2-v'+n).innerHTML = ' ' + t('s2V'+n);
   });
   g('s3-pre').textContent = t('s3Pre');
   g('s3-p1').textContent = t('s3P1');
@@ -309,7 +312,7 @@ function render(){
   g('s5-pre').textContent = t('s5Pre');
   ['1','2','3'].forEach(n=>{
     g('s5-k'+n).textContent = t('s5K'+n);
-    g('s5-v'+n).textContent = t('s5V'+n);
+    g('s5-v'+n).textContent = ' ' + t('s5V'+n);
   });
   g('s6-pre').textContent = t('s6Pre');
   g('s6-p1').innerHTML = t('s6P1');
