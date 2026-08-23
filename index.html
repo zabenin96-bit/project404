@@ -964,16 +964,22 @@ const utmParams = (function(){
   return out;
 })();
 
-// ── CLICK PING: best-effort visit count for tagged links, separate from
-// applications - lets a channel's traffic be compared to how much of it
-// converts. Fire-and-forget, never blocks or affects the page. ──
-if (utmParams.utm_source) {
-  fetch('https://noresults-backend-production.up.railway.app/click', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(utmParams)
-  }).catch(()=>{});
+// Referring domain only (e.g. "google.com", "t.me") - never the full URL,
+// so no search terms or query strings leave the visitor's browser.
+function referrerSource(){
+  if(!document.referrer) return 'direct';
+  try { return new URL(document.referrer).hostname.replace(/^www\./,''); }
+  catch(e){ return 'direct'; }
 }
+
+// ── CLICK PING: best-effort visit count, separate from applications - lets
+// a channel's traffic (UTM-tagged or organic/referral) be compared to how
+// much of it converts. Fire-and-forget, never blocks or affects the page. ──
+fetch('https://noresults-backend-production.up.railway.app/click', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ ...utmParams, referrer: referrerSource() })
+}).catch(()=>{});
 
 
 // ── FOUNDING RATE OFFER: $100 → $39, valid through Aug 31, 2026 ──
