@@ -95,6 +95,9 @@ body {
 .lang-sep { color: var(--dim); font-size: 12px; user-select: none; text-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg), 0 0 16px var(--bg); }
 .lang-indicator { position: absolute; bottom: 0; left: 0; height: 2px; width: 0; background: var(--amber); box-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg); transition: left 0.3s cubic-bezier(.65,0,.35,1), width 0.3s cubic-bezier(.65,0,.35,1), background-color 0.4s ease; }
 .lang-btn { background: none; border: none; font-family: var(--font); font-size: 12px; cursor: pointer; color: var(--dim); letter-spacing: 0.1em; text-transform: uppercase; padding: 8px 12px; min-width: 44px; transition: color 0.2s ease; text-shadow: 0 0 6px var(--bg), 0 0 10px var(--bg), 0 0 16px var(--bg); }
+body { transition: opacity 0.15s ease; }
+body.lang-switching { opacity: 0; }
+@media (prefers-reduced-motion: reduce) { body { transition: none; } }
 .lang-btn:hover { color: var(--text); }
 .lang-btn.active { color: var(--text); font-weight: 700; }
 .lang-btn:focus-visible, .hero-cta:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, .q-opt:focus-within { outline: 1px solid var(--amber); outline-offset: 2px; }
@@ -504,7 +507,7 @@ body { padding-bottom: 60px; }
   <div class="section reveal">
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
-      <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, и мы в самом начале - ты не просто вступаешь, а формируешь, каким это станет.</p><p>Место, где говорят по существу, без рекламной шелухи и кейсов "посмотрите как я вырос".</p><p>Готовых сделок не обещаем - но когда люди, которые строят, сидят в одном чате, связи возникают сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
+      <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, и мы в самом начале.</p><p>Место, где говорят по существу, без рекламной шелухи и кейсов "посмотрите как я вырос".</p><p>Готовых сделок не обещаем - но когда люди, которые строят, сидят в одном чате, связи возникают сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
     </div>
   </div>
 
@@ -784,7 +787,7 @@ const C = {
     r7t:'Paid',r7d:'$100/mo, no free tier.',r7dFounding:'$39/mo through Aug 31 (regular price $100), no free tier.',
     valPre:'// VALUE',
     valueBody:[
-      "The founding core already spans 3D art, SEO, lead engineering, and marketing systems. A year in the making, and early enough that you'd help shape it, not just join it.",
+      "The founding core already spans 3D art, SEO, lead engineering, and marketing systems. A year in the making, and we're just getting started.",
       "A place to talk shop, without the marketing gloss and \"look how far I've come\" case studies.",
       "No deal flow promised - but when people who've built things are in one chat, connections happen on their own.",
       "Everyone fills out the application, no matter how much they're willing to pay."
@@ -876,7 +879,7 @@ const C = {
     r7t:'Платно',r7d:'$100/мес, бесплатного тарифа нет.',r7dFounding:'$39/мес до 31 августа (обычная цена $100), бесплатного тарифа нет.',
     valPre:'// ЦЕННОСТЬ',
     valueBody:[
-      'Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, и мы в самом начале - ты не просто вступаешь, а формируешь, каким это станет.',
+      'Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, и мы в самом начале.',
       'Место, где говорят по существу, без рекламной шелухи и кейсов "посмотрите как я вырос".',
       'Готовых сделок не обещаем - но когда люди, которые строят, сидят в одном чате, связи возникают сами.',
       'Анкету заполняют все, независимо от того, сколько готовы платить.'
@@ -995,11 +998,18 @@ function positionLangIndicator(){
 }
 
 function setLang(l){
-  lang = l;
-  g('btn-en').classList.toggle('active', l==='en');
-  g('btn-ru').classList.toggle('active', l==='ru');
-  positionLangIndicator();
-  render();
+  const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const apply = () => {
+    lang = l;
+    g('btn-en').classList.toggle('active', l==='en');
+    g('btn-ru').classList.toggle('active', l==='ru');
+    positionLangIndicator();
+    render();
+    document.body.classList.remove('lang-switching');
+  };
+  if(reduceMotion){ apply(); return; }
+  document.body.classList.add('lang-switching');
+  setTimeout(apply, 150);
 }
 
 function render(){
