@@ -464,7 +464,7 @@ body { padding-bottom: 60px; }
       <span class="deadline" id="sb-spots">до 31 авг.</span>
     </span>
   </div>
-  <button class="sticky-btn" onclick="goToApplication()">
+  <button class="sticky-btn" onclick="stickyBtnClick()">
     <span id="sb-cta">Пройти отбор →</span>
   </button>
 </div>
@@ -769,7 +769,7 @@ const C = {
   en: {
     sErr:'STATUS', sMsg:'now accepting applications',
     sErr2:'ACCESS', sMsg2:'<span class="nb">200 seats - $250/mo</span>', sMsg2Founding:'<span class="nb">200 seats - $100/mo</span> - apply by Aug 31',
-    sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply →',
+    sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply →', sbCtaDone:'Ask a question →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
     heroHl:'A closed community for founders, creative leaders, and specialists in adjacent fields.',
@@ -861,7 +861,7 @@ const C = {
   ru: {
     sErr:'СТАТУС',sMsg:'приём заявок открыт',
     sErr2:'ДОСТУП',sMsg2:'<span class="nb">200 мест - $250/мес</span>', sMsg2Founding:'<span class="nb">200 мест - $100/мес</span> до 31 авг',
-    sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Пройти отбор →',
+    sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Пройти отбор →', sbCtaDone:'Задать вопрос →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
     heroHl:'Закрытое сообщество для фаундеров, креативных лидеров и специалистов смежных сфер.',
@@ -953,6 +953,10 @@ const C = {
 };
 
 let lang = 'ru';
+// After a successful submission, the sticky-bar CTA has nothing left to
+// scroll to (the form is hidden) - repoint it at the support chat instead
+// of leaving a button that visibly does nothing.
+let applicationSubmitted = false;
 
 // ── UTM: считываем метки один раз при загрузке, прикладываем к каждой отправке ──
 const utmParams = (function(){
@@ -1136,7 +1140,7 @@ function renderStatusBar(){
     spots.style.display = active ? '' : 'none';
     spots.textContent = t('sbDeadline');
   }
-  if(cta) cta.textContent = t('sbCta');
+  if(cta) cta.textContent = applicationSubmitted ? t('sbCtaDone') : t('sbCta');
 }
 
 // ── REJECT SELF-CHECK ──
@@ -1394,6 +1398,13 @@ function flagQ14Empty(){
 // it's still unanswered, surfaces the same warning nx()/submitForm() would -
 // so clicking "apply" twice in a row gives visible feedback instead of a
 // no-op scroll when the section is already in view. ──
+// Sticky-bar CTA only - once submitted, there's no form left to jump to,
+// so it opens the support chat instead of a dead scroll.
+function stickyBtnClick(){
+  if(applicationSubmitted){ window.open('https://t.me/CreativesManager', '_blank', 'noopener'); return; }
+  goToApplication();
+}
+
 function goToApplication(){
   const activeQ = getActiveQ();
   const target = g('q'+activeQ) || g('test-section');
@@ -1481,6 +1492,8 @@ async function submitForm(){
     const ty=g('ty');
     ty.style.display='block';
     ty.scrollIntoView({behavior:'smooth'});
+    applicationSubmitted = true;
+    renderStatusBar();
   } catch(e){
     console.error(e);
     btn.disabled = false;
@@ -1696,7 +1709,7 @@ function initTipCarousel(){
 
 // ── FORM MICRO-FEEDBACK ──
 function initFormFeedback(){
-  document.querySelectorAll('.q-textarea, .q-input').forEach(inp=>{
+  document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
       inp.classList.toggle('filled', inp.value.trim().length > 0);
     });
