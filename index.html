@@ -632,7 +632,7 @@ body { padding-bottom: 60px; }
     <div class="q-block" id="q5">
       <div class="q-tag" id="q5l">05 / 14 - ГЛУБИНА</div>
       <div class="q-text" id="q5t">В чём облажался(-ась) в этом году? Что это дало понять?</div>
-      <textarea class="q-textarea" id="q5v" placeholder="Не ищем историю искупления, просто честный ответ."></textarea>
+      <textarea class="q-textarea" id="q5v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(5)">← Назад</button><button class="btn-p" onclick="nx(5)">Далее →</button></div>
     </div>
 
@@ -652,49 +652,49 @@ body { padding-bottom: 60px; }
     <div class="q-block" id="q7">
       <div class="q-tag" id="q7l">07 / 14 - КОНТЕКСТ</div>
       <div class="q-text" id="q7t">Где ты находишься?</div>
-      <input class="q-input" id="q7v" type="text" placeholder="Город, страна">
+      <input class="q-input" id="q7v" type="text">
       <div class="q-nav"><button class="btn-b" onclick="bk(7)">← Назад</button><button class="btn-p" onclick="nx(7)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q8">
       <div class="q-tag" id="q8l">08 / 14 - ФИЛЬТР</div>
       <div class="q-text" id="q8t">Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?</div>
-      <textarea class="q-textarea" id="q8v" placeholder="Напиши реальные вопросы, а не в духе &quot;я бы спросил про его путь&quot;."></textarea>
+      <textarea class="q-textarea" id="q8v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(8)">← Назад</button><button class="btn-p" onclick="nx(8)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q9">
       <div class="q-tag" id="q9l">09 / 14 - ФИЛЬТР</div>
       <div class="q-text" id="q9t">В чём большинство людей в твоей сфере ошибается?</div>
-      <textarea class="q-textarea" id="q9v" placeholder="Одна конкретная мысль - именно твоя, а не общее наблюдение."></textarea>
+      <textarea class="q-textarea" id="q9v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(9)">← Назад</button><button class="btn-p" onclick="nx(9)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q10">
       <div class="q-tag" id="q10l">10 / 14 - ФИЛЬТР</div>
       <div class="q-text" id="q10t">Что в этой анкете показалось тебе лишним или манипулятивным?</div>
-      <textarea class="q-textarea" id="q10v" placeholder="Похвала анкете за ответ не считается."></textarea>
+      <textarea class="q-textarea" id="q10v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(10)">← Назад</button><button class="btn-p" onclick="nx(10)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q11">
       <div class="q-tag" id="q11l">11 / 14 - ФИЛЬТР</div>
       <div class="q-text" id="q11t">Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?</div>
-      <textarea class="q-textarea" id="q11v" placeholder="Одна конкретная вещь, которую обычно замалчиваешь."></textarea>
+      <textarea class="q-textarea" id="q11v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(11)">← Назад</button><button class="btn-p" onclick="nx(11)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q12">
       <div class="q-tag" id="q12l">12 / 14 - ФИЛЬТР</div>
       <div class="q-text" id="q12t">Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.</div>
-      <textarea class="q-textarea" id="q12v" placeholder="Конкретный случай, а не общая привычка."></textarea>
+      <textarea class="q-textarea" id="q12v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(12)">← Назад</button><button class="btn-p" onclick="nx(12)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q13">
       <div class="q-tag" id="q13l">13 / 14 - ФИНАЛ</div>
       <div class="q-text" id="q13t">Почему мы должны взять тебя, а не другого кандидата?</div>
-      <textarea class="q-textarea" id="q13v" placeholder="Не нужна ни скромность, ни самолюбование - нужна ясность."></textarea>
+      <textarea class="q-textarea" id="q13v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(13)">← Назад</button><button class="btn-p" onclick="nx(13)">Далее →</button></div>
     </div>
 
@@ -828,15 +828,15 @@ const C = {
     q2l:'02 / 14 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 14 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
     q4l:'04 / 14 - DEPTH',q4t:"What's the hardest decision you've made in your work in the last 12 months?",q4p:'Be specific. Vague answers tell us nothing.',
-    q5l:'05 / 14 - DEPTH',q5t:'What have you failed at this year? What did you learn?',q5p:'Not looking for a redemption arc. Just honesty.',
+    q5l:'05 / 14 - DEPTH',q5t:'What have you failed at this year? What did you learn?',
     q6l:'06 / 14 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who inspire me to push harder than I would on my own','Access to specific skills or expertise','Networking that might turn into something','A place to talk about failures and setbacks','Accountability. Someone to answer to'],
-    q7l:'07 / 14 - CONTEXT',q7t:'Where are you based?',q7p:'City, Country',
-    q8l:'08 / 14 - FILTER',q8t:'You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?',q8p:"Write the actual questions, not something like 'I'd ask about their journey.'",
-    q9l:'09 / 14 - FILTER',q9t:"What's something most people in your field are wrong about?",q9p:'One specific thing - genuinely yours, not a general observation.',
-    q10l:'10 / 14 - FILTER',q10t:'What in this application felt unnecessary or manipulative?',q10p:"Praising the form doesn't count as an answer.",
-    q11l:'11 / 14 - FILTER',q11t:'What tool or method do you talk about like an expert but are actually still learning?',q11p:"One specific thing you'd normally gloss over.",
-    q12l:'12 / 14 - FILTER',q12t:'Name one thing you gave to a community - any community - expecting nothing back.',q12p:'A specific instance, not a general habit.',
-    q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else who applied?',q13p:'Not looking for humility or arrogance - just clarity.',
+    q7l:'07 / 14 - CONTEXT',q7t:'Where are you based?',
+    q8l:'08 / 14 - FILTER',q8t:'You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?',
+    q9l:'09 / 14 - FILTER',q9t:"What's something most people in your field are wrong about?",
+    q10l:'10 / 14 - FILTER',q10t:'What in this application felt unnecessary or manipulative?',
+    q11l:'11 / 14 - FILTER',q11t:'What tool or method do you talk about like an expert but are actually still learning?',
+    q12l:'12 / 14 - FILTER',q12t:'Name one thing you gave to a community - any community - expecting nothing back.',
+    q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else who applied?',
     q14l:'14 / 14 - CONTACT',q14t:'Your name, age, and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14p3:'Age',q14h:"Strictly 18+.",
     reqWarnAge:'You must be 18 or older to apply.',
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
@@ -920,15 +920,15 @@ const C = {
     q2l:'02 / 14 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 14 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
     q4l:'04 / 14 - ГЛУБИНА',q4t:'Какое было самое трудное решение в твоей работе за последние 12 месяцев?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
-    q5l:'05 / 14 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',q5p:'Не ищем историю искупления, просто честный ответ.',
+    q5l:'05 / 14 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',
     q6l:'06 / 14 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, рядом с которыми хочется выкладываться сильнее','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Место, где можно говорить о провалах и неудачах','Ответственность. Чтобы было перед кем отчитываться'],
-    q7l:'07 / 14 - КОНТЕКСТ',q7t:'Где ты находишься?',q7p:'Город, страна',
-    q8l:'08 / 14 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?',q8p:'Напиши реальные вопросы, а не в духе "я бы спросил про его путь".',
-    q9l:'09 / 14 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',q9p:'Одна конкретная мысль - именно твоя, а не общее наблюдение.',
-    q10l:'10 / 14 - ФИЛЬТР',q10t:'Что в этой анкете показалось тебе лишним или манипулятивным?',q10p:'Похвала анкете за ответ не считается.',
-    q11l:'11 / 14 - ФИЛЬТР',q11t:'Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?',q11p:'Одна конкретная вещь, которую обычно замалчиваешь.',
-    q12l:'12 / 14 - ФИЛЬТР',q12t:'Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.',q12p:'Конкретный случай, а не общая привычка.',
-    q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого кандидата?',q13p:'Не нужна ни скромность, ни самолюбование - нужна ясность.',
+    q7l:'07 / 14 - КОНТЕКСТ',q7t:'Где ты находишься?',
+    q8l:'08 / 14 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?',
+    q9l:'09 / 14 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',
+    q10l:'10 / 14 - ФИЛЬТР',q10t:'Что в этой анкете показалось тебе лишним или манипулятивным?',
+    q11l:'11 / 14 - ФИЛЬТР',q11t:'Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?',
+    q12l:'12 / 14 - ФИЛЬТР',q12t:'Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.',
+    q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого кандидата?',
     q14l:'14 / 14 - КОНТАКТ',q14t:'Имя, возраст и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14p3:'Возраст',q14h:'Строго 18+.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
@@ -1063,8 +1063,7 @@ function render(){
     if(lel) lel.textContent=t('q'+i+'l');
     if(tel) tel.textContent=t('q'+i+'t');
   }
-  [1,4,5,8,9,10,11,12,13].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
-  const q7v=g('q7v'); if(q7v) q7v.placeholder=t('q7p');
+  [1,4].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
   [[2,'q2o'],[3,'q3o'],[6,'q6o']].forEach(([q,k])=>{
     t(k).forEach((o,i)=>{ const e=g('q'+q+'abcde'[i]); if(e) e.textContent=o; });
   });
