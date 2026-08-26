@@ -360,6 +360,14 @@ body.lang-switching { opacity: 0; }
 .ty-share-text { font-size: 13px; color: var(--dim); margin-bottom: 14px; }
 .ty-share-btn { display: inline-block; background: none; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.03em; cursor: pointer; padding: 10px 22px; min-height: 44px; transition: color 0.15s ease, border-color 0.15s ease; }
 .ty-share-btn:hover { color: var(--text); border-color: var(--dim); }
+.ty-share-icons { display: flex; justify-content: center; gap: 12px; margin-top: 16px; }
+.ty-share-icon { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; background: none; border: 1px solid var(--line); border-radius: 50%; color: var(--dim); cursor: pointer; transition: color 0.15s ease, border-color 0.15s ease; }
+.ty-share-icon:hover { color: var(--text); border-color: var(--dim); }
+.ty-share-icon svg { width: 18px; height: 18px; }
+/* Reserves its own line height even empty, so the icon row above doesn't
+   jump when the Instagram fallback copy-hint appears/disappears. */
+.share-hint { display: block; font-size: 12px; color: var(--dim); min-height: 16px; margin-top: 10px; opacity: 0; transition: opacity 0.2s ease; }
+.share-hint.show { opacity: 1; }
 
 /* ── FOOTER ── */
 footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); letter-spacing: 0.05em; }
@@ -796,6 +804,12 @@ body { padding-bottom: 60px; }
     <div class="ty-share">
       <p class="ty-share-text" id="ty-share-text">Поделись с тем, кому это надо.</p>
       <button type="button" class="ty-share-btn" id="ty-share-btn" onclick="shareApp()">Поделиться</button>
+      <div class="ty-share-icons">
+        <button type="button" class="ty-share-icon" onclick="shareTo('tg')" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2 11 13"/><path d="M22 2 15 22l-4-9-9-4Z"/></svg></button>
+        <button type="button" class="ty-share-icon" onclick="shareTo('wa')" aria-label="WhatsApp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z"/></svg></button>
+        <button type="button" class="ty-share-icon" onclick="shareTo('ig')" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none"/></svg></button>
+      </div>
+      <span class="share-hint" id="share-hint"></span>
     </div>
   </div>
 
@@ -916,7 +930,7 @@ const C = {
     tyHead:'Accepted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     shareText:'Share it with someone who needs this.',
-    shareBtn:'Share', shareCopied:'Link copied',
+    shareBtn:'Share', shareCopied:'Link copied', shareCopiedIg:'Link copied - paste it into Instagram',
     ftR:'connection closed',
     ftContact:'contact',
     ftPrivacy:'privacy',
@@ -1013,7 +1027,7 @@ const C = {
     tyHead:'Принято, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     shareText:'Поделись с тем, кому это надо.',
-    shareBtn:'Поделиться', shareCopied:'Ссылка скопирована',
+    shareBtn:'Поделиться', shareCopied:'Ссылка скопирована', shareCopiedIg:'Ссылка скопирована - вставь в Instagram',
     ftR:'соединение закрыто',
     ftContact:'контакты',
     ftPrivacy:'конфиденциальность',
@@ -1249,22 +1263,32 @@ function showShareCopied(){
   setTimeout(()=>{ delete btn.dataset.copied; btn.textContent = t('shareBtn'); }, 2200);
 }
 
-function legacyCopy(url){
+function showShareHint(msg){
+  const hint = g('share-hint');
+  if(!hint) return;
+  hint.textContent = msg;
+  hint.classList.add('show');
+  clearTimeout(showShareHint._t);
+  showShareHint._t = setTimeout(()=>{ hint.classList.remove('show'); }, 2200);
+}
+
+function legacyCopy(url, onDone){
   const ta = document.createElement('textarea');
   ta.value = url;
   ta.style.position = 'fixed';
   ta.style.opacity = '0';
   document.body.appendChild(ta);
   ta.select();
-  try { document.execCommand('copy'); showShareCopied(); } catch(e){}
+  try { document.execCommand('copy'); onDone(); } catch(e){}
   document.body.removeChild(ta);
 }
 
-function copyShareUrl(url){
+function copyShareUrl(url, onDone){
+  onDone = onDone || showShareCopied;
   if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(showShareCopied).catch(()=>legacyCopy(url));
+    navigator.clipboard.writeText(url).then(onDone).catch(()=>legacyCopy(url, onDone));
   } else {
-    legacyCopy(url);
+    legacyCopy(url, onDone);
   }
 }
 
@@ -1276,6 +1300,20 @@ async function shareApp(){
     return;
   }
   copyShareUrl(url);
+}
+
+// Telegram and WhatsApp both accept a share link built from a URL param -
+// Instagram has no such endpoint for arbitrary web links, so that button
+// copies the link instead and says so, same fallback as the main button.
+function shareTo(platform){
+  const url = buildShareUrl();
+  if(platform === 'tg'){
+    window.open('https://t.me/share/url?url=' + encodeURIComponent(url) + '&text=' + encodeURIComponent(t('shareText')), '_blank', 'noopener');
+  } else if(platform === 'wa'){
+    window.open('https://wa.me/?text=' + encodeURIComponent(t('shareText') + ' ' + url), '_blank', 'noopener');
+  } else if(platform === 'ig'){
+    copyShareUrl(url, () => showShareHint(t('shareCopiedIg')));
+  }
 }
 
 function renderStatusBar(){
