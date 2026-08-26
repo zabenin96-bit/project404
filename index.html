@@ -599,6 +599,7 @@ body { padding-bottom: 60px; }
       <div class="q-text" id="q1t">Чем занимаешься? Опиши главный проект или работу одним предложением.</div>
       <textarea class="q-textarea" id="q1v" placeholder="Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов."></textarea>
       <div class="q-nav"><button class="btn-p" onclick="nx(1)">Далее →</button></div>
+      <p class="q-hint" id="q1-age-hint">Строго 18+.</p>
     </div>
 
     <div class="q-block" id="q2">
@@ -1075,6 +1076,7 @@ function render(){
   g('q14age').placeholder=t('q14p3');
   g('q14c').placeholder=t('q14p2');
   g('q14h').textContent=t('q14h');
+  g('q1-age-hint').textContent=t('q14h');
   g('q14cl').innerHTML=t('consentLabel');
   document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
   document.querySelectorAll('#test-section .btn-b').forEach(b=>{ b.textContent = t('navBack'); });
