@@ -339,9 +339,10 @@ body.lang-switching { opacity: 0; }
 
 /* ── THANK YOU ── */
 #ty { display: none; padding: 80px 10vw 120px; border-top: 1px solid var(--line); text-align: center; }
-.ty-sys { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 40px; }
-.ty-sys .line { font-size: 12px; color: var(--dim); display: flex; gap: 12px; justify-content: center; }
-.ty-sys .tag { color: var(--green); min-width: 80px; }
+/* Caption for the big number below - the reward comes first on this
+   screen, so it needs just enough context to not read as an orphaned
+   symbol before the headline even loads. */
+.ty-number-label { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--green); margin-bottom: 10px; }
 .ty-code { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--line); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; }
 /* Same scale/weight as .ty-code, but this is the thing actually worth
    making big - the HTTP joke stays as a fallback for when no real number
@@ -350,6 +351,11 @@ body.lang-switching { opacity: 0; }
 .ty-number-prefix { opacity: 0.55; }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
+/* Receipt-style detail, now supporting the reward above rather than
+   gating it - reads after the headline/body, not before. */
+.ty-sys { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-top: 36px; }
+.ty-sys .line { font-size: 12px; color: var(--dim); display: flex; gap: 12px; justify-content: center; }
+.ty-sys .tag { color: var(--green); min-width: 80px; }
 .ty-share { margin-top: 40px; }
 .ty-share-text { font-size: 13px; color: var(--dim); margin-bottom: 14px; }
 .ty-share-btn { display: inline-block; background: none; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.03em; cursor: pointer; padding: 10px 22px; min-height: 44px; transition: color 0.15s ease, border-color 0.15s ease; }
@@ -777,16 +783,16 @@ body { padding-bottom: 60px; }
 
   <!-- THANKYOU -->
   <div id="ty">
-    <div class="ty-sys">
-      <div class="line"><span class="tag" id="ty-t1">ПОЛУЧЕНО</span><span id="ty-v1"> заявка записана - ожидает проверки</span></div>
-      <div class="line"><span class="tag" id="ty-t2">СТАТУС</span><span id="ty-v2"> 202 принято</span></div>
-      <div class="line"><span class="tag" id="ty-t3">ДАЛЕЕ</span><span id="ty-v3"> ответим в любом случае</span></div>
-      <div class="line" id="ty-line4" style="display:none;"><span class="tag" id="ty-t4">НОМЕР</span><span id="ty-v4"></span></div>
-    </div>
+    <div class="ty-number-label" id="ty-number-label" style="display:none;">ЗАЯВКА</div>
     <div class="ty-number" id="ty-number" style="display:none;"><span class="ty-number-prefix" id="ty-number-prefix"></span><span id="ty-number-val"></span></div>
     <div class="ty-code" id="ty-code">202</div>
     <h2 class="ty-head" id="ty-head">Принято, ожидай.</h2>
     <p class="ty-body" id="ty-body">Спасибо за честные ответы.</p>
+    <div class="ty-sys">
+      <div class="line"><span class="tag" id="ty-t1">ПОЛУЧЕНО</span><span id="ty-v1"> заявка записана - ожидает проверки</span></div>
+      <div class="line"><span class="tag" id="ty-t2">СТАТУС</span><span id="ty-v2"> принято</span></div>
+      <div class="line"><span class="tag" id="ty-t3">ДАЛЕЕ</span><span id="ty-v3"> ответим в любом случае</span></div>
+    </div>
     <div class="ty-share">
       <p class="ty-share-text" id="ty-share-text">Поделись с тем, кому это надо.</p>
       <button type="button" class="ty-share-btn" id="ty-share-btn" onclick="shareApp()">Поделиться</button>
@@ -906,7 +912,7 @@ const C = {
     tyT1:'RECEIVED',tyV1:'application logged - pending manual review',
     tyT2:'STATUS',tyV2:'accepted',
     tyT3:'NEXT',tyV3:"we'll get back to you either way",
-    tyT4:'NUMBER', tyNumberPrefix:'#',
+    tyNumberLabel:'APPLICATION', tyNumberPrefix:'#',
     tyHead:'Accepted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     shareText:'Share it with someone who needs this.',
@@ -1003,7 +1009,7 @@ const C = {
     tyT1:'ПОЛУЧЕНО',tyV1:'заявка записана - ожидает проверки',
     tyT2:'СТАТУС',tyV2:'принято',
     tyT3:'ДАЛЕЕ',tyV3:'ответим в любом случае',
-    tyT4:'НОМЕР', tyNumberPrefix:'#',
+    tyNumberLabel:'ЗАЯВКА', tyNumberPrefix:'#',
     tyHead:'Принято, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     shareText:'Поделись с тем, кому это надо.',
@@ -1157,7 +1163,7 @@ function render(){
   g('ty-t1').textContent=t('tyT1'); g('ty-v1').textContent=t('tyV1');
   g('ty-t2').textContent=t('tyT2'); g('ty-v2').textContent=t('tyV2');
   g('ty-t3').textContent=t('tyT3'); g('ty-v3').textContent=t('tyV3');
-  g('ty-t4').textContent=t('tyT4');
+  g('ty-number-label').textContent=t('tyNumberLabel');
   updateTyNumber();
   g('ty-head').textContent=t('tyHead');
   g('ty-body').textContent=t('tyBody');
@@ -1191,10 +1197,6 @@ function render(){
 function spaceOutKeyValuePairs(){
   document.querySelectorAll('.tag, .rule-key').forEach(keyEl => {
     const valEl = keyEl.nextElementSibling;
-    // ty-v4 manages its own leading space in updateTyNumber() (it's set
-    // conditionally, only once a real number exists) - spacing it here too
-    // would double up every time render() runs after that.
-    if(valEl && valEl.id === 'ty-v4') return;
     if(valEl && valEl.children.length === 0){
       valEl.textContent = ' ' + valEl.textContent;
     }
@@ -1213,23 +1215,19 @@ function logConsoleHint(){
 // number comes back from the backend, re-synced on every render() so a
 // language switch after submitting still shows the right prefix (№/#).
 function updateTyNumber(){
-  const line = g('ty-line4');
   const bigNum = g('ty-number');
   const codeEl = g('ty-code');
-  if(!line) return;
+  const label = g('ty-number-label');
   if(lastApplicationNumber){
-    g('ty-v4').textContent = ' ' + t('tyNumberPrefix') + lastApplicationNumber;
-    line.style.display = '';
-    if(bigNum){
-      g('ty-number-prefix').textContent = t('tyNumberPrefix');
-      g('ty-number-val').textContent = lastApplicationNumber;
-      bigNum.style.display = '';
-    }
+    g('ty-number-prefix').textContent = t('tyNumberPrefix');
+    g('ty-number-val').textContent = lastApplicationNumber;
+    if(bigNum) bigNum.style.display = '';
     if(codeEl) codeEl.style.display = 'none';
+    if(label) label.style.display = '';
   } else {
-    line.style.display = 'none';
     if(bigNum) bigNum.style.display = 'none';
     if(codeEl) codeEl.style.display = '';
+    if(label) label.style.display = 'none';
   }
 }
 
