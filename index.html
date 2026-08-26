@@ -726,6 +726,7 @@ body { padding-bottom: 60px; }
       <p class="q-hint" id="q14h">Строго 18+.</p>
       <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.</span></label>
       <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Назад</button><button class="btn-sub" id="goto-review-btn" onclick="showReview()">Проверить →</button></div>
+      <button type="button" class="review-return" id="skip-review-btn" onclick="submitForm()" style="display:block;">Отправить без проверки</button>
     </div>
 
     <div class="q-block" id="q-review">
@@ -801,7 +802,7 @@ const C = {
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review →',
     reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
-    reviewEdit:'Edit', reviewReturn:'← Back to review', reviewProgress:'Review',
+    reviewEdit:'Edit', reviewReturn:'← Back to review', reviewProgress:'Review', skipReview:'Submit without review',
     heroHl:'A closed community for founders, creative leaders, and specialists in adjacent fields.',
     heroBody:'Selection is strictly by application.',
     heroCta:'Apply',
@@ -896,7 +897,7 @@ const C = {
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить →',
     reviewTag:'ПРОВЕРКА ОТВЕТОВ', reviewHeading:'Проверь ответы перед отправкой.',
-    reviewEdit:'Изменить', reviewReturn:'← Вернуться к проверке', reviewProgress:'Проверка',
+    reviewEdit:'Изменить', reviewReturn:'← Вернуться к проверке', reviewProgress:'Проверка', skipReview:'Отправить без проверки',
     heroHl:'Закрытое сообщество для фаундеров, креативных лидеров и специалистов смежных сфер.',
     heroBody:'Отбор строго по анкете.',
     heroCta:'Пройти отбор',
@@ -1116,6 +1117,8 @@ function render(){
   const gotoReviewBtn = g('goto-review-btn');
   if(gotoReviewBtn) gotoReviewBtn.textContent = t('navReview');
   g('review-return').textContent = t('reviewReturn');
+  const skipReviewBtn = g('skip-review-btn');
+  if(skipReviewBtn && !skipReviewBtn.disabled) skipReviewBtn.textContent = t('skipReview');
   g('review-tag').textContent = t('reviewTag');
   g('review-heading').textContent = t('reviewHeading');
   if(g('q-review').classList.contains('active')) populateReview();
@@ -1671,10 +1674,12 @@ async function submitForm(){
     a: qAnswerOverrides[i] ?? (data['q'+i] || '')
   }));
 
-  const btn = g('submit-btn');
-  const originalBtnText = btn.textContent;
-  btn.disabled = true;
-  btn.textContent = t('submitting');
+  // Two possible triggers - the review screen's Submit button, and the
+  // "Submit without review" link on Q14 - whichever the user actually
+  // clicked needs its own loading/disabled state, not just submit-btn's.
+  const triggerButtons = [g('submit-btn'), g('skip-review-btn')].filter(Boolean);
+  const originalTexts = new Map(triggerButtons.map(b => [b, b.textContent]));
+  triggerButtons.forEach(b => { b.disabled = true; b.textContent = t('submitting'); });
   hideWarn(14);
 
   try {
@@ -1703,8 +1708,7 @@ async function submitForm(){
     renderStatusBar();
   } catch(e){
     console.error(e);
-    btn.disabled = false;
-    btn.textContent = originalBtnText;
+    triggerButtons.forEach(b => { b.disabled = false; b.textContent = originalTexts.get(b); });
     showWarn(14, e.message === 'attempt_limit' ? 'attemptLimitError' : 'submitError');
   }
 }
