@@ -342,6 +342,10 @@ body.lang-switching { opacity: 0; }
 .ty-number-prefix { opacity: 0.55; }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
+.ty-share { margin-top: 40px; }
+.ty-share-text { font-size: 13px; color: var(--dim); margin-bottom: 14px; }
+.ty-share-btn { display: inline-block; background: none; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.03em; cursor: pointer; padding: 10px 22px; min-height: 44px; transition: color 0.15s ease, border-color 0.15s ease; }
+.ty-share-btn:hover { color: var(--text); border-color: var(--dim); }
 
 /* ── FOOTER ── */
 footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); letter-spacing: 0.05em; }
@@ -769,6 +773,10 @@ body { padding-bottom: 60px; }
     <div class="ty-code" id="ty-code">202</div>
     <h2 class="ty-head" id="ty-head">Принято, ожидай.</h2>
     <p class="ty-body" id="ty-body">Спасибо за честные ответы.</p>
+    <div class="ty-share">
+      <p class="ty-share-text" id="ty-share-text">Знаешь того, кто впишется? Поделись ссылкой.</p>
+      <button type="button" class="ty-share-btn" id="ty-share-btn" onclick="shareApp()">Поделиться</button>
+    </div>
   </div>
 
   <!-- NOTIFY -->
@@ -887,6 +895,8 @@ const C = {
     tyT4:'NUMBER', tyNumberPrefix:'#',
     tyHead:'Accepted. Please wait.',
     tyBody:"Thanks for the honest answers.",
+    shareText:"Know someone who'd fit? Share the link.",
+    shareBtn:'Share', shareCopied:'Link copied',
     ftR:'connection closed',
     ftContact:'contact',
     ftPrivacy:'privacy',
@@ -982,6 +992,8 @@ const C = {
     tyT4:'НОМЕР', tyNumberPrefix:'№',
     tyHead:'Принято, ожидай.',
     tyBody:'Спасибо за честные ответы.',
+    shareText:'Знаешь того, кто впишется? Поделись ссылкой.',
+    shareBtn:'Поделиться', shareCopied:'Ссылка скопирована',
     ftR:'соединение закрыто',
     ftContact:'контакты',
     ftPrivacy:'конфиденциальность',
@@ -1135,6 +1147,9 @@ function render(){
   updateTyNumber();
   g('ty-head').textContent=t('tyHead');
   g('ty-body').textContent=t('tyBody');
+  g('ty-share-text').textContent=t('shareText');
+  const shareBtn = g('ty-share-btn');
+  if(shareBtn && !shareBtn.dataset.copied) shareBtn.textContent = t('shareBtn');
   g('ft-r').textContent=t('ftR');
   g('ft-ask').textContent=t('ftAsk');
   g('ft-contact').textContent=t('ftContact');
@@ -1202,6 +1217,53 @@ function updateTyNumber(){
     if(bigNum) bigNum.style.display = 'none';
     if(codeEl) codeEl.style.display = '';
   }
+}
+
+// ── SHARE: a fresh link (no leftover query string) tagged so this
+// visitor's traffic shows up as its own channel next to the UTM'd ones. ──
+function buildShareUrl(){
+  const url = new URL(location.origin + location.pathname);
+  url.searchParams.set('utm_source', 'member_share');
+  url.searchParams.set('utm_medium', 'referral');
+  url.searchParams.set('utm_campaign', 'organic_share');
+  return url.toString();
+}
+
+function showShareCopied(){
+  const btn = g('ty-share-btn');
+  if(!btn) return;
+  btn.dataset.copied = '1';
+  btn.textContent = t('shareCopied');
+  setTimeout(()=>{ delete btn.dataset.copied; btn.textContent = t('shareBtn'); }, 2200);
+}
+
+function legacyCopy(url){
+  const ta = document.createElement('textarea');
+  ta.value = url;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showShareCopied(); } catch(e){}
+  document.body.removeChild(ta);
+}
+
+function copyShareUrl(url){
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(showShareCopied).catch(()=>legacyCopy(url));
+  } else {
+    legacyCopy(url);
+  }
+}
+
+async function shareApp(){
+  const url = buildShareUrl();
+  if(navigator.share){
+    try { await navigator.share({ title: 'no results.', text: t('shareText'), url }); }
+    catch(e){ /* cancelled or failed silently - native UI already handled it */ }
+    return;
+  }
+  copyShareUrl(url);
 }
 
 function renderStatusBar(){
