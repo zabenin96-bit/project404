@@ -296,6 +296,15 @@ body.lang-switching { opacity: 0; }
 
 .q-nav { display: flex; gap: 16px; margin-top: 28px; align-items: center; }
 .q-hint { font-size: 12px; color: var(--dim); margin-top: 10px; }
+
+/* ── REVIEW SCREEN ── */
+.review-return { background: none; border: none; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.03em; cursor: pointer; padding: 10px 0; margin-top: 4px; min-height: 44px; text-align: left; }
+.review-return:hover { color: var(--text); }
+.review-row { padding: 14px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
+.review-row:first-child { border-top: 1px solid var(--line); }
+.review-q { font-size: 12px; color: var(--dim); }
+.review-a { font-size: 14px; color: var(--text); line-height: 1.6; white-space: pre-wrap; }
+.review-edit { align-self: flex-start; margin-top: 2px; }
 .consent-row { display: flex; align-items: flex-start; gap: 10px; margin-top: 16px; font-size: 12px; color: var(--dim); line-height: 1.6; cursor: pointer; }
 .consent-row input[type="checkbox"] { margin-top: 2px; width: 15px; height: 15px; flex-shrink: 0; accent-color: var(--amber); cursor: pointer; }
 .consent-row a { color: var(--dim); text-decoration: underline; }
@@ -593,6 +602,7 @@ body { padding-bottom: 60px; }
       <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
       <div class="progress-num" id="pnum">0 / 14</div>
     </div>
+    <button type="button" class="review-return" id="review-return" onclick="showReview()" style="display:none;"></button>
 
     <div class="q-block active" id="q1">
       <div class="q-tag" id="q1l">01 / 14 - ОСНОВЫ</div>
@@ -710,7 +720,14 @@ body { padding-bottom: 60px; }
       <input class="q-input" id="q14c" type="text" placeholder="Telegram / Instagram / Email">
       <p class="q-hint" id="q14h">Строго 18+.</p>
       <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.</span></label>
-      <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Назад</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Отправить →</button></div>
+      <div class="q-nav"><button class="btn-b" onclick="bk(14)">← Назад</button><button class="btn-sub" id="goto-review-btn" onclick="showReview()">Проверить →</button></div>
+    </div>
+
+    <div class="q-block" id="q-review">
+      <div class="q-tag" id="review-tag">ПРОВЕРКА ОТВЕТОВ</div>
+      <div class="q-text" id="review-heading">Проверь ответы перед отправкой.</div>
+      <div id="review-list"></div>
+      <div class="q-nav"><button class="btn-b" onclick="jumpToQ(14)">← Назад</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Отправить →</button></div>
     </div>
   </div>
 
@@ -775,7 +792,9 @@ const C = {
     sErr2:'ACCESS', sMsg2:'<span class="nb">200 seats - $250/mo</span>', sMsg2Founding:'<span class="nb">200 seats - $100/mo</span> - apply by Aug 31',
     sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply →', sbCtaDone:'Ask a question →',
     sbPrice:'$250', sbPriceFounding:'$100',
-    navNext:'Next →', navBack:'← Back', navSubmit:'Submit →',
+    navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review →',
+    reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
+    reviewEdit:'Edit', reviewReturn:'← Back to review', reviewProgress:'Review',
     heroHl:'A closed community for founders, creative leaders, and specialists in adjacent fields.',
     heroBody:'Selection is strictly by application.',
     heroCta:'Apply',
@@ -867,7 +886,9 @@ const C = {
     sErr2:'ДОСТУП',sMsg2:'<span class="nb">200 мест - $250/мес</span>', sMsg2Founding:'<span class="nb">200 мест - $100/мес</span> до 31 авг',
     sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Пройти отбор →', sbCtaDone:'Задать вопрос →',
     sbPrice:'$250', sbPriceFounding:'$100',
-    navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →',
+    navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить →',
+    reviewTag:'ПРОВЕРКА ОТВЕТОВ', reviewHeading:'Проверь ответы перед отправкой.',
+    reviewEdit:'Изменить', reviewReturn:'← Вернуться к проверке', reviewProgress:'Проверка',
     heroHl:'Закрытое сообщество для фаундеров, креативных лидеров и специалистов смежных сфер.',
     heroBody:'Отбор строго по анкете.',
     heroCta:'Пройти отбор',
@@ -1079,9 +1100,15 @@ function render(){
   g('q1-age-hint').textContent=t('q14h');
   g('q14cl').innerHTML=t('consentLabel');
   document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
-  document.querySelectorAll('#test-section .btn-b').forEach(b=>{ b.textContent = t('navBack'); });
+  document.querySelectorAll('#test-section .btn-b:not(.review-edit)').forEach(b=>{ b.textContent = t('navBack'); });
   const submitBtn = g('submit-btn');
   if(submitBtn && !submitBtn.disabled) submitBtn.textContent = t('navSubmit');
+  const gotoReviewBtn = g('goto-review-btn');
+  if(gotoReviewBtn) gotoReviewBtn.textContent = t('navReview');
+  g('review-return').textContent = t('reviewReturn');
+  g('review-tag').textContent = t('reviewTag');
+  g('review-heading').textContent = t('reviewHeading');
+  if(g('q-review').classList.contains('active')) populateReview();
   g('ty-t1').textContent=t('tyT1'); g('ty-v1').textContent=t('tyV1');
   g('ty-t2').textContent=t('tyT2'); g('ty-v2').textContent=t('tyV2');
   g('ty-t3').textContent=t('tyT3'); g('ty-v3').textContent=t('tyV3');
@@ -1167,9 +1194,92 @@ document.querySelectorAll('.q-opts').forEach(group=>{
   });
 });
 
+let maxReachedQ = 1;
+
 function updProg(n){
   g('pfill').style.width=((n-1)/14*100)+'%';
   g('pnum').textContent=(n-1)+' / 14';
+  g('review-return').style.display = maxReachedQ >= 14 ? 'block' : 'none';
+}
+
+// ── REVIEW SCREEN ──
+function showBlock(id){
+  document.querySelectorAll('#test-section .q-block').forEach(b=>b.classList.remove('active'));
+  const el = g(id);
+  if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+}
+
+function jumpToQ(n){
+  if(n > maxReachedQ) return;
+  showBlock('q'+n);
+  updProg(n);
+}
+
+function editFromReview(n){
+  jumpToQ(n);
+}
+
+// Mirrors how submitForm() reads each answer, but for display only - never
+// touches what actually gets sent.
+function getDisplayAnswer(i){
+  const ta = g('q'+i+'v');
+  if(ta && ta.tagName === 'TEXTAREA') return ta.value.trim();
+  if(i === 7) return (g('q7v')?.value || '').trim();
+  if(i === 2 || i === 3){
+    const checked = document.querySelector('input[name="q'+i+'"]:checked');
+    return checked ? (checked.parentElement.querySelector('span')?.textContent || '') : '';
+  }
+  if(i === 6){
+    return Array.from(document.querySelectorAll('input[name="q6"]:checked'))
+      .map(el=>el.parentElement.querySelector('span')?.textContent || '').join(', ');
+  }
+  return '';
+}
+
+function populateReview(){
+  const list = g('review-list');
+  if(!list) return;
+  list.innerHTML = '';
+  for(let i=1;i<=13;i++){
+    const qText = g('q'+i+'t')?.textContent || '';
+    const row = document.createElement('div');
+    row.className = 'review-row';
+    const qEl = document.createElement('div');
+    qEl.className = 'review-q';
+    qEl.textContent = qText;
+    const aEl = document.createElement('div');
+    aEl.className = 'review-a';
+    aEl.textContent = getDisplayAnswer(i) || '—';
+    const editBtn = document.createElement('button');
+    editBtn.type = 'button';
+    editBtn.className = 'btn-b review-edit';
+    editBtn.textContent = t('reviewEdit');
+    editBtn.onclick = () => editFromReview(i);
+    row.appendChild(qEl); row.appendChild(aEl); row.appendChild(editBtn);
+    list.appendChild(row);
+  }
+}
+
+function showReview(){
+  if(!q14Answered()){ flagQ14Empty(); return; }
+  const age = ageValue();
+  if(age === null || age < 18){
+    showWarn(14, 'reqWarnAge');
+    g('q14age').classList.add('q-error');
+    return;
+  }
+  if(!consentChecked()){
+    showWarn(14, 'reqWarnConsent');
+    g('q14consentRow').classList.add('q-error');
+    return;
+  }
+  maxReachedQ = Math.max(maxReachedQ, 14);
+  populateReview();
+  showBlock('q-review');
+  g('pfill').style.width = '100%';
+  g('pnum').textContent = t('reviewProgress');
+  g('review-return').style.display = 'none';
+  saveDraft();
 }
 
 // ── VALIDATION: every question must be answered before moving on ──
@@ -1248,7 +1358,12 @@ function nx(n){
   if(!isAnswered(n)){ showWarn(n); return; }
   g('q'+n).classList.remove('active');
   const nxEl=g('q'+(n+1));
-  if(nxEl){ nxEl.classList.add('active'); updProg(n+1); nxEl.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  if(nxEl){
+    nxEl.classList.add('active');
+    maxReachedQ = Math.max(maxReachedQ, n+1);
+    updProg(n+1);
+    nxEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
   saveDraft();
 }
 
@@ -1304,6 +1419,7 @@ function ageValue(){
 const DRAFT_KEY = 'nr_app_draft_v1';
 
 function getActiveQ(){
+  if(g('q-review')?.classList.contains('active')) return 'review';
   for(let i=1;i<=14;i++){ const b=g('q'+i); if(b && b.classList.contains('active')) return i; }
   return 1;
 }
@@ -1311,6 +1427,7 @@ function getActiveQ(){
 function collectDraft(){
   return {
     activeQ: getActiveQ(),
+    maxReachedQ: maxReachedQ,
     q1:g('q1v')?.value||'',
     q2:document.querySelector('input[name="q2"]:checked')?.value||'',
     q3:document.querySelector('input[name="q3"]:checked')?.value||'',
@@ -1369,6 +1486,18 @@ function restoreDraft(){
   if(g('q14c')) g('q14c').value = d.q14c||'';
   if(d.consent && g('q14consent')) g('q14consent').checked = true;
 
+  if(typeof d.maxReachedQ === 'number') maxReachedQ = Math.max(maxReachedQ, d.maxReachedQ);
+
+  if(d.activeQ === 'review'){
+    maxReachedQ = Math.max(maxReachedQ, 14);
+    populateReview();
+    showBlock('q-review');
+    g('pfill').style.width = '100%';
+    g('pnum').textContent = t('reviewProgress');
+    g('review-return').style.display = 'none';
+    return;
+  }
+
   const target = d.activeQ || 1;
   if(target > 1){
     document.querySelectorAll('.q-block').forEach(b=>b.classList.remove('active'));
@@ -1420,6 +1549,10 @@ function stickyBtnClick(){
 
 function goToApplication(){
   const activeQ = getActiveQ();
+  if(activeQ === 'review'){
+    g('q-review').scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
   const target = g('q'+activeQ) || g('test-section');
   target.scrollIntoView({behavior:'smooth', block:'center'});
   if(activeQ === 14){
