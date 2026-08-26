@@ -323,9 +323,9 @@ body.lang-switching { opacity: 0; }
 .btn-b:hover { color: var(--text); border-color: var(--dim); }
 
 /* ── THANK YOU ── */
-#ty { display: none; padding: 80px 10vw 120px; border-top: 1px solid var(--line); }
-.ty-sys { display: flex; flex-direction: column; gap: 5px; margin-bottom: 40px; }
-.ty-sys .line { font-size: 12px; color: var(--dim); display: flex; gap: 12px; }
+#ty { display: none; padding: 80px 10vw 120px; border-top: 1px solid var(--line); text-align: center; }
+.ty-sys { display: flex; flex-direction: column; align-items: center; gap: 5px; margin-bottom: 40px; }
+.ty-sys .line { font-size: 12px; color: var(--dim); display: flex; gap: 12px; justify-content: center; }
 .ty-sys .tag { color: var(--green); min-width: 80px; }
 .ty-code { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--line); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; }
 /* Same scale/weight as .ty-code, but this is the thing actually worth
@@ -334,7 +334,7 @@ body.lang-switching { opacity: 0; }
 .ty-number { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--amber); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; animation: fadeup 0.5s ease; }
 .ty-number-prefix { opacity: 0.55; }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
-.ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; }
+.ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
 
 /* ── FOOTER ── */
 footer { border-top: 1px solid var(--line); padding: 16px 10vw 64px; display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); letter-spacing: 0.05em; }
@@ -800,9 +800,9 @@ const C = {
     sErr2:'ACCESS', sMsg2:'<span class="nb">200 seats - $250/mo</span>', sMsg2Founding:'<span class="nb">200 seats - $100/mo</span> - apply by Aug 31',
     sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply →', sbCtaDone:'Ask a question →',
     sbPrice:'$250', sbPriceFounding:'$100',
-    navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review →',
+    navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review answers →',
     reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
-    reviewEdit:'Edit', reviewReturn:'← Back to review', reviewProgress:'Review', skipReview:'Submit without review',
+    reviewEdit:'Edit', reviewReturn:'← Back to review', reviewProgress:'Review', skipReview:'Submit',
     heroHl:'A closed community for founders, creative leaders, and specialists in adjacent fields.',
     heroBody:'Selection is strictly by application.',
     heroCta:'Apply',
@@ -876,7 +876,7 @@ const C = {
     submitError:'Something went wrong. Please try again, or message us on Telegram.',
     attemptLimitError:"You've already submitted 2 applications this month. Counter resets on the 1st.",
     tyT1:'RECEIVED',tyV1:'application logged - pending manual review',
-    tyT2:'STATUS',tyV2:'202 accepted',
+    tyT2:'STATUS',tyV2:'accepted',
     tyT3:'NEXT',tyV3:"we'll get back to you either way",
     tyT4:'NUMBER', tyNumberPrefix:'#',
     tyHead:'Accepted. Please wait.',
@@ -895,9 +895,9 @@ const C = {
     sErr2:'ДОСТУП',sMsg2:'<span class="nb">200 мест - $250/мес</span>', sMsg2Founding:'<span class="nb">200 мест - $100/мес</span> до 31 авг',
     sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Пройти отбор →', sbCtaDone:'Задать вопрос →',
     sbPrice:'$250', sbPriceFounding:'$100',
-    navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить →',
+    navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить ответы →',
     reviewTag:'ПРОВЕРКА ОТВЕТОВ', reviewHeading:'Проверь ответы перед отправкой.',
-    reviewEdit:'Изменить', reviewReturn:'← Вернуться к проверке', reviewProgress:'Проверка', skipReview:'Отправить без проверки',
+    reviewEdit:'Изменить', reviewReturn:'← Вернуться к проверке', reviewProgress:'Проверка', skipReview:'Отправить',
     heroHl:'Закрытое сообщество для фаундеров, креативных лидеров и специалистов смежных сфер.',
     heroBody:'Отбор строго по анкете.',
     heroCta:'Пройти отбор',
@@ -971,7 +971,7 @@ const C = {
     submitError:'Что-то пошло не так. Попробуй ещё раз или напиши нам в Telegram.',
     attemptLimitError:'Ты уже подал(а) 2 заявки в этом месяце. Счётчик обнулится 1 числа.',
     tyT1:'ПОЛУЧЕНО',tyV1:'заявка записана - ожидает проверки',
-    tyT2:'СТАТУС',tyV2:'202 принято',
+    tyT2:'СТАТУС',tyV2:'принято',
     tyT3:'ДАЛЕЕ',tyV3:'ответим в любом случае',
     tyT4:'НОМЕР', tyNumberPrefix:'№',
     tyHead:'Принято, ожидай.',
