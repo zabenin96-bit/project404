@@ -282,7 +282,7 @@ body.lang-switching { opacity: 0; }
 .q-text { font-size: clamp(16px, 1.9vw, 21px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; }
 
 .q-textarea, .q-input { width: 100%; max-width: 580px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 4px; padding: 12px 14px; font-family: var(--font); font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
-.q-textarea { min-height: 90px; }
+.q-textarea { min-height: 90px; overflow-y: hidden; }
 .q-textarea::placeholder, .q-input::placeholder { color: var(--dim); font-size: 13px; }
 .q-textarea:focus, .q-input:focus { border-color: var(--amber); }
 .q-textarea.filled, .q-input.filled { border-color: var(--green); }
@@ -586,7 +586,7 @@ body { padding-bottom: 60px; }
   <div class="section reveal" id="test-section">
     <div class="section-grid" style="margin-bottom:0">
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
-      <p class="test-intro" id="test-intro">Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.</p>
+      <p class="test-intro" id="test-intro">Первый шаг: ответь на 14 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.</p>
     </div>
 
     <div class="progress-wrap">
@@ -826,8 +826,8 @@ const C = {
     notifySent:'Got it - we\'ll reach out if a spot opens.',
     notifyEmptyWarn:'Enter your Telegram or email.',
     wlPre:'// APPLICATION',
-    testIntro:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $250/mo.',
-    testIntroFounding:'First step: answer 14 questions. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo for their first 2 months (apply by Aug 31), then $250/mo.',
+    testIntro:'First step: answer 14 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $250/mo.',
+    testIntroFounding:'First step: answer 14 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo for their first 2 months (apply by Aug 31), then $250/mo.',
     q1l:'01 / 14 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
     q2l:'02 / 14 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 14 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
@@ -918,8 +918,8 @@ const C = {
     notifySent:'Записали - напишем, если появится место.',
     notifyEmptyWarn:'Укажи Telegram или email.',
     wlPre:'// ОТБОР',
-    testIntro:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $250/мес.',
-    testIntroFounding:'Первый шаг: ответь на 14 вопросов. Без ограничения по времени - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.',
+    testIntro:'Первый шаг: ответь на 14 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $250/мес.',
+    testIntroFounding:'Первый шаг: ответь на 14 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.',
     q1l:'01 / 14 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 14 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 14 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
@@ -1721,10 +1721,32 @@ function initTipCarousel(){
 }
 
 // ── FORM MICRO-FEEDBACK ──
+// Grows the textarea to fit its content instead of leaving long answers
+// scrolling inside a fixed 90px box.
+function autoGrowTextarea(el){
+  el.style.height = 'auto';
+  el.style.height = el.scrollHeight + 'px';
+}
+
 function initFormFeedback(){
   document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
       inp.classList.toggle('filled', inp.value.trim().length > 0);
+    });
+  });
+  document.querySelectorAll('#test-section .q-textarea').forEach(ta=>{
+    autoGrowTextarea(ta);
+    ta.addEventListener('input', ()=>autoGrowTextarea(ta));
+  });
+  // Enter advances single-line fields (never textareas - Enter there is a
+  // line break) by clicking whatever primary button sits in the same block.
+  document.querySelectorAll('#test-section .q-input').forEach(inp=>{
+    inp.addEventListener('keydown', (e)=>{
+      if(e.key !== 'Enter') return;
+      e.preventDefault();
+      const block = inp.closest('.q-block');
+      const btn = block && block.querySelector('.q-nav .btn-p, .q-nav .btn-sub');
+      if(btn) btn.click();
     });
   });
   document.querySelectorAll('.q-opts').forEach(group=>{
