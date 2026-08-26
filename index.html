@@ -328,6 +328,11 @@ body.lang-switching { opacity: 0; }
 .ty-sys .line { font-size: 12px; color: var(--dim); display: flex; gap: 12px; }
 .ty-sys .tag { color: var(--green); min-width: 80px; }
 .ty-code { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--line); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; }
+/* Same scale/weight as .ty-code, but this is the thing actually worth
+   making big - the HTTP joke stays as a fallback for when no real number
+   comes back, not the default hero element. */
+.ty-number { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--amber); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; animation: fadeup 0.5s ease; }
+.ty-number-prefix { opacity: 0.55; }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; }
 
@@ -753,7 +758,8 @@ body { padding-bottom: 60px; }
       <div class="line"><span class="tag" id="ty-t3">ДАЛЕЕ</span><span id="ty-v3"> ответим в любом случае</span></div>
       <div class="line" id="ty-line4" style="display:none;"><span class="tag" id="ty-t4">НОМЕР</span><span id="ty-v4"></span></div>
     </div>
-    <div class="ty-code">202</div>
+    <div class="ty-number" id="ty-number" style="display:none;"><span class="ty-number-prefix" id="ty-number-prefix"></span><span id="ty-number-val"></span></div>
+    <div class="ty-code" id="ty-code">202</div>
     <h2 class="ty-head" id="ty-head">Принято, ожидай.</h2>
     <p class="ty-body" id="ty-body">Спасибо за честные ответы.</p>
   </div>
@@ -1170,12 +1176,22 @@ function logConsoleHint(){
 // language switch after submitting still shows the right prefix (№/#).
 function updateTyNumber(){
   const line = g('ty-line4');
+  const bigNum = g('ty-number');
+  const codeEl = g('ty-code');
   if(!line) return;
   if(lastApplicationNumber){
     g('ty-v4').textContent = ' ' + t('tyNumberPrefix') + lastApplicationNumber;
     line.style.display = '';
+    if(bigNum){
+      g('ty-number-prefix').textContent = t('tyNumberPrefix');
+      g('ty-number-val').textContent = lastApplicationNumber;
+      bigNum.style.display = '';
+    }
+    if(codeEl) codeEl.style.display = 'none';
   } else {
     line.style.display = 'none';
+    if(bigNum) bigNum.style.display = 'none';
+    if(codeEl) codeEl.style.display = '';
   }
 }
 
@@ -1227,10 +1243,22 @@ function updProg(n){
 }
 
 // ── REVIEW SCREEN ──
+// Focuses whatever's actually fillable in a block - the textarea/input, or
+// (for a radio/checkbox question) the checked option if there is one,
+// otherwise the first option - so advancing a question never leaves the
+// user needing an extra tap/click just to start typing.
+function focusActiveField(blockId){
+  const block = g(blockId);
+  if(!block) return;
+  const preferred = block.querySelector('.q-textarea, .q-input, input[type="radio"]:checked, input[type="checkbox"]:checked');
+  const field = preferred || block.querySelector('.q-textarea, .q-input, input[type="radio"], input[type="checkbox"]');
+  if(field) field.focus({preventScroll:true});
+}
+
 function showBlock(id){
   document.querySelectorAll('#test-section .q-block').forEach(b=>b.classList.remove('active'));
   const el = g(id);
-  if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth', block:'nearest'}); }
+  if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth', block:'nearest'}); focusActiveField(id); }
 }
 
 function jumpToQ(n){
@@ -1387,6 +1415,7 @@ function nx(n){
     maxReachedQ = Math.max(maxReachedQ, n+1);
     updProg(n+1);
     nxEl.scrollIntoView({behavior:'smooth',block:'nearest'});
+    focusActiveField('q'+(n+1));
   }
   saveDraft();
 }
@@ -1394,7 +1423,12 @@ function nx(n){
 function bk(n){
   g('q'+n).classList.remove('active');
   const pv=g('q'+(n-1));
-  if(pv){ pv.classList.add('active'); updProg(n-1); pv.scrollIntoView({behavior:'smooth',block:'nearest'}); }
+  if(pv){
+    pv.classList.add('active');
+    updProg(n-1);
+    pv.scrollIntoView({behavior:'smooth',block:'nearest'});
+    focusActiveField('q'+(n-1));
+  }
   saveDraft();
 }
 
