@@ -751,6 +751,7 @@ body { padding-bottom: 60px; }
       <div class="line"><span class="tag" id="ty-t1">ПОЛУЧЕНО</span><span id="ty-v1"> заявка записана - ожидает проверки</span></div>
       <div class="line"><span class="tag" id="ty-t2">СТАТУС</span><span id="ty-v2"> 202 принято</span></div>
       <div class="line"><span class="tag" id="ty-t3">ДАЛЕЕ</span><span id="ty-v3"> ответим в любом случае</span></div>
+      <div class="line" id="ty-line4" style="display:none;"><span class="tag" id="ty-t4">НОМЕР</span><span id="ty-v4"></span></div>
     </div>
     <div class="ty-code">202</div>
     <h2 class="ty-head" id="ty-head">Принято, ожидай.</h2>
@@ -870,6 +871,7 @@ const C = {
     tyT1:'RECEIVED',tyV1:'application logged - pending manual review',
     tyT2:'STATUS',tyV2:'202 accepted',
     tyT3:'NEXT',tyV3:"we'll get back to you either way",
+    tyT4:'NUMBER', tyNumberPrefix:'#',
     tyHead:'Accepted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     ftR:'connection closed',
@@ -964,6 +966,7 @@ const C = {
     tyT1:'ПОЛУЧЕНО',tyV1:'заявка записана - ожидает проверки',
     tyT2:'СТАТУС',tyV2:'202 принято',
     tyT3:'ДАЛЕЕ',tyV3:'ответим в любом случае',
+    tyT4:'НОМЕР', tyNumberPrefix:'№',
     tyHead:'Принято, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     ftR:'соединение закрыто',
@@ -982,6 +985,7 @@ let lang = 'ru';
 // scroll to (the form is hidden) - repoint it at the support chat instead
 // of leaving a button that visibly does nothing.
 let applicationSubmitted = false;
+let lastApplicationNumber = null;
 
 // ── UTM: считываем метки один раз при загрузке, прикладываем к каждой отправке ──
 const utmParams = (function(){
@@ -1112,6 +1116,8 @@ function render(){
   g('ty-t1').textContent=t('tyT1'); g('ty-v1').textContent=t('tyV1');
   g('ty-t2').textContent=t('tyT2'); g('ty-v2').textContent=t('tyV2');
   g('ty-t3').textContent=t('tyT3'); g('ty-v3').textContent=t('tyV3');
+  g('ty-t4').textContent=t('tyT4');
+  updateTyNumber();
   g('ty-head').textContent=t('tyHead');
   g('ty-body').textContent=t('tyBody');
   g('ft-r').textContent=t('ftR');
@@ -1141,6 +1147,10 @@ function render(){
 function spaceOutKeyValuePairs(){
   document.querySelectorAll('.tag, .rule-key').forEach(keyEl => {
     const valEl = keyEl.nextElementSibling;
+    // ty-v4 manages its own leading space in updateTyNumber() (it's set
+    // conditionally, only once a real number exists) - spacing it here too
+    // would double up every time render() runs after that.
+    if(valEl && valEl.id === 'ty-v4') return;
     if(valEl && valEl.children.length === 0){
       valEl.textContent = ' ' + valEl.textContent;
     }
@@ -1155,6 +1165,20 @@ function logConsoleHint(){
 }
 
 // ── STATUS BAR: founding-rate pricing only shows while the offer is live ──
+// Applicant number line on the thank-you screen - hidden until a real
+// number comes back from the backend, re-synced on every render() so a
+// language switch after submitting still shows the right prefix (№/#).
+function updateTyNumber(){
+  const line = g('ty-line4');
+  if(!line) return;
+  if(lastApplicationNumber){
+    g('ty-v4').textContent = ' ' + t('tyNumberPrefix') + lastApplicationNumber;
+    line.style.display = '';
+  } else {
+    line.style.display = 'none';
+  }
+}
+
 function renderStatusBar(){
   const active = foundingActive();
   const founding = g('sb-founding');
@@ -1631,11 +1655,14 @@ async function submitForm(){
       throw new Error(errCode === 'attempt_limit' ? 'attempt_limit' : 'submit failed: '+res.status);
     }
 
+    try{ lastApplicationNumber = (await res.json()).number || null; }catch(e){}
+
     clearDraft();
     g('pfill').style.width='100%';
     g('pnum').textContent='14 / 14';
     g('test-section').style.display='none';
     const ty=g('ty');
+    updateTyNumber();
     ty.style.display='block';
     ty.scrollIntoView({behavior:'smooth'});
     applicationSubmitted = true;
