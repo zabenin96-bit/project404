@@ -343,6 +343,11 @@ body.lang-switching { opacity: 0; }
   transition: none;
 }
 #test-section.fs-mode .fs-close { display: flex; }
+/* The intro paragraph is only meant for the normal page scroll (visible
+   while browsing before the CTA is clicked) - once fullscreen takes over,
+   the progress bar and question move up to be the first thing visible. */
+#test-section.fs-mode .section-grid { display: none; }
+#test-section.fs-mode .progress-wrap { margin-top: 0; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
    that ~0.25s it would become the containing block instead of the viewport,
@@ -359,6 +364,22 @@ body.lang-switching { opacity: 0; }
   border-top: 1px solid var(--line);
   padding: 16px 10vw calc(16px + env(safe-area-inset-bottom));
   z-index: 221;
+  box-shadow: 0 -16px 32px rgba(0,0,0,0.35);
+}
+/* Fullscreen is now the primary place people click "Далее" - give the
+   primary action the same amber accent as the hero CTA instead of the
+   plain filled-white button used inline, and give it more room to breathe
+   now that it isn't competing with page content for space. */
+#test-section.fs-mode .btn-p,
+#test-section.fs-mode .btn-sub {
+  background: var(--amber);
+  color: var(--bg);
+  padding: 13px 30px;
+  font-size: 13px;
+  font-weight: 700;
+}
+#test-section.fs-mode .btn-b {
+  padding: 13px 6px;
 }
 .fs-close { display: none; align-items: center; justify-content: center; position: fixed; top: 14px; left: 14px; width: 44px; height: 44px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; z-index: 222; transition: color 0.15s ease; }
 .fs-close:hover { color: var(--text); }
@@ -370,14 +391,10 @@ body.fs-active .scroll-progress, body.fs-active .statusbar { display: none; }
 body.fs-active #main { transform: none; }
 
 /* ── REVIEW SCREEN ── */
-.review-return { background: none; border: none; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; padding: 10px 0; margin-top: 4px; min-height: 44px; text-align: left; }
-/* A real button (unlike .review-return above) so it doesn't read as
-   stray text next to the other buttons, but muted/outlined rather than
-   filled - stays visibly secondary to "Отправить", not an equal
-   competing CTA. */
+/* Muted/outlined rather than filled - stays visibly secondary to
+   "Отправить", not an equal competing CTA. */
 .skip-review { display: inline-block; background: none; border: 1px solid var(--line-strong); border-radius: 4px; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; padding: 10px 18px; min-height: 44px; transition: color 0.15s ease, border-color 0.15s ease; }
 .skip-review:hover { color: var(--text); border-color: var(--dim); }
-.review-return:hover { color: var(--text); }
 .review-row { padding: 14px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; }
 .review-row:first-child { border-top: 1px solid var(--line); }
 .review-q { font-size: 12px; color: var(--dim); }
@@ -709,15 +726,13 @@ body { padding-bottom: 60px; }
     <button type="button" class="fs-close" id="fs-close" onclick="exitFsMode()" aria-label="Close">✕</button>
     <div class="section-grid" style="margin-bottom:0">
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
-      <p class="test-intro" id="test-intro">Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.</p>
+      <p class="test-intro" id="test-intro">Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.</p>
     </div>
 
     <div class="progress-wrap">
       <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
       <div class="progress-num" id="pnum">0 / 11</div>
     </div>
-    <button type="button" class="review-return" id="review-return" onclick="showReview()" style="display:none;"></button>
-
     <div class="q-block active" id="q1">
       <div class="q-tag" id="q1l">01 / 11 - ОСНОВЫ</div>
       <div class="q-text" id="q1t">Чем занимаешься? Опиши главный проект или работу одним предложением.</div>
@@ -899,7 +914,7 @@ const C = {
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review answers',
     reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
-    reviewEdit:'Edit', reviewReturn:'← Back to review', reviewProgress:'Review', skipReview:'Submit',
+    reviewEdit:'Edit', reviewProgress:'Review', skipReview:'Submit',
     heroHl:'A closed community for founders, creative leaders, and specialists in adjacent fields.',
     heroBody:'Selection is strictly by application.',
     heroCta:'Apply',
@@ -950,8 +965,7 @@ const C = {
     notifySent:'Got it - we\'ll remind you later.',
     notifyEmptyWarn:'Enter your Telegram or email.',
     wlPre:'// APPLICATION',
-    testIntro:'First step: answer 11 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $250/mo.',
-    testIntroFounding:'First step: answer 11 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo for their first 2 months (apply by Aug 31), then $250/mo.',
+    testIntro:'First step: answer 11 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back.',
     q1l:'01 / 11 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
     q2l:'02 / 11 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 11 - BASICS',q3t:'What stage is your project at right now?',q3o:['Pre-revenue - testing hypotheses, running on pure hustle.','Getting some traction, but not stable yet - building the plane while flying it.',"Stable - the processes work, but I'm itching to reach for more.","Scaling - the team's growing, and so is the headache."],
@@ -994,7 +1008,7 @@ const C = {
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить ответы',
     reviewTag:'ПРОВЕРКА ОТВЕТОВ', reviewHeading:'Проверь ответы перед отправкой.',
-    reviewEdit:'Изменить', reviewReturn:'← Вернуться к проверке', reviewProgress:'Проверка', skipReview:'Отправить',
+    reviewEdit:'Изменить', reviewProgress:'Проверка', skipReview:'Отправить',
     heroHl:'Закрытое сообщество для фаундеров, креативных лидеров и специалистов смежных сфер.',
     heroBody:'Отбор строго по анкете.',
     heroCta:'Пройти отбор',
@@ -1045,8 +1059,7 @@ const C = {
     notifySent:'Записали - напомним позже.',
     notifyEmptyWarn:'Укажи Telegram или email.',
     wlPre:'// ОТБОР',
-    testIntro:'Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $250/мес.',
-    testIntroFounding:'Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.',
+    testIntro:'Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.',
     q1l:'01 / 11 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 11 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 11 - ОСНОВЫ',q3t:'На каком этапе сейчас твой проект?',q3o:['До выручки - тестирую гипотезы, строю на голом энтузиазме.','Есть результаты, но нестабильно - строю самолёт прямо в полёте.','Стабильно - процессы работают, но чешутся руки замахнуться на большее.','Масштабирование - команда растёт, и головная боль вместе с ней.'],
@@ -1191,7 +1204,7 @@ function render(){
   g('notify-contact').placeholder = t('notifyPh');
   g('notify-btn').textContent = t('notifyBtn');
   g('wl-pre').textContent = t('wlPre');
-  g('test-intro').textContent = foundingActive() ? t('testIntroFounding') : t('testIntro');
+  g('test-intro').textContent = t('testIntro');
   for(let i=1;i<=11;i++){
     const lel=g('q'+i+'l'), tel=g('q'+i+'t');
     if(lel) lel.textContent=t('q'+i+'l');
@@ -1213,7 +1226,6 @@ function render(){
   if(submitBtn && !submitBtn.disabled) submitBtn.textContent = t('navSubmit');
   const gotoReviewBtn = g('goto-review-btn');
   if(gotoReviewBtn) gotoReviewBtn.textContent = t('navReview');
-  g('review-return').textContent = t('reviewReturn');
   const skipReviewBtn = g('skip-review-btn');
   if(skipReviewBtn && !skipReviewBtn.disabled) skipReviewBtn.textContent = t('skipReview');
   g('review-tag').textContent = t('reviewTag');
@@ -1405,7 +1417,6 @@ let maxReachedQ = 1;
 function updProg(n){
   g('pfill').style.width=((n-1)/11*100)+'%';
   g('pnum').textContent=(n-1)+' / 11';
-  g('review-return').style.display = maxReachedQ >= 11 ? 'block' : 'none';
 }
 
 // ── REVIEW SCREEN ──
@@ -1495,7 +1506,6 @@ function showReview(){
   showBlock('q-review');
   g('pfill').style.width = '100%';
   g('pnum').textContent = t('reviewProgress');
-  g('review-return').style.display = 'none';
   saveDraft();
 }
 
@@ -1731,7 +1741,6 @@ function restoreDraft(){
     showBlock('q-review');
     g('pfill').style.width = '100%';
     g('pnum').textContent = t('reviewProgress');
-    g('review-return').style.display = 'none';
     return;
   }
 
