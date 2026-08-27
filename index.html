@@ -349,21 +349,6 @@ body.lang-switching { opacity: 0; }
    can't trigger the same bug. */
 @keyframes fsFadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes fsPopIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
-/* A thin amber line sweeping top-to-bottom as the form opens - the same
-   "scan" language as the amber highlight-sweep on the hero's "results."
-   (hlSweep) and the progress bar's own accent color, so the entrance reads
-   as this site's signature move instead of a generic modal fade. Lives on
-   its own element rather than reusing the real progress bar, so it can't
-   collide with updProg()'s live width updates on every question change.
-   It's a sibling of .q-nav, never an ancestor, so animating its transform
-   is safe - the containing-block gotcha above only applies to elements
-   .q-nav is actually nested inside. */
-@keyframes fsScan {
-  0% { transform: translateY(0); opacity: 0; }
-  10% { opacity: 1; }
-  88% { opacity: 1; }
-  100% { transform: translateY(100vh); opacity: 0; }
-}
 #test-section.fs-mode {
   position: fixed;
   inset: 0;
@@ -390,7 +375,6 @@ body.lang-switching { opacity: 0; }
   animation: fsFadeIn 0.35s ease both;
 }
 #test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.3s ease 0.1s both; }
-#test-section.fs-mode .fs-scan { display: block; animation: fsScan 0.55s cubic-bezier(.4,0,.2,1) both; }
 /* The intro paragraph is only meant for the normal page scroll (visible
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
@@ -489,7 +473,6 @@ body.lang-switching { opacity: 0; }
 }
 .fs-close { display: none; align-items: center; justify-content: center; position: fixed; top: 14px; left: 14px; width: 44px; height: 44px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; z-index: 222; transition: color 0.15s ease; }
 .fs-close:hover { color: var(--text); }
-.fs-scan { display: none; position: fixed; left: 0; right: 0; top: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--amber) 20%, var(--amber) 80%, transparent); box-shadow: 0 0 10px 1px var(--amber); z-index: 223; pointer-events: none; opacity: 0; }
 body.fs-active { overflow: hidden; }
 body.fs-active .scroll-progress, body.fs-active .statusbar { display: none; }
 /* #main.show (the page's own entrance fade-in) sets transform: translateY(0)
@@ -836,7 +819,6 @@ body { padding-bottom: 60px; }
   <!-- TEST -->
   <div class="section reveal" id="test-section">
     <button type="button" class="fs-close" id="fs-close" onclick="exitFsMode()" aria-label="Close">✕</button>
-    <div class="fs-scan" id="fs-scan" aria-hidden="true"></div>
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
       <div class="test-intro-wrap">
