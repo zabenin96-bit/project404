@@ -692,7 +692,7 @@ body { padding-bottom: 60px; }
 
     <div class="q-block" id="q4">
       <div class="q-tag" id="q4l">04 / 11 - ГЛУБИНА</div>
-      <div class="q-text" id="q4t">Расскажи о сложном решении или провале за последний год: что произошло и какой главный вывод ты сделал(а)?</div>
+      <div class="q-text" id="q4t">Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?</div>
       <textarea class="q-textarea" id="q4v" placeholder="Конкретно - расплывчатые ответы ничего не говорят."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(4)">← Назад</button><button class="btn-p" onclick="nx(4)">Далее →</button></div>
     </div>
@@ -719,7 +719,7 @@ body { padding-bottom: 60px; }
 
     <div class="q-block" id="q7">
       <div class="q-tag" id="q7l">07 / 11 - ФИЛЬТР</div>
-      <div class="q-text" id="q7t">Тебе дают 20 минут с человеком, который уже прошёл твой текущий кризис или тупик. Что ты у него спросишь?</div>
+      <div class="q-text" id="q7t">Тебе дают 20 минут с тем, кто уже прошёл твой кризис. Что спросишь?</div>
       <textarea class="q-textarea" id="q7v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(7)">← Назад</button><button class="btn-p" onclick="nx(7)">Далее →</button></div>
     </div>
@@ -740,7 +740,7 @@ body { padding-bottom: 60px; }
 
     <div class="q-block" id="q10">
       <div class="q-tag" id="q10l">10 / 11 - ФИЛЬТР</div>
-      <div class="q-text" id="q10t">Вспомни случай, когда ты помог(ла) кому-то в бизнесе или профессии, вообще не ожидая ничего взамен. Что это было?</div>
+      <div class="q-text" id="q10t">Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?</div>
       <textarea class="q-textarea" id="q10v" placeholder="Конкретный случай - не общие слова про «всегда помогаю людям»."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(10)">← Назад</button><button class="btn-p" onclick="nx(10)">Далее →</button></div>
     </div>
@@ -895,13 +895,13 @@ const C = {
     q1l:'01 / 11 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
     q2l:'02 / 11 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 11 - BASICS',q3t:'What stage is your project at right now?',q3o:['Pre-revenue - testing hypotheses, running on pure hustle.','Getting some traction, but not stable yet - building the plane while flying it.',"Stable - the processes work, but I'm itching to reach for more.","Scaling - the team's growing, and so is the headache."],
-    q4l:'04 / 11 - DEPTH',q4t:'Tell us about a hard decision or failure from the past year - what happened, and what was the main thing you took away from it?',q4p:'Be specific. Vague answers tell us nothing.',
+    q4l:'04 / 11 - DEPTH',q4t:'Tell us about a hard decision or failure this year. What did you learn?',q4p:'Be specific. Vague answers tell us nothing.',
     q5l:'05 / 11 - DEPTH',q5t:'What do you actually want from a community like this?',q5o:['Access to specific skills or expertise','Accountability. Someone to answer to','Drop the "successful leader" act and talk about real struggles safely','Find my people - others who think critically the way I do','Honest feedback on my ideas, without the flattery'],
     q6l:'06 / 11 - CONTEXT',q6t:'Where are you based?',
-    q7l:'07 / 11 - FILTER',q7t:"You get 20 minutes with someone who's already been through whatever you're stuck on right now. What do you ask them?",
+    q7l:'07 / 11 - FILTER',q7t:"20 minutes with someone who's already past your crisis. What do you ask?",
     q8l:'08 / 11 - FILTER',q8t:'What do most people in your field get fatally wrong?',q8p:"Be specific - generic takes don't count.",
     q9l:'09 / 11 - FILTER',q9t:'What in this application felt unnecessary, dumb, or manipulative?',
-    q10l:'10 / 11 - FILTER',q10t:'Think of a time you helped someone in business or their profession, expecting nothing back. What was it?',q10p:"A specific instance - not a general 'I always help people.'",
+    q10l:'10 / 11 - FILTER',q10t:'When did you help someone at work, expecting nothing back? What was it?',q10p:"A specific instance - not a general 'I always help people.'",
     q11l:'11 / 11 - CONTACT',q11t:'Name, a way to reach you, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Link to a profile that represents you best - optional',
     ageHint:'Strictly 18+.', age18Label:"I confirm I'm 18 or older.",
     reqWarnAge:'You must be 18 or older to apply.',
@@ -990,13 +990,13 @@ const C = {
     q1l:'01 / 11 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 11 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 11 - ОСНОВЫ',q3t:'На каком этапе сейчас твой проект?',q3o:['До выручки - тестирую гипотезы, строю на голом энтузиазме.','Есть результаты, но нестабильно - строю самолёт прямо в полёте.','Стабильно - процессы работают, но чешутся руки замахнуться на большее.','Масштабирование - команда растёт, и головная боль вместе с ней.'],
-    q4l:'04 / 11 - ГЛУБИНА',q4t:'Расскажи о сложном решении или провале за последний год: что произошло и какой главный вывод ты сделал(а)?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
+    q4l:'04 / 11 - ГЛУБИНА',q4t:'Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
     q5l:'05 / 11 - ГЛУБИНА',q5t:'Чего ты на самом деле хочешь от такого сообщества?',q5o:['Доступ к конкретным навыкам и экспертизе','Ответственность. Чтобы было перед кем отчитываться','Снять маску «успешного лидера» и безопасно поговорить о трудностях','Найти своих - людей с похожим критическим мышлением','Честную обратную связь на свои идеи без лести'],
     q6l:'06 / 11 - КОНТЕКСТ',q6t:'Где ты находишься?',
-    q7l:'07 / 11 - ФИЛЬТР',q7t:'Тебе дают 20 минут с человеком, который уже прошёл твой текущий кризис или тупик. Что ты у него спросишь?',
+    q7l:'07 / 11 - ФИЛЬТР',q7t:'Тебе дают 20 минут с тем, кто уже прошёл твой кризис. Что спросишь?',
     q8l:'08 / 11 - ФИЛЬТР',q8t:'В чём большинство людей в твоей сфере фатально ошибается или заблуждается?',q8p:'Будь конкретен(-на) - общие фразы не считаются.',
     q9l:'09 / 11 - ФИЛЬТР',q9t:'Что в этой анкете показалось тебе лишним, глупым или манипулятивным?',
-    q10l:'10 / 11 - ФИЛЬТР',q10t:'Вспомни случай, когда ты помог(ла) кому-то в бизнесе или профессии, вообще не ожидая ничего взамен. Что это было?',q10p:'Конкретный случай - не общие слова про «всегда помогаю людям».',
+    q10l:'10 / 11 - ФИЛЬТР',q10t:'Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?',q10p:'Конкретный случай - не общие слова про «всегда помогаю людям».',
     q11l:'11 / 11 - КОНТАКТ',q11t:'Имя, способ связи и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль, который лучше всего тебя отражает - необязательно',
     ageHint:'Строго 18+.', age18Label:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
