@@ -301,14 +301,14 @@ body.lang-switching { opacity: 0; }
 .q-nav { display: flex; gap: 16px; margin-top: 28px; align-items: flex-start; }
 .q-hint { font-size: 12px; color: var(--dim); margin-top: 10px; }
 
-/* Q14's nav has 3 actions instead of the usual 2, so it gets its own grid:
+/* Q11's nav has 3 actions instead of the usual 2, so it gets its own grid:
    one row on desktop; on mobile "Проверить ответы" drops to its own row,
    stretched to match the combined width of the row above it. */
-.q-nav-14 { display: grid; grid-template-columns: auto auto auto; grid-template-areas: "back submit review"; column-gap: 16px; row-gap: 12px; align-items: center; }
-.q-nav-14 .btn-b { grid-area: back; }
-.q-nav-14 #skip-review-btn { grid-area: submit; }
-.q-nav-14 #goto-review-btn { grid-area: review; }
-.q-nav-14 .btn-b, .q-nav-14 #skip-review-btn, .q-nav-14 #goto-review-btn { height: 44px; display: inline-flex; align-items: center; justify-content: center; }
+.q-nav-11 { display: grid; grid-template-columns: auto auto auto; grid-template-areas: "back submit review"; column-gap: 16px; row-gap: 12px; align-items: center; }
+.q-nav-11 .btn-b { grid-area: back; }
+.q-nav-11 #skip-review-btn { grid-area: submit; }
+.q-nav-11 #goto-review-btn { grid-area: review; }
+.q-nav-11 .btn-b, .q-nav-11 #skip-review-btn, .q-nav-11 #goto-review-btn { height: 44px; display: inline-flex; align-items: center; justify-content: center; }
 
 /* ── REVIEW SCREEN ── */
 .review-return { background: none; border: none; color: var(--dim); font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; padding: 10px 0; margin-top: 4px; min-height: 44px; text-align: left; }
@@ -490,8 +490,8 @@ body { padding-bottom: 60px; }
   /* "Проверить ответы" drops to its own row, stretched to the combined
      width of "Назад" + "Отправить" above it rather than left-aligned
      at its own natural (shorter) width. */
-  .q-nav-14 { grid-template-columns: auto auto; grid-template-areas: "back submit" "review review"; }
-  .q-nav-14 #goto-review-btn { justify-self: stretch; }
+  .q-nav-11 { grid-template-columns: auto auto; grid-template-areas: "back submit" "review review"; }
+  .q-nav-11 #goto-review-btn { justify-self: stretch; }
 }
 </style>
 </head>
@@ -638,7 +638,7 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="proc-pre">// ПРОЦЕСС</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="proc1t">01 - Заявка</span><span class="rule-val" id="proc1d"> 14 вопросов, без ограничения по времени.</span></li>
+        <li><span class="rule-key" id="proc1t">01 - Заявка</span><span class="rule-val" id="proc1d"> 11 вопросов, без ограничения по времени.</span></li>
         <li><span class="rule-key" id="proc2t">02 - Проверка</span><span class="rule-val" id="proc2d"> Каждый ответ читает человек, не алгоритм. Ответ даём в любом случае.</span></li>
         <li><span class="rule-key" id="proc3t">03 - Приём либо повторная заявка</span><span class="rule-val" id="proc3d"> Если приняли - поздравляем. Если нет - можно попробовать снова.</span></li>
       </ul>
@@ -649,17 +649,17 @@ body { padding-bottom: 60px; }
   <div class="section reveal" id="test-section">
     <div class="section-grid" style="margin-bottom:0">
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
-      <p class="test-intro" id="test-intro">Первый шаг: ответь на 14 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.</p>
+      <p class="test-intro" id="test-intro">Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.</p>
     </div>
 
     <div class="progress-wrap">
       <div class="progress-track"><div class="progress-fill" id="pfill"></div></div>
-      <div class="progress-num" id="pnum">0 / 14</div>
+      <div class="progress-num" id="pnum">0 / 11</div>
     </div>
     <button type="button" class="review-return" id="review-return" onclick="showReview()" style="display:none;"></button>
 
     <div class="q-block active" id="q1">
-      <div class="q-tag" id="q1l">01 / 14 - ОСНОВЫ</div>
+      <div class="q-tag" id="q1l">01 / 11 - ОСНОВЫ</div>
       <div class="q-text" id="q1t">Чем занимаешься? Опиши главный проект или работу одним предложением.</div>
       <textarea class="q-textarea" id="q1v" placeholder="Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов."></textarea>
       <div class="q-nav"><button class="btn-p" onclick="nx(1)">Далее →</button></div>
@@ -667,7 +667,7 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="q-block" id="q2">
-      <div class="q-tag" id="q2l">02 / 14 - ОСНОВЫ</div>
+      <div class="q-tag" id="q2l">02 / 11 - ОСНОВЫ</div>
       <div class="q-text" id="q2t">Сколько ты этим занимаешься?</div>
       <div class="q-opts">
         <label class="q-opt"><input type="radio" name="q2" value="a"><span id="q2a">Меньше 6 месяцев</span></label>
@@ -679,8 +679,8 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="q-block" id="q3">
-      <div class="q-tag" id="q3l">03 / 14 - ОСНОВЫ</div>
-      <div class="q-text" id="q3t">Где сейчас находишься?</div>
+      <div class="q-tag" id="q3l">03 / 11 - ОСНОВЫ</div>
+      <div class="q-text" id="q3t">На каком этапе сейчас твой проект?</div>
       <div class="q-opts">
         <label class="q-opt"><input type="radio" name="q3" value="a"><span id="q3a">До выручки, строю</span></label>
         <label class="q-opt"><input type="radio" name="q3" value="b"><span id="q3b">Есть результаты, но пока нестабильно</span></label>
@@ -691,97 +691,76 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="q-block" id="q4">
-      <div class="q-tag" id="q4l">04 / 14 - ГЛУБИНА</div>
-      <div class="q-text" id="q4t">Какое было самое трудное решение в твоей работе за последние 12 месяцев?</div>
+      <div class="q-tag" id="q4l">04 / 11 - ГЛУБИНА</div>
+      <div class="q-text" id="q4t">Расскажи о сложном решении или провале за последний год: что произошло и какой главный вывод ты сделал(а)?</div>
       <textarea class="q-textarea" id="q4v" placeholder="Конкретно - расплывчатые ответы ничего не говорят."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(4)">← Назад</button><button class="btn-p" onclick="nx(4)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q5">
-      <div class="q-tag" id="q5l">05 / 14 - ГЛУБИНА</div>
-      <div class="q-text" id="q5t">В чём облажался(-ась) в этом году? Что это дало понять?</div>
-      <textarea class="q-textarea" id="q5v"></textarea>
+      <div class="q-tag" id="q5l">05 / 11 - ГЛУБИНА</div>
+      <div class="q-text" id="q5t">Чего ты на самом деле хочешь от такого сообщества?</div>
+      <div class="q-opts">
+        <label class="q-opt"><input type="checkbox" name="q5" value="a"><span id="q5a">Доступ к конкретным навыкам и экспертизе</span></label>
+        <label class="q-opt"><input type="checkbox" name="q5" value="b"><span id="q5b">Ответственность. Чтобы было перед кем отчитываться</span></label>
+        <label class="q-opt"><input type="checkbox" name="q5" value="c"><span id="q5c">Снять маску «успешного лидера» и безопасно поговорить о трудностях</span></label>
+        <label class="q-opt"><input type="checkbox" name="q5" value="d"><span id="q5d">Найти своих - людей с похожим критическим мышлением</span></label>
+        <label class="q-opt"><input type="checkbox" name="q5" value="e"><span id="q5e">Честную обратную связь на свои идеи без лести</span></label>
+      </div>
       <div class="q-nav"><button class="btn-b" onclick="bk(5)">← Назад</button><button class="btn-p" onclick="nx(5)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q6">
-      <div class="q-tag" id="q6l">06 / 14 - ГЛУБИНА</div>
-      <div class="q-text" id="q6t">Чего ты на самом деле хочешь от такого сообщества?</div>
-      <div class="q-opts">
-        <label class="q-opt"><input type="checkbox" name="q6" value="a"><span id="q6a">Людей, рядом с которыми хочется выкладываться сильнее</span></label>
-        <label class="q-opt"><input type="checkbox" name="q6" value="b"><span id="q6b">Доступ к конкретным навыкам и экспертизе</span></label>
-        <label class="q-opt"><input type="checkbox" name="q6" value="c"><span id="q6c">Нетворкинг, который может во что-то перерасти</span></label>
-        <label class="q-opt"><input type="checkbox" name="q6" value="d"><span id="q6d">Место, где можно говорить о провалах и неудачах</span></label>
-        <label class="q-opt"><input type="checkbox" name="q6" value="e"><span id="q6e">Ответственность. Чтобы было перед кем отчитываться</span></label>
-      </div>
+      <div class="q-tag" id="q6l">06 / 11 - КОНТЕКСТ</div>
+      <div class="q-text" id="q6t">Где ты находишься?</div>
+      <input class="q-input" id="q6v" type="text">
       <div class="q-nav"><button class="btn-b" onclick="bk(6)">← Назад</button><button class="btn-p" onclick="nx(6)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q7">
-      <div class="q-tag" id="q7l">07 / 14 - КОНТЕКСТ</div>
-      <div class="q-text" id="q7t">Где ты находишься?</div>
-      <input class="q-input" id="q7v" type="text">
+      <div class="q-tag" id="q7l">07 / 11 - ФИЛЬТР</div>
+      <div class="q-text" id="q7t">Тебе дают 20 минут с человеком, который уже прошёл твой текущий кризис или тупик. Что ты у него спросишь?</div>
+      <textarea class="q-textarea" id="q7v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(7)">← Назад</button><button class="btn-p" onclick="nx(7)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q8">
-      <div class="q-tag" id="q8l">08 / 14 - ФИЛЬТР</div>
-      <div class="q-text" id="q8t">Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?</div>
-      <textarea class="q-textarea" id="q8v"></textarea>
+      <div class="q-tag" id="q8l">08 / 11 - ФИЛЬТР</div>
+      <div class="q-text" id="q8t">В чём большинство людей в твоей сфере фатально ошибается или заблуждается?</div>
+      <textarea class="q-textarea" id="q8v" placeholder="Будь конкретен(-на) - общие фразы не считаются."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(8)">← Назад</button><button class="btn-p" onclick="nx(8)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q9">
-      <div class="q-tag" id="q9l">09 / 14 - ФИЛЬТР</div>
-      <div class="q-text" id="q9t">В чём большинство людей в твоей сфере ошибается?</div>
+      <div class="q-tag" id="q9l">09 / 11 - ФИЛЬТР</div>
+      <div class="q-text" id="q9t">Что в этой анкете показалось тебе лишним, глупым или манипулятивным?</div>
       <textarea class="q-textarea" id="q9v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(9)">← Назад</button><button class="btn-p" onclick="nx(9)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q10">
-      <div class="q-tag" id="q10l">10 / 14 - ФИЛЬТР</div>
-      <div class="q-text" id="q10t">Что в этой анкете показалось тебе лишним или манипулятивным?</div>
-      <textarea class="q-textarea" id="q10v"></textarea>
+      <div class="q-tag" id="q10l">10 / 11 - ФИЛЬТР</div>
+      <div class="q-text" id="q10t">Вспомни случай, когда ты помог(ла) кому-то в бизнесе или профессии, вообще не ожидая ничего взамен. Что это было?</div>
+      <textarea class="q-textarea" id="q10v" placeholder="Конкретный случай - не общие слова про «всегда помогаю людям»."></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(10)">← Назад</button><button class="btn-p" onclick="nx(10)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q11">
-      <div class="q-tag" id="q11l">11 / 14 - ФИЛЬТР</div>
-      <div class="q-text" id="q11t">Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?</div>
-      <textarea class="q-textarea" id="q11v"></textarea>
-      <div class="q-nav"><button class="btn-b" onclick="bk(11)">← Назад</button><button class="btn-p" onclick="nx(11)">Далее →</button></div>
-    </div>
-
-    <div class="q-block" id="q12">
-      <div class="q-tag" id="q12l">12 / 14 - ФИЛЬТР</div>
-      <div class="q-text" id="q12t">Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.</div>
-      <textarea class="q-textarea" id="q12v"></textarea>
-      <div class="q-nav"><button class="btn-b" onclick="bk(12)">← Назад</button><button class="btn-p" onclick="nx(12)">Далее →</button></div>
-    </div>
-
-    <div class="q-block" id="q13">
-      <div class="q-tag" id="q13l">13 / 14 - ФИНАЛ</div>
-      <div class="q-text" id="q13t">Почему мы должны взять тебя, а не другого кандидата?</div>
-      <textarea class="q-textarea" id="q13v"></textarea>
-      <div class="q-nav"><button class="btn-b" onclick="bk(13)">← Назад</button><button class="btn-p" onclick="nx(13)">Далее →</button></div>
-    </div>
-
-    <div class="q-block" id="q14">
-      <div class="q-tag" id="q14l">14 / 14 - КОНТАКТ</div>
-      <div class="q-text" id="q14t">Имя, возраст и способ связи.</div>
-      <input class="q-input" id="q14n" type="text" placeholder="Имя" style="margin-bottom:18px;">
-      <input class="q-input" id="q14age" type="number" inputmode="numeric" min="1" max="120" placeholder="Возраст" style="margin-bottom:18px;">
-      <input class="q-input" id="q14c" type="text" placeholder="Telegram / Instagram / Email">
-      <p class="q-hint" id="q14h">Строго 18+.</p>
-      <label class="consent-row" id="q14consentRow"><input type="checkbox" id="q14consent"><span id="q14cl">Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.</span></label>
-      <div class="q-nav q-nav-14"><button class="btn-b" onclick="bk(14)">← Назад</button><button type="button" class="btn-sub" id="skip-review-btn" onclick="submitForm()">Отправить</button><button class="skip-review" id="goto-review-btn" onclick="showReview()">Проверить ответы</button></div>
+      <div class="q-tag" id="q11l">11 / 11 - КОНТАКТ</div>
+      <div class="q-text" id="q11t">Имя, способ связи и ссылка на профиль.</div>
+      <input class="q-input" id="q11n" type="text" placeholder="Имя" style="margin-bottom:18px;">
+      <input class="q-input" id="q11c" type="text" placeholder="Telegram / Instagram / Email" style="margin-bottom:18px;">
+      <input class="q-input" id="q11link" type="text" placeholder="Ссылка на профиль, который лучше всего тебя отражает - необязательно">
+      <label class="consent-row" id="q11ageRow"><input type="checkbox" id="q11age18"><span id="q11age18label">Подтверждаю, что мне есть 18 лет.</span></label>
+      <label class="consent-row" id="q11consentRow"><input type="checkbox" id="q11consent"><span id="q11cl">Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.</span></label>
+      <div class="q-nav q-nav-11"><button class="btn-b" onclick="bk(11)">← Назад</button><button type="button" class="btn-sub" id="skip-review-btn" onclick="submitForm()">Отправить</button><button class="skip-review" id="goto-review-btn" onclick="showReview()">Проверить ответы</button></div>
     </div>
 
     <div class="q-block" id="q-review">
       <div class="q-tag" id="review-tag">ПРОВЕРКА ОТВЕТОВ</div>
       <div class="q-text" id="review-heading">Проверь ответы перед отправкой.</div>
       <div id="review-list"></div>
-      <div class="q-nav"><button class="btn-b" onclick="jumpToQ(14)">← Назад</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Отправить →</button></div>
+      <div class="q-nav"><button class="btn-b" onclick="jumpToQ(11)">← Назад</button><button class="btn-sub" id="submit-btn" onclick="submitForm()">Отправить →</button></div>
     </div>
   </div>
 
@@ -889,7 +868,7 @@ const C = {
     fmt6t:'Sprint / Retro',fmt6d:"Monday you state what you're doing this week - no advice given. Friday you note what worked and what didn't.",
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
-    proc1t:'01 - Apply',proc1d:'14 questions, no time limit.',
+    proc1t:'01 - Apply',proc1d:'11 questions, no time limit.',
     proc2t:'02 - Review',proc2d:'A person reads every answer, not an algorithm. You get a response either way.',
     proc3t:'03 - Accept or reapply',proc3d:"Accepted - congrats. Not this round: you can try again.",
     faqPre:'// FAQ',
@@ -911,22 +890,20 @@ const C = {
     notifySent:'Got it - we\'ll remind you later.',
     notifyEmptyWarn:'Enter your Telegram or email.',
     wlPre:'// APPLICATION',
-    testIntro:'First step: answer 14 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $250/mo.',
-    testIntroFounding:'First step: answer 14 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo for their first 2 months (apply by Aug 31), then $250/mo.',
-    q1l:'01 / 14 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
-    q2l:'02 / 14 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
-    q3l:'03 / 14 - BASICS',q3t:'Where are you right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
-    q4l:'04 / 14 - DEPTH',q4t:"What's the hardest decision you've made in your work in the last 12 months?",q4p:'Be specific. Vague answers tell us nothing.',
-    q5l:'05 / 14 - DEPTH',q5t:'What have you failed at this year? What did you learn?',
-    q6l:'06 / 14 - DEPTH',q6t:'What do you actually want from a community like this?',q6o:['People who inspire me to push harder than I would on my own','Access to specific skills or expertise','Networking that might turn into something','A place to talk about failures and setbacks','Accountability. Someone to answer to'],
-    q7l:'07 / 14 - CONTEXT',q7t:'Where are you based?',
-    q8l:'08 / 14 - FILTER',q8t:'You get a call with someone more experienced than you in your field. 20 minutes. What do you ask?',
-    q9l:'09 / 14 - FILTER',q9t:"What's something most people in your field are wrong about?",
-    q10l:'10 / 14 - FILTER',q10t:'What in this application felt unnecessary or manipulative?',
-    q11l:'11 / 14 - FILTER',q11t:'What tool or method do you talk about like an expert but are actually still learning?',
-    q12l:'12 / 14 - FILTER',q12t:'Name one thing you gave to a community - any community - expecting nothing back.',
-    q13l:'13 / 14 - FINAL',q13t:'Why should we let you in over someone else who applied?',
-    q14l:'14 / 14 - CONTACT',q14t:'Your name, age, and a way to reach you.',q14p1:'Name',q14p2:'Telegram / Instagram / Email',q14p3:'Age',q14h:"Strictly 18+.",
+    testIntro:'First step: answer 11 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $250/mo.',
+    testIntroFounding:'First step: answer 11 questions, usually takes 10-15 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back. Accepted members pay $100/mo for their first 2 months (apply by Aug 31), then $250/mo.',
+    q1l:'01 / 11 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
+    q2l:'02 / 11 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
+    q3l:'03 / 11 - BASICS',q3t:'What stage is your project at right now?',q3o:['Pre-revenue, building','Getting some traction, but not stable yet','Stable, building systems','Scaling, team in place'],
+    q4l:'04 / 11 - DEPTH',q4t:'Tell us about a hard decision or failure from the past year - what happened, and what was the main thing you took away from it?',q4p:'Be specific. Vague answers tell us nothing.',
+    q5l:'05 / 11 - DEPTH',q5t:'What do you actually want from a community like this?',q5o:['Access to specific skills or expertise','Accountability. Someone to answer to','Drop the "successful leader" act and talk about real struggles safely','Find my people - others who think critically the way I do','Honest feedback on my ideas, without the flattery'],
+    q6l:'06 / 11 - CONTEXT',q6t:'Where are you based?',
+    q7l:'07 / 11 - FILTER',q7t:"You get 20 minutes with someone who's already been through whatever you're stuck on right now. What do you ask them?",
+    q8l:'08 / 11 - FILTER',q8t:'What do most people in your field get fatally wrong?',q8p:"Be specific - generic takes don't count.",
+    q9l:'09 / 11 - FILTER',q9t:'What in this application felt unnecessary, dumb, or manipulative?',
+    q10l:'10 / 11 - FILTER',q10t:'Think of a time you helped someone in business or their profession, expecting nothing back. What was it?',q10p:"A specific instance - not a general 'I always help people.'",
+    q11l:'11 / 11 - CONTACT',q11t:'Name, a way to reach you, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Link to a profile that represents you best - optional',
+    ageHint:'Strictly 18+.', age18Label:"I confirm I'm 18 or older.",
     reqWarnAge:'You must be 18 or older to apply.',
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
@@ -986,7 +963,7 @@ const C = {
     fmt6t:'Спринт / Ретро',fmt6d:'В понедельник фиксируешь, что делаешь на неделе - без советов. В пятницу коротко разбираешь, что сработало, а что нет.',
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
-    proc1t:'01 - Заявка',proc1d:'14 вопросов, без ограничения по времени.',
+    proc1t:'01 - Заявка',proc1d:'11 вопросов, без ограничения по времени.',
     proc2t:'02 - Проверка',proc2d:'Каждый ответ читает человек, не алгоритм. Ответ даём в любом случае.',
     proc3t:'03 - Приём либо повторная заявка',proc3d:'Если приняли - поздравляем. Если нет - можно попробовать снова.',
     faqPre:'// FAQ',
@@ -1008,22 +985,20 @@ const C = {
     notifySent:'Записали - напомним позже.',
     notifyEmptyWarn:'Укажи Telegram или email.',
     wlPre:'// ОТБОР',
-    testIntro:'Первый шаг: ответь на 14 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $250/мес.',
-    testIntroFounding:'Первый шаг: ответь на 14 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.',
-    q1l:'01 / 14 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
-    q2l:'02 / 14 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
-    q3l:'03 / 14 - ОСНОВЫ',q3t:'Где сейчас находишься?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
-    q4l:'04 / 14 - ГЛУБИНА',q4t:'Какое было самое трудное решение в твоей работе за последние 12 месяцев?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
-    q5l:'05 / 14 - ГЛУБИНА',q5t:'В чём облажался(-ась) в этом году? Что это дало понять?',
-    q6l:'06 / 14 - ГЛУБИНА',q6t:'Чего ты на самом деле хочешь от такого сообщества?',q6o:['Людей, рядом с которыми хочется выкладываться сильнее','Доступ к конкретным навыкам и экспертизе','Нетворкинг, который может во что-то перерасти','Место, где можно говорить о провалах и неудачах','Ответственность. Чтобы было перед кем отчитываться'],
-    q7l:'07 / 14 - КОНТЕКСТ',q7t:'Где ты находишься?',
-    q8l:'08 / 14 - ФИЛЬТР',q8t:'Тебе дают 20 минут с человеком опытнее тебя в твоей сфере. Что спрашиваешь?',
-    q9l:'09 / 14 - ФИЛЬТР',q9t:'В чём большинство людей в твоей сфере ошибается?',
-    q10l:'10 / 14 - ФИЛЬТР',q10t:'Что в этой анкете показалось тебе лишним или манипулятивным?',
-    q11l:'11 / 14 - ФИЛЬТР',q11t:'Какой инструмент или метод, о котором ты говоришь как эксперт, ты на самом деле только изучаешь?',
-    q12l:'12 / 14 - ФИЛЬТР',q12t:'Назови одну вещь, которую ты отдал(а) какому-то сообществу - любому - не ожидая ничего взамен.',
-    q13l:'13 / 14 - ФИНАЛ',q13t:'Почему мы должны взять тебя, а не другого кандидата?',
-    q14l:'14 / 14 - КОНТАКТ',q14t:'Имя, возраст и способ связи.',q14p1:'Имя',q14p2:'Telegram / Instagram / Email',q14p3:'Возраст',q14h:'Строго 18+.',
+    testIntro:'Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $250/мес.',
+    testIntroFounding:'Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже. Принятые участники платят $100/мес первые 2 месяца при подаче заявки до 31 августа, дальше - $250/мес.',
+    q1l:'01 / 11 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
+    q2l:'02 / 11 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
+    q3l:'03 / 11 - ОСНОВЫ',q3t:'На каком этапе сейчас твой проект?',q3o:['До выручки, строю','Есть результаты, но пока нестабильно','Стабильно, выстраиваю процессы','Масштабирование, есть команда'],
+    q4l:'04 / 11 - ГЛУБИНА',q4t:'Расскажи о сложном решении или провале за последний год: что произошло и какой главный вывод ты сделал(а)?',q4p:'Конкретно - расплывчатые ответы ничего не говорят.',
+    q5l:'05 / 11 - ГЛУБИНА',q5t:'Чего ты на самом деле хочешь от такого сообщества?',q5o:['Доступ к конкретным навыкам и экспертизе','Ответственность. Чтобы было перед кем отчитываться','Снять маску «успешного лидера» и безопасно поговорить о трудностях','Найти своих - людей с похожим критическим мышлением','Честную обратную связь на свои идеи без лести'],
+    q6l:'06 / 11 - КОНТЕКСТ',q6t:'Где ты находишься?',
+    q7l:'07 / 11 - ФИЛЬТР',q7t:'Тебе дают 20 минут с человеком, который уже прошёл твой текущий кризис или тупик. Что ты у него спросишь?',
+    q8l:'08 / 11 - ФИЛЬТР',q8t:'В чём большинство людей в твоей сфере фатально ошибается или заблуждается?',q8p:'Будь конкретен(-на) - общие фразы не считаются.',
+    q9l:'09 / 11 - ФИЛЬТР',q9t:'Что в этой анкете показалось тебе лишним, глупым или манипулятивным?',
+    q10l:'10 / 11 - ФИЛЬТР',q10t:'Вспомни случай, когда ты помог(ла) кому-то в бизнесе или профессии, вообще не ожидая ничего взамен. Что это было?',q10p:'Конкретный случай - не общие слова про «всегда помогаю людям».',
+    q11l:'11 / 11 - КОНТАКТ',q11t:'Имя, способ связи и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль, который лучше всего тебя отражает - необязательно',
+    ageHint:'Строго 18+.', age18Label:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
@@ -1157,21 +1132,21 @@ function render(){
   g('notify-btn').textContent = t('notifyBtn');
   g('wl-pre').textContent = t('wlPre');
   g('test-intro').textContent = foundingActive() ? t('testIntroFounding') : t('testIntro');
-  for(let i=1;i<=14;i++){
+  for(let i=1;i<=11;i++){
     const lel=g('q'+i+'l'), tel=g('q'+i+'t');
     if(lel) lel.textContent=t('q'+i+'l');
     if(tel) tel.textContent=t('q'+i+'t');
   }
-  [1,4].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
-  [[2,'q2o'],[3,'q3o'],[6,'q6o']].forEach(([q,k])=>{
+  [1,4,8,10].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
+  [[2,'q2o'],[3,'q3o'],[5,'q5o']].forEach(([q,k])=>{
     t(k).forEach((o,i)=>{ const e=g('q'+q+'abcde'[i]); if(e) e.textContent=o; });
   });
-  g('q14n').placeholder=t('q14p1');
-  g('q14age').placeholder=t('q14p3');
-  g('q14c').placeholder=t('q14p2');
-  g('q14h').textContent=t('q14h');
-  g('q1-age-hint').textContent=t('q14h');
-  g('q14cl').innerHTML=t('consentLabel');
+  g('q11n').placeholder=t('q11p1');
+  g('q11c').placeholder=t('q11p2');
+  g('q11link').placeholder=t('q11p3');
+  g('q11age18label').textContent=t('age18Label');
+  g('q1-age-hint').textContent=t('ageHint');
+  g('q11cl').innerHTML=t('consentLabel');
   document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
   document.querySelectorAll('#test-section .btn-b:not(.review-edit)').forEach(b=>{ b.textContent = t('navBack'); });
   const submitBtn = g('submit-btn');
@@ -1368,9 +1343,9 @@ document.querySelectorAll('.q-opts').forEach(group=>{
 let maxReachedQ = 1;
 
 function updProg(n){
-  g('pfill').style.width=((n-1)/14*100)+'%';
-  g('pnum').textContent=(n-1)+' / 14';
-  g('review-return').style.display = maxReachedQ >= 14 ? 'block' : 'none';
+  g('pfill').style.width=((n-1)/11*100)+'%';
+  g('pnum').textContent=(n-1)+' / 11';
+  g('review-return').style.display = maxReachedQ >= 11 ? 'block' : 'none';
 }
 
 // ── REVIEW SCREEN ──
@@ -1407,13 +1382,13 @@ function editFromReview(n){
 function getDisplayAnswer(i){
   const ta = g('q'+i+'v');
   if(ta && ta.tagName === 'TEXTAREA') return ta.value.trim();
-  if(i === 7) return (g('q7v')?.value || '').trim();
+  if(i === 6) return (g('q6v')?.value || '').trim();
   if(i === 2 || i === 3){
     const checked = document.querySelector('input[name="q'+i+'"]:checked');
     return checked ? (checked.parentElement.querySelector('span')?.textContent || '') : '';
   }
-  if(i === 6){
-    return Array.from(document.querySelectorAll('input[name="q6"]:checked'))
+  if(i === 5){
+    return Array.from(document.querySelectorAll('input[name="q5"]:checked'))
       .map(el=>el.parentElement.querySelector('span')?.textContent || '').join(', ');
   }
   return '';
@@ -1423,7 +1398,7 @@ function populateReview(){
   const list = g('review-list');
   if(!list) return;
   list.innerHTML = '';
-  for(let i=1;i<=13;i++){
+  for(let i=1;i<=10;i++){
     const qText = g('q'+i+'t')?.textContent || '';
     const row = document.createElement('div');
     row.className = 'review-row';
@@ -1444,19 +1419,18 @@ function populateReview(){
 }
 
 function showReview(){
-  if(!q14Answered()){ flagQ14Empty(); return; }
-  const age = ageValue();
-  if(age === null || age < 18){
-    showWarn(14, 'reqWarnAge');
-    g('q14age').classList.add('q-error');
+  if(!q11Answered()){ flagQ11Empty(); return; }
+  if(!age18Confirmed()){
+    showWarn(11, 'reqWarnAge');
+    g('q11ageRow').classList.add('q-error');
     return;
   }
   if(!consentChecked()){
-    showWarn(14, 'reqWarnConsent');
-    g('q14consentRow').classList.add('q-error');
+    showWarn(11, 'reqWarnConsent');
+    g('q11consentRow').classList.add('q-error');
     return;
   }
-  maxReachedQ = Math.max(maxReachedQ, 14);
+  maxReachedQ = Math.max(maxReachedQ, 11);
   populateReview();
   showBlock('q-review');
   g('pfill').style.width = '100%';
@@ -1470,7 +1444,7 @@ function isAnswered(n){
   const ta = g('q'+n+'v');
   if(ta) return ta.value.trim().length > 0;
   if(n===2 || n===3) return !!document.querySelector('input[name="q'+n+'"]:checked');
-  if(n===6) return document.querySelectorAll('input[name="q6"]:checked').length > 0;
+  if(n===5) return document.querySelectorAll('input[name="q5"]:checked').length > 0;
   return true;
 }
 
@@ -1526,12 +1500,21 @@ function initValidationClear(){
       }
     });
   });
-  const consentBox = g('q14consent');
+  const age18Box = g('q11age18');
+  if(age18Box){
+    age18Box.addEventListener('change', ()=>{
+      if(age18Box.checked){
+        g('q11ageRow').classList.remove('q-error');
+        hideWarn('q11');
+      }
+    });
+  }
+  const consentBox = g('q11consent');
   if(consentBox){
     consentBox.addEventListener('change', ()=>{
       if(consentBox.checked){
-        g('q14consentRow').classList.remove('q-error');
-        hideWarn('q14');
+        g('q11consentRow').classList.remove('q-error');
+        hideWarn('q11');
       }
     });
   }
@@ -1591,25 +1574,27 @@ async function submitNotify(){
   }
 }
 
-function q14Answered(){
-  return (g('q14n')?.value.trim().length||0) > 0 && (g('q14age')?.value.trim().length||0) > 0 && (g('q14c')?.value.trim().length||0) > 0;
+function q11Answered(){
+  return (g('q11n')?.value.trim().length||0) > 0 && (g('q11c')?.value.trim().length||0) > 0;
 }
 
 function consentChecked(){
-  return !!g('q14consent')?.checked;
+  return !!g('q11consent')?.checked;
 }
 
-function ageValue(){
-  const v = parseInt(g('q14age')?.value, 10);
-  return Number.isFinite(v) ? v : null;
+function age18Confirmed(){
+  return !!g('q11age18')?.checked;
 }
 
 // ── DRAFT AUTOSAVE: survive page refresh mid-application ──
-const DRAFT_KEY = 'nr_app_draft_v1';
+// Bumped to v2 - the question set/order changed (14 → 11 questions), so a
+// v1 draft's field-by-number mapping no longer lines up with what's on
+// screen and must not be restored.
+const DRAFT_KEY = 'nr_app_draft_v2';
 
 function getActiveQ(){
   if(g('q-review')?.classList.contains('active')) return 'review';
-  for(let i=1;i<=14;i++){ const b=g('q'+i); if(b && b.classList.contains('active')) return i; }
+  for(let i=1;i<=11;i++){ const b=g('q'+i); if(b && b.classList.contains('active')) return i; }
   return 1;
 }
 
@@ -1621,18 +1606,16 @@ function collectDraft(){
     q2:document.querySelector('input[name="q2"]:checked')?.value||'',
     q3:document.querySelector('input[name="q3"]:checked')?.value||'',
     q4:g('q4v')?.value||'',
-    q5:g('q5v')?.value||'',
-    q6:Array.from(document.querySelectorAll('input[name="q6"]:checked')).map(el=>el.value),
+    q5:Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(el=>el.value),
+    q6:g('q6v')?.value||'',
     q7:g('q7v')?.value||'',
     q8:g('q8v')?.value||'',
     q9:g('q9v')?.value||'',
     q10:g('q10v')?.value||'',
-    q11:g('q11v')?.value||'',
-    q12:g('q12v')?.value||'',
-    q13:g('q13v')?.value||'',
-    q14n:g('q14n')?.value||'',
-    q14age:g('q14age')?.value||'',
-    q14c:g('q14c')?.value||'',
+    q11n:g('q11n')?.value||'',
+    q11link:g('q11link')?.value||'',
+    q11c:g('q11c')?.value||'',
+    age18:age18Confirmed(),
     consent:consentChecked(),
   };
 }
@@ -1661,24 +1644,22 @@ function restoreDraft(){
   if(d.q2){ const r=document.querySelector('input[name="q2"][value="'+d.q2+'"]'); if(r) r.checked=true; }
   if(d.q3){ const r=document.querySelector('input[name="q3"][value="'+d.q3+'"]'); if(r) r.checked=true; }
   if(g('q4v')) g('q4v').value = d.q4||'';
-  if(g('q5v')) g('q5v').value = d.q5||'';
-  if(Array.isArray(d.q6)) d.q6.forEach(v=>{ const cb=document.querySelector('input[name="q6"][value="'+v+'"]'); if(cb) cb.checked=true; });
+  if(Array.isArray(d.q5)) d.q5.forEach(v=>{ const cb=document.querySelector('input[name="q5"][value="'+v+'"]'); if(cb) cb.checked=true; });
+  if(g('q6v')) g('q6v').value = d.q6||'';
   if(g('q7v')) g('q7v').value = d.q7||'';
   if(g('q8v')) g('q8v').value = d.q8||'';
   if(g('q9v')) g('q9v').value = d.q9||'';
   if(g('q10v')) g('q10v').value = d.q10||'';
-  if(g('q11v')) g('q11v').value = d.q11||'';
-  if(g('q12v')) g('q12v').value = d.q12||'';
-  if(g('q13v')) g('q13v').value = d.q13||'';
-  if(g('q14n')) g('q14n').value = d.q14n||'';
-  if(g('q14age')) g('q14age').value = d.q14age||'';
-  if(g('q14c')) g('q14c').value = d.q14c||'';
-  if(d.consent && g('q14consent')) g('q14consent').checked = true;
+  if(g('q11n')) g('q11n').value = d.q11n||'';
+  if(g('q11link')) g('q11link').value = d.q11link||'';
+  if(g('q11c')) g('q11c').value = d.q11c||'';
+  if(d.age18 && g('q11age18')) g('q11age18').checked = true;
+  if(d.consent && g('q11consent')) g('q11consent').checked = true;
 
   if(typeof d.maxReachedQ === 'number') maxReachedQ = Math.max(maxReachedQ, d.maxReachedQ);
 
   if(d.activeQ === 'review'){
-    maxReachedQ = Math.max(maxReachedQ, 14);
+    maxReachedQ = Math.max(maxReachedQ, 11);
     populateReview();
     showBlock('q-review');
     g('pfill').style.width = '100%';
@@ -1700,20 +1681,21 @@ function initAutosave(){
   document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(el=>{
     el.addEventListener('input', saveDraft);
   });
-  document.querySelectorAll('input[name="q2"], input[name="q3"], input[name="q6"]').forEach(el=>{
+  document.querySelectorAll('input[name="q2"], input[name="q3"], input[name="q5"]').forEach(el=>{
     el.addEventListener('change', saveDraft);
   });
-  const consentBox = g('q14consent');
+  const age18Box = g('q11age18');
+  if(age18Box) age18Box.addEventListener('change', saveDraft);
+  const consentBox = g('q11consent');
   if(consentBox) consentBox.addEventListener('change', saveDraft);
 }
 
 // ── SUBMISSION: single channel, awaited. The backend is responsible for
 // relaying to Telegram server-side — never put a bot token in client JS. ──
-function flagQ14Empty(){
-  showWarn(14, 'reqWarnFinal');
-  if(!g('q14n').value.trim()) g('q14n').classList.add('q-error');
-  if(!g('q14age').value.trim()) g('q14age').classList.add('q-error');
-  if(!g('q14c').value.trim()) g('q14c').classList.add('q-error');
+function flagQ11Empty(){
+  showWarn(11, 'reqWarnFinal');
+  if(!g('q11n').value.trim()) g('q11n').classList.add('q-error');
+  if(!g('q11c').value.trim()) g('q11c').classList.add('q-error');
 }
 
 // ── APPLY CTA: both the hero button and the sticky bar land here. Jumps to
@@ -1744,27 +1726,26 @@ function goToApplication(){
   }
   const target = g('q'+activeQ) || g('test-section');
   target.scrollIntoView({behavior:'smooth', block:'center'});
-  if(activeQ === 14){
-    if(!q14Answered()) flagQ14Empty();
+  if(activeQ === 11){
+    if(!q11Answered()) flagQ11Empty();
   } else if(!isAnswered(activeQ)){
     showWarn(activeQ);
   }
 }
 
 async function submitForm(){
-  if(!q14Answered()){
-    flagQ14Empty();
+  if(!q11Answered()){
+    flagQ11Empty();
     return;
   }
-  const age = ageValue();
-  if(age === null || age < 18){
-    showWarn(14, 'reqWarnAge');
-    g('q14age').classList.add('q-error');
+  if(!age18Confirmed()){
+    showWarn(11, 'reqWarnAge');
+    g('q11ageRow').classList.add('q-error');
     return;
   }
   if(!consentChecked()){
-    showWarn(14, 'reqWarnConsent');
-    g('q14consentRow').classList.add('q-error');
+    showWarn(11, 'reqWarnConsent');
+    g('q11consentRow').classList.add('q-error');
     return;
   }
   const data={
@@ -1773,18 +1754,16 @@ async function submitForm(){
     q2:document.querySelector('input[name="q2"]:checked')?.value||'',
     q3:document.querySelector('input[name="q3"]:checked')?.value||'',
     q4:g('q4v')?.value||'',
-    q5:g('q5v')?.value||'',
-    q6:Array.from(document.querySelectorAll('input[name="q6"]:checked')).map(el=>el.parentElement.querySelector('span').textContent).join(', '),
+    q5:Array.from(document.querySelectorAll('input[name="q5"]:checked')).map(el=>el.parentElement.querySelector('span').textContent).join(', '),
+    q6:g('q6v')?.value||'',
     q7:g('q7v')?.value||'',
     q8:g('q8v')?.value||'',
     q9:g('q9v')?.value||'',
     q10:g('q10v')?.value||'',
-    q11:g('q11v')?.value||'',
-    q12:g('q12v')?.value||'',
-    q13:g('q13v')?.value||'',
-    name:g('q14n')?.value||'',
-    age:g('q14age')?.value||'',
-    contact:g('q14c')?.value||'',
+    name:g('q11n')?.value||'',
+    contact:g('q11c')?.value||'',
+    profileLink:g('q11link')?.value||'',
+    age18:age18Confirmed(),
     ...utmParams,
   };
 
@@ -1797,18 +1776,18 @@ async function submitForm(){
   // from the real wording here more than once. Sending the pairing removes the
   // second copy instead of just keeping the two in sync by hand.
   const qAnswerOverrides = { 2: q2Text, 3: q3Text };
-  const answers = [1,2,3,4,5,6,7,8,9,10,11,12,13].map(i => ({
+  const answers = [1,2,3,4,5,6,7,8,9,10].map(i => ({
     q: g('q'+i+'t')?.textContent || '',
     a: qAnswerOverrides[i] ?? (data['q'+i] || '')
   }));
 
   // Two possible triggers - the review screen's Submit button, and the
-  // "Submit without review" link on Q14 - whichever the user actually
+  // "Submit without review" link on Q11 - whichever the user actually
   // clicked needs its own loading/disabled state, not just submit-btn's.
   const triggerButtons = [g('submit-btn'), g('skip-review-btn')].filter(Boolean);
   const originalTexts = new Map(triggerButtons.map(b => [b, b.textContent]));
   triggerButtons.forEach(b => { b.disabled = true; b.textContent = t('submitting'); });
-  hideWarn(14);
+  hideWarn(11);
 
   try {
     const res = await fetch('https://noresults-backend-production.up.railway.app/submit',{
@@ -1826,7 +1805,7 @@ async function submitForm(){
 
     clearDraft();
     g('pfill').style.width='100%';
-    g('pnum').textContent='14 / 14';
+    g('pnum').textContent='11 / 11';
     g('test-section').style.display='none';
     const ty=g('ty');
     updateTyNumber();
@@ -1837,7 +1816,7 @@ async function submitForm(){
   } catch(e){
     console.error(e);
     triggerButtons.forEach(b => { b.disabled = false; b.textContent = originalTexts.get(b); });
-    showWarn(14, e.message === 'attempt_limit' ? 'attemptLimitError' : 'submitError');
+    showWarn(11, e.message === 'attempt_limit' ? 'attemptLimitError' : 'submitError');
   }
 }
 
