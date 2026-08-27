@@ -365,6 +365,13 @@ body.lang-switching { opacity: 0; }
   padding: 16px 10vw calc(16px + env(safe-area-inset-bottom));
   z-index: 221;
   box-shadow: 0 -16px 32px rgba(0,0,0,0.35);
+  /* --kb-inset is kept at the on-screen keyboard's height by the
+     visualViewport listener below, so the bar rides up above it instead
+     of being covered (iOS/Android leave position:fixed anchored to the
+     old, keyboard-covered viewport height by default). 0px the rest of
+     the time, so this is a no-op with no keyboard open. */
+  transform: translateY(calc(-1 * var(--kb-inset, 0px)));
+  transition: transform 0.15s ease;
 }
 /* Fullscreen is now the primary place people click "Далее" - give the
    primary action the same amber accent as the hero CTA instead of the
@@ -1801,6 +1808,7 @@ function enterFsMode(){
   section.classList.add('fs-mode');
   document.body.classList.add('fs-active');
   section.scrollTop = 0;
+  section.style.setProperty('--kb-inset', '0px');
 }
 
 function exitFsMode(){
@@ -1808,6 +1816,25 @@ function exitFsMode(){
   if(!section) return;
   section.classList.remove('fs-mode');
   document.body.classList.remove('fs-active');
+  section.style.removeProperty('--kb-inset');
+}
+
+// Mobile browsers keep position:fixed anchored to the full layout viewport,
+// not the shorter one left after the on-screen keyboard opens - so a
+// naively fixed nav bar ends up hidden behind the keyboard. visualViewport
+// reports the actual visible height, so its shortfall against the layout
+// viewport is exactly the keyboard's height; #test-section.fs-mode .q-nav
+// reads --kb-inset back out to shift itself above that.
+function updateKbInset(){
+  const section = g('test-section');
+  if(!section || !section.classList.contains('fs-mode')) return;
+  const vv = window.visualViewport;
+  const inset = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+  section.style.setProperty('--kb-inset', inset + 'px');
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', updateKbInset);
+  window.visualViewport.addEventListener('scroll', updateKbInset);
 }
 
 function goToApplication(){
