@@ -415,6 +415,17 @@ body.lang-switching { opacity: 0; }
      own end value instead of leaving --kb-inset in control. */
   transform: translateY(calc(-1 * var(--kb-inset, 0px)));
   transition: transform 0.15s ease;
+}
+/* Every question has its own .q-nav (not one shared bar), so scoping the
+   entrance fade to the plain #test-section.fs-mode selector above would
+   replay it on every question change too - each next .q-nav is a
+   different element going display:none -> visible, which restarts any
+   animation tied to it. .fs-entering is a transient class (added on open,
+   stripped ~600ms later by enterFsMode) so the fade plays once for the
+   opening bar and never again for the ones question-to-question - which
+   is the whole point: the nav bar should read as one static element that
+   never moves or blinks, even though it's actually swapped out under it. */
+#test-section.fs-mode.fs-entering .q-nav {
   animation: fsFadeIn 0.22s ease 0.16s both;
 }
 /* Fullscreen is now the primary place people click "Далее" - give the
@@ -1871,19 +1882,23 @@ function stickyBtnClick(){
 // The step-by-step form takes over the viewport instead of living inline
 // in the page's scroll - see the CSS comment above #test-section.fs-mode
 // for why. exitFsMode() is also the "✕" button's handler.
+let fsEnterTimer = null;
 function enterFsMode(){
   const section = g('test-section');
   if(!section) return;
-  section.classList.add('fs-mode');
+  section.classList.add('fs-mode', 'fs-entering');
   document.body.classList.add('fs-active');
   section.scrollTop = 0;
   section.style.setProperty('--kb-inset', '0px');
+  clearTimeout(fsEnterTimer);
+  fsEnterTimer = setTimeout(()=>section.classList.remove('fs-entering'), 600);
 }
 
 function exitFsMode(){
   const section = g('test-section');
   if(!section) return;
-  section.classList.remove('fs-mode');
+  clearTimeout(fsEnterTimer);
+  section.classList.remove('fs-mode', 'fs-entering');
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
 }
