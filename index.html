@@ -432,10 +432,16 @@ body.lang-switching { opacity: 0; }
 /* Give the primary action the width, not just the color, to carry the
    most weight in the bar - .btn-b (Назад) keeps its compact, ghost-link
    footprint instead of competing for space. flex:1 is a no-op inside
-   .q-nav-11's grid layout, so Q11's three-button row is unaffected. */
+   .q-nav-11's grid layout, so Q11's three-button row is unaffected.
+   max-width caps it on desktop, where the bar itself spans the full
+   viewport - uncapped, flex:1 stretched it to 1000px+, way past the
+   580px column every question's own text/field is already capped to.
+   The cap never engages on mobile (available width is already under
+   it), so phone sizing is unchanged. */
 #test-section.fs-mode .q-nav .btn-p,
 #test-section.fs-mode .q-nav .btn-sub {
   flex: 1;
+  max-width: 460px;
   text-align: center;
 }
 #test-section.fs-mode .btn-b {
