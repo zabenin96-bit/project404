@@ -1516,8 +1516,12 @@ function updProg(n){
 // Focuses whatever's actually fillable in a block - the textarea/input, or
 // (for a radio/checkbox question) the checked option if there is one,
 // otherwise the first option - so advancing a question never leaves the
-// user needing an extra tap/click just to start typing.
+// user needing an extra tap/click just to start typing. Skipped for q11:
+// it has three fields plus two checkboxes, and auto-focusing the first one
+// pops the on-screen keyboard immediately, hiding most of that layout
+// before the person has even seen what's being asked for.
 function focusActiveField(blockId){
+  if(blockId === 'q11') return;
   const block = g(blockId);
   if(!block) return;
   const preferred = block.querySelector('.q-textarea, .q-input, input[type="radio"]:checked, input[type="checkbox"]:checked');
