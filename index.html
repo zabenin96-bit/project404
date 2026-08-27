@@ -312,6 +312,12 @@ body.lang-switching { opacity: 0; }
 
 .q-nav { display: flex; gap: 16px; margin-top: 28px; align-items: flex-start; }
 .q-hint { font-size: 12px; color: var(--dim); margin-top: 10px; }
+/* Q1's age/attempt-limit notice specifically: these are hard requirements
+   that block submission at the very last step if missed, so - unlike a
+   plain .q-hint sitting quietly after the field - this one sits before it
+   in --dim-hi (built for secondary copy that still has to be read, not
+   just noticed) so it's seen before anyone invests the full 10-15 minutes. */
+.q-hint-top { color: var(--dim-hi); margin-top: 0; margin-bottom: 18px; }
 
 /* Q11's nav has 3 actions instead of the usual 2, so it gets its own grid:
    one row on desktop; on mobile "Проверить ответы" drops to its own row,
@@ -822,9 +828,9 @@ body { padding-bottom: 60px; }
     <div class="q-block active" id="q1">
       <div class="q-tag" id="q1l">01 / 11 - ОСНОВЫ</div>
       <div class="q-text" id="q1t">Чем занимаешься? Опиши главный проект или работу одним предложением.</div>
+      <p class="q-hint q-hint-top" id="q1-notice">Строго 18+. Подать заявку можно не больше 2 раз в месяц.</p>
       <textarea class="q-textarea" id="q1v" placeholder="Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов."></textarea>
       <div class="q-nav"><button class="btn-p" onclick="nx(1)">Далее →</button></div>
-      <p class="q-hint" id="q1-age-hint">Строго 18+.</p>
     </div>
 
     <div class="q-block" id="q2">
@@ -1063,7 +1069,7 @@ const C = {
     q9l:'09 / 11 - FILTER',q9t:'What in this application felt unnecessary, dumb, or manipulative?',
     q10l:'10 / 11 - FILTER',q10t:'When did you help someone at work, expecting nothing back? What was it?',q10p:"A specific instance - not a general 'I always help people.'",
     q11l:'11 / 11 - CONTACT',q11t:'Name, a way to reach you, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Link to a profile that represents you best - optional',
-    ageHint:'Strictly 18+.', age18Label:"I confirm I'm 18 or older.",
+    ageHint:'Strictly 18+.', attemptLimitHint:'Up to 2 applications per month.', age18Label:"I confirm I'm 18 or older.",
     reqWarnAge:'You must be 18 or older to apply.',
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
     reqWarnConsent:'Check the box to submit.',
@@ -1157,7 +1163,7 @@ const C = {
     q9l:'09 / 11 - ФИЛЬТР',q9t:'Что в этой анкете показалось тебе лишним, глупым или манипулятивным?',
     q10l:'10 / 11 - ФИЛЬТР',q10t:'Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?',q10p:'Конкретный случай - не общие слова про «всегда помогаю людям».',
     q11l:'11 / 11 - КОНТАКТ',q11t:'Имя, способ связи и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль, который лучше всего тебя отражает - необязательно',
-    ageHint:'Строго 18+.', age18Label:'Подтверждаю, что мне есть 18 лет.',
+    ageHint:'Строго 18+.', attemptLimitHint:'Подать заявку можно не больше 2 раз в месяц.', age18Label:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
     reqWarnConsent:'Отметь галочку, чтобы отправить.',
@@ -1305,7 +1311,7 @@ function render(){
   g('q11c').placeholder=t('q11p2');
   g('q11link').placeholder=t('q11p3');
   g('q11age18label').textContent=t('age18Label');
-  g('q1-age-hint').textContent=t('ageHint');
+  g('q1-notice').textContent=t('ageHint')+' '+t('attemptLimitHint');
   g('q11cl').innerHTML=t('consentLabel');
   document.querySelectorAll('#test-section .btn-p').forEach(b=>{ b.textContent = t('navNext'); });
   document.querySelectorAll('#test-section .btn-b:not(.review-edit)').forEach(b=>{ b.textContent = t('navBack'); });
