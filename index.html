@@ -721,6 +721,7 @@ body { padding-bottom: 60px; }
     <div class="sys-block">
       <div class="sys-line"><span class="tag" id="s-err">СТАТУС</span><span class="val" id="s-msg"> приём заявок открыт</span></div>
       <div class="sys-line"><span class="tag" id="s-err2">ДОСТУП</span><span class="val" id="s-msg2"> <span class="nb">200 мест - $100/мес</span> до 31 авг</span></div>
+      <div class="sys-line"><span class="tag" id="s-err3">УЧАСТНИКИ</span><span class="val"> <span class="nb"><span id="member-count">1</span> / 200</span></span></div>
     </div>
 
     <div class="hero-copy">
@@ -810,7 +811,7 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="proc-pre">// ПРОЦЕСС</span></div>
       <ul class="rules-list reveal-child">
         <li><span class="rule-key" id="proc1t">01 - Заявка</span><span class="rule-val" id="proc1d"> 11 вопросов, без ограничения по времени.</span></li>
-        <li><span class="rule-key" id="proc2t">02 - Проверка</span><span class="rule-val" id="proc2d"> Каждый ответ читает человек, не алгоритм. Ответ даём в любом случае.</span></li>
+        <li><span class="rule-key" id="proc2t">02 - Проверка</span><span class="rule-val" id="proc2d"> Каждый ответ читает человек - не алгоритм и не ИИ. Ответ даём в любом случае.</span></li>
         <li><span class="rule-key" id="proc3t">03 - Приём либо повторная заявка</span><span class="rule-val" id="proc3d"> Если приняли - поздравляем. Если нет - можно попробовать снова.</span></li>
       </ul>
     </div>
@@ -988,6 +989,7 @@ const C = {
   en: {
     sErr:'STATUS', sMsg:'now accepting applications',
     sErr2:'ACCESS', sMsg2:'<span class="nb">200 seats - $250/mo</span>', sMsg2Founding:'<span class="nb">200 seats - $100/mo</span> - apply by Aug 31',
+    sErr3:'MEMBERS',
     sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply', sbCtaDone:'Ask a question →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review answers',
@@ -1022,7 +1024,7 @@ const C = {
     sampleLabel:'// from the chat',
     procPre:'// PROCESS',
     proc1t:'01 - Apply',proc1d:'11 questions, no time limit.',
-    proc2t:'02 - Review',proc2d:'A person reads every answer, not an algorithm. You get a response either way.',
+    proc2t:'02 - Review',proc2d:'A person reads every answer - not an algorithm, not AI. You get a response either way.',
     proc3t:'03 - Accept or reapply',proc3d:"Accepted - congrats. Not this round: you can try again.",
     faqPre:'// FAQ',
     faq1t:'When you hear back',faq1d:'Usually 1-3 days.',
@@ -1079,6 +1081,7 @@ const C = {
   ru: {
     sErr:'СТАТУС',sMsg:'приём заявок открыт',
     sErr2:'ДОСТУП',sMsg2:'<span class="nb">200 мест - $250/мес</span>', sMsg2Founding:'<span class="nb">200 мест - $100/мес</span> до 31 авг',
+    sErr3:'УЧАСТНИКИ',
     sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Подать заявку', sbCtaDone:'Задать вопрос →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить ответы',
@@ -1113,7 +1116,7 @@ const C = {
     sampleLabel:'// из чата',
     procPre:'// ПРОЦЕСС',
     proc1t:'01 - Заявка',proc1d:'11 вопросов, без ограничения по времени.',
-    proc2t:'02 - Проверка',proc2d:'Каждый ответ читает человек, не алгоритм. Ответ даём в любом случае.',
+    proc2t:'02 - Проверка',proc2d:'Каждый ответ читает человек - не алгоритм и не ИИ. Ответ даём в любом случае.',
     proc3t:'03 - Приём либо повторная заявка',proc3d:'Если приняли - поздравляем. Если нет - можно попробовать снова.',
     faqPre:'// FAQ',
     faq1t:'Когда рассмотрят',faq1d:'Обычно 1-3 дня.',
@@ -1212,6 +1215,30 @@ fetch('https://noresults-backend-production.up.railway.app/click', {
 const FOUNDING_DEADLINE = new Date('2026-09-01T00:00:00+04:00');
 function foundingActive(){ return new Date() < FOUNDING_DEADLINE; }
 
+// ── MEMBER COUNT: real number, updated by hand for now ──
+// Manual on purpose - there's no live signal yet for "accepted and paying"
+// vs. "applied," so a hand-set number that's always true beats an
+// automated one that might not be. Worth revisiting once there's a
+// reliable source (e.g. the Sheet gains an "accepted" status this could
+// count, same way nextApplicationNumber() counts 'Заявка' rows).
+const MEMBER_COUNT = 48;
+
+function animateMemberCount(target){
+  const el = g('member-count');
+  if(!el) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced){ el.textContent = target; return; }
+  const duration = 1200;
+  const start = performance.now();
+  function tick(now){
+    const progress = Math.min((now - start) / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = Math.round(1 + eased * (target - 1));
+    if(progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function g(id){ return document.getElementById(id); }
 function t(k){ return C[lang][k] !== undefined ? C[lang][k] : C.en[k]; }
 
@@ -1244,6 +1271,7 @@ function render(){
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
   g('s-msg2').innerHTML = ' ' + (foundingActive() ? t('sMsg2Founding') : t('sMsg2'));
+  g('s-err3').textContent = t('sErr3');
   g('hero-hl').textContent = t('heroHl');
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
@@ -2308,19 +2336,24 @@ function initFormFeedback(){
 // animation that isn't actually playing for that visitor. ──
 function initLoader(){
   const loader = g('loader');
-  if(!loader) return;
+  if(!loader){ animateMemberCount(MEMBER_COUNT); return; }
   // Once per tab, not once ever - sessionStorage, not localStorage. A fresh
   // tab/visit still gets the entrance; navigating or reloading within the
   // same one doesn't replay it. No server round-trip, nothing identifying -
   // same category of on-device flag as the draft autosave already uses.
   try{
-    if(sessionStorage.getItem('nrLoaderSeen') === '1'){ loader.remove(); return; }
+    if(sessionStorage.getItem('nrLoaderSeen') === '1'){ loader.remove(); animateMemberCount(MEMBER_COUNT); return; }
     sessionStorage.setItem('nrLoaderSeen', '1');
   }catch(e){}
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const revealDelay = reduced ? 50 : 950;
   setTimeout(()=>{
     loader.classList.add('hide');
+    // Timed to when the loader actually starts revealing the hero behind
+    // it, on a fresh tab, or fires right away on a repeat visit within the
+    // same tab (loader skipped entirely) - either way it plays as the
+    // member count becomes visible, not before.
+    animateMemberCount(MEMBER_COUNT);
     setTimeout(()=>{ loader.remove(); }, reduced ? 0 : 520);
   }, revealDelay);
 }
