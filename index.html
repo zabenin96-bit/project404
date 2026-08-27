@@ -455,7 +455,7 @@ body.lang-switching { opacity: 0; }
   max-width: 460px;
   text-align: center;
 }
-#test-section.fs-mode .btn-b {
+#test-section.fs-mode .q-nav .btn-b {
   padding: 13px 6px;
   flex-shrink: 0;
 }
@@ -1574,7 +1574,36 @@ function populateReview(){
     row.appendChild(qEl); row.appendChild(aEl); row.appendChild(editBtn);
     list.appendChild(row);
   }
+  // Contact info doesn't have its own numbered question dict entry per field
+  // (q11t covers name/contact/link together) - but it's the one place a typo
+  // costs the most (an unreachable applicant never finds out why), so it
+  // belongs on the review screen just as much as questions 1-10 do.
+  const contactRow = document.createElement('div');
+  contactRow.className = 'review-row';
+  const cqEl = document.createElement('div');
+  cqEl.className = 'review-q';
+  cqEl.textContent = g('q11t')?.textContent || '';
+  const caEl = document.createElement('div');
+  caEl.className = 'review-a';
+  const name = g('q11n')?.value.trim() || '—';
+  const contact = g('q11c')?.value.trim() || '—';
+  const link = g('q11link')?.value.trim();
+  caEl.textContent = name + '\n' + contact + (link ? '\n' + link : '');
+  const contactEditBtn = document.createElement('button');
+  contactEditBtn.type = 'button';
+  contactEditBtn.className = 'btn-b review-edit';
+  contactEditBtn.textContent = t('reviewEdit');
+  contactEditBtn.onclick = () => editFromReview(11);
+  contactRow.appendChild(cqEl); contactRow.appendChild(caEl); contactRow.appendChild(contactEditBtn);
+  list.appendChild(contactRow);
 }
+
+// Set once the review screen is actually reached, so nx() (below) knows a
+// "Далее" click from an edited question means "done editing, take me back"
+// rather than "keep moving forward through questions I already answered" -
+// without this, fixing one early answer meant re-clicking Далее through
+// every question after it just to get back to the review screen.
+let reviewReached = false;
 
 function showReview(){
   if(!q11Answered()){ flagQ11Empty(); return; }
@@ -1589,6 +1618,7 @@ function showReview(){
     return;
   }
   maxReachedQ = Math.max(maxReachedQ, 11);
+  reviewReached = true;
   populateReview();
   showBlock('q-review');
   g('pfill').style.width = '100%';
@@ -1686,6 +1716,7 @@ function initValidationClear(){
 
 function nx(n){
   if(!isAnswered(n)){ showWarn(n); return; }
+  if(reviewReached){ showReview(); return; }
   g('q'+n).classList.remove('active');
   const nxEl=g('q'+(n+1));
   if(nxEl){
@@ -1766,6 +1797,7 @@ function collectDraft(){
   return {
     activeQ: getActiveQ(),
     maxReachedQ: maxReachedQ,
+    reviewReached: reviewReached,
     q1:g('q1v')?.value||'',
     q2:document.querySelector('input[name="q2"]:checked')?.value||'',
     q3:document.querySelector('input[name="q3"]:checked')?.value||'',
@@ -1821,9 +1853,11 @@ function restoreDraft(){
   if(d.consent && g('q11consent')) g('q11consent').checked = true;
 
   if(typeof d.maxReachedQ === 'number') maxReachedQ = Math.max(maxReachedQ, d.maxReachedQ);
+  if(d.reviewReached) reviewReached = true;
 
   if(d.activeQ === 'review'){
     maxReachedQ = Math.max(maxReachedQ, 11);
+    reviewReached = true;
     populateReview();
     showBlock('q-review');
     g('pfill').style.width = '100%';
