@@ -461,8 +461,14 @@ body.lang-switching { opacity: 0; }
   max-width: 460px;
   text-align: center;
 }
+/* Matches .skip-review's (Проверить ответы) outlined look instead of the
+   plain underlined ghost-link .btn-b uses elsewhere - same secondary
+   weight as that button, so "Назад" reads as a real, tappable button
+   throughout the anketa, not just on Q11 where .skip-review already is one. */
 #test-section.fs-mode .q-nav .btn-b {
-  padding: 13px 6px;
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 13px 20px;
   flex-shrink: 0;
 }
 .fs-close { display: none; align-items: center; justify-content: center; position: fixed; top: 14px; left: 14px; width: 44px; height: 44px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; z-index: 222; transition: color 0.15s ease; }
