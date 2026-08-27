@@ -1895,10 +1895,11 @@ function scrollPastHero(){
   if(next) next.scrollIntoView({behavior:'smooth', block:'start'});
 }
 
-// Sticky-bar CTA only - once submitted, there's no form left to jump to,
-// so it opens the support chat instead of a dead scroll.
+// Sticky-bar CTA - kept as its own function since the sticky bar's onclick
+// already calls it by name; the applicationSubmitted branch that used to
+// live here moved into goToApplication() itself, since every CTA
+// (hero/teaser/sticky) needs the same guard, not just this one.
 function stickyBtnClick(){
-  if(applicationSubmitted){ window.open('https://t.me/CreativesManager', '_blank', 'noopener'); return; }
   goToApplication();
 }
 
@@ -1949,6 +1950,14 @@ if(window.visualViewport){
 }
 
 function goToApplication(){
+  // #test-section gets a permanent inline display:none once submitted (see
+  // submitForm()'s success path) - enterFsMode() would add fs-mode/fs-active
+  // right on top of that without actually making anything visible (inline
+  // style always beats the class-based display:flex), leaving the page
+  // scroll-locked with no visible form and no way out. Every entry point
+  // into the anketa (hero, teaser, sticky bar) goes through here, so the
+  // guard only needs to live in one place.
+  if(applicationSubmitted){ window.open('https://t.me/CreativesManager', '_blank', 'noopener'); return; }
   enterFsMode();
 }
 
