@@ -1478,15 +1478,22 @@ function hideWarn2(el){
   if(el) el.classList.remove('show');
 }
 
+// n is normally a question number (1-10, or 11 for the contact block), but
+// submitForm() can also be triggered from the review screen - which has no
+// number of its own - so this also accepts a literal block id ('q-review')
+// for exactly that case. Without this, a submit error while on the review
+// screen was written into #q11's (invisible, off-screen) warning box instead
+// of the review screen's own, and looked like the button did nothing.
 function showWarn(n, msgKey){
-  const warn = getWarnEl('q'+n);
+  const blockId = typeof n === 'string' ? n : 'q'+n;
+  const warn = getWarnEl(blockId);
   if(!warn) return;
   warn.dataset.key = msgKey || 'reqWarn';
   warn.textContent = t(warn.dataset.key);
   warn.classList.add('show');
-  const ta = g('q'+n+'v');
+  const ta = g(blockId+'v');
   if(ta){ ta.classList.add('q-error'); return; }
-  const opts = document.querySelector('#q'+n+' .q-opts');
+  const opts = document.querySelector('#'+blockId+' .q-opts');
   if(opts){ opts.classList.add('q-error'); }
 }
 
@@ -1692,8 +1699,8 @@ function initAutosave(){
 
 // ── SUBMISSION: single channel, awaited. The backend is responsible for
 // relaying to Telegram server-side — never put a bot token in client JS. ──
-function flagQ11Empty(){
-  showWarn(11, 'reqWarnFinal');
+function flagQ11Empty(target){
+  showWarn(target || 'q11', 'reqWarnFinal');
   if(!g('q11n').value.trim()) g('q11n').classList.add('q-error');
   if(!g('q11c').value.trim()) g('q11c').classList.add('q-error');
 }
@@ -1734,17 +1741,21 @@ function goToApplication(){
 }
 
 async function submitForm(){
+  // Whichever screen is actually visible when this runs - the review screen
+  // (submit-btn) or Q11 directly (skip-review-btn) - is where any warning
+  // needs to show up, since the other one is off-screen and won't be seen.
+  const warnTarget = g('q-review')?.classList.contains('active') ? 'q-review' : 'q11';
   if(!q11Answered()){
-    flagQ11Empty();
+    flagQ11Empty(warnTarget);
     return;
   }
   if(!age18Confirmed()){
-    showWarn(11, 'reqWarnAge');
+    showWarn(warnTarget, 'reqWarnAge');
     g('q11ageRow').classList.add('q-error');
     return;
   }
   if(!consentChecked()){
-    showWarn(11, 'reqWarnConsent');
+    showWarn(warnTarget, 'reqWarnConsent');
     g('q11consentRow').classList.add('q-error');
     return;
   }
@@ -1787,7 +1798,7 @@ async function submitForm(){
   const triggerButtons = [g('submit-btn'), g('skip-review-btn')].filter(Boolean);
   const originalTexts = new Map(triggerButtons.map(b => [b, b.textContent]));
   triggerButtons.forEach(b => { b.disabled = true; b.textContent = t('submitting'); });
-  hideWarn(11);
+  hideWarn(warnTarget);
 
   try {
     const res = await fetch('https://noresults-backend-production.up.railway.app/submit',{
@@ -1816,7 +1827,7 @@ async function submitForm(){
   } catch(e){
     console.error(e);
     triggerButtons.forEach(b => { b.disabled = false; b.textContent = originalTexts.get(b); });
-    showWarn(11, e.message === 'attempt_limit' ? 'attemptLimitError' : 'submitError');
+    showWarn(warnTarget, e.message === 'attempt_limit' ? 'attemptLimitError' : 'submitError');
   }
 }
 
