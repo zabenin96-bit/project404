@@ -332,6 +332,17 @@ body.lang-switching { opacity: 0; }
    at the same physical position no matter how tall the active question is,
    with no dead space needed to force it (see the min-height experiments
    this replaced). */
+/* Entrance animations, split by what's safe to transform. Giving
+   #test-section.fs-mode (or .q-block, its direct parent) its own transform
+   would make IT the containing block for the bottom-fixed .q-nav for the
+   run of the animation, same gotcha as .reveal below - confirmed by
+   measurement to throw .q-nav thousands of pixels off (its computed
+   "static position" fallback with no ancestor left at true viewport size).
+   So opacity-only here; the scale "pop" instead lands on each question's
+   own content (tag/text/field/hint), which never contains .q-nav and so
+   can't trigger the same bug. */
+@keyframes fsFadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fsPopIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
 #test-section.fs-mode {
   position: fixed;
   inset: 0;
@@ -353,19 +364,23 @@ body.lang-switching { opacity: 0; }
      briefly animate through non-none values on the way to it. */
   transform: none;
   transition: none;
+  animation: fsFadeIn 0.25s ease both;
 }
-#test-section.fs-mode .fs-close { display: flex; }
+#test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.22s ease 0.08s both; }
 /* The intro paragraph is only meant for the normal page scroll (visible
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
 #test-section.fs-mode .section-grid { display: none; }
-#test-section.fs-mode .progress-wrap { margin-top: 0; }
+#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsFadeIn 0.22s ease 0.08s both; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
    that ~0.25s it would become the containing block instead of the viewport,
    flickering the fixed nav bar to the wrong spot on every question change.
    Not worth the trade against the one thing this mode exists to guarantee. */
 #test-section.fs-mode .q-block { animation: none; }
+#test-section.fs-mode .q-block.active > *:not(.q-nav) {
+  animation: fsPopIn 0.3s cubic-bezier(.16,.8,.24,1) 0.12s both;
+}
 #test-section.fs-mode .q-nav {
   position: fixed;
   left: 0;
@@ -381,9 +396,14 @@ body.lang-switching { opacity: 0; }
      visualViewport listener below, so the bar rides up above it instead
      of being covered (iOS/Android leave position:fixed anchored to the
      old, keyboard-covered viewport height by default). 0px the rest of
-     the time, so this is a no-op with no keyboard open. */
+     the time, so this is a no-op with no keyboard open. transform is
+     already spoken for by that, so the entrance only fades this bar in -
+     a translateY entrance here would fight the keyboard-offset one, since
+     animation-fill-mode:both would freeze transform at the animation's
+     own end value instead of leaving --kb-inset in control. */
   transform: translateY(calc(-1 * var(--kb-inset, 0px)));
   transition: transform 0.15s ease;
+  animation: fsFadeIn 0.22s ease 0.16s both;
 }
 /* Fullscreen is now the primary place people click "Далее" - give the
    primary action the same amber accent as the hero CTA instead of the
@@ -406,8 +426,13 @@ body.fs-active { overflow: hidden; }
 body.fs-active .scroll-progress, body.fs-active .statusbar { display: none; }
 /* #main.show (the page's own entrance fade-in) sets transform: translateY(0)
    - same containing-block gotcha as #test-section's .reveal above, one level
-   further up the tree, so it needs the same override. */
-body.fs-active #main { transform: none; }
+   further up the tree, so it needs the same override. #main also carries
+   its own transition: transform 0.18s from that same rule, which - without
+   killing it here too - animates this override in over 180ms instead of
+   applying it instantly, so .q-nav gets #main as its containing block for
+   that entire window (confirmed by measurement: thousands of pixels off,
+   the same "static position" fallback fully explained above). */
+body.fs-active #main { transform: none; transition: none; }
 
 /* ── REVIEW SCREEN ── */
 /* Muted/outlined rather than filled - stays visibly secondary to
