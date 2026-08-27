@@ -354,6 +354,8 @@ body.lang-switching { opacity: 0; }
   margin: 0;
   padding: 64px 10vw calc(120px + env(safe-area-inset-bottom));
   border-top: none;
+  display: flex;
+  flex-direction: column;
   /* #test-section also carries .reveal.in-view (the scroll-triggered fade-in),
      which sets transform: translateY(0) - even that identity transform makes
      this element a containing block for fixed-position descendants, so the
@@ -378,6 +380,16 @@ body.lang-switching { opacity: 0; }
    flickering the fixed nav bar to the wrong spot on every question change.
    Not worth the trade against the one thing this mode exists to guarantee. */
 #test-section.fs-mode .q-block { animation: none; }
+/* Short questions (a single textarea, say) used to leave a big dead gap
+   between the field and the fixed nav bar on tall phones, while longer
+   ones (5 checkboxes) filled the space naturally - centering the active
+   block turns that into consistent, intentional breathing room instead.
+   margin:auto (not justify-content:center on the flex container) is the
+   deliberate choice here: it only centers when there's free space to
+   split - a question long enough to fill the viewport just collapses the
+   margins to 0 and scrolls from the top like normal, so nothing at the
+   start gets clipped the way justify-content:center would risk. */
+#test-section.fs-mode .q-block.active { margin: auto 0; }
 #test-section.fs-mode .q-block.active > *:not(.q-nav) {
   animation: fsPopIn 0.3s cubic-bezier(.16,.8,.24,1) 0.12s both;
 }
@@ -417,8 +429,18 @@ body.lang-switching { opacity: 0; }
   font-size: 13px;
   font-weight: 700;
 }
+/* Give the primary action the width, not just the color, to carry the
+   most weight in the bar - .btn-b (Назад) keeps its compact, ghost-link
+   footprint instead of competing for space. flex:1 is a no-op inside
+   .q-nav-11's grid layout, so Q11's three-button row is unaffected. */
+#test-section.fs-mode .q-nav .btn-p,
+#test-section.fs-mode .q-nav .btn-sub {
+  flex: 1;
+  text-align: center;
+}
 #test-section.fs-mode .btn-b {
   padding: 13px 6px;
+  flex-shrink: 0;
 }
 .fs-close { display: none; align-items: center; justify-content: center; position: fixed; top: 14px; left: 14px; width: 44px; height: 44px; background: none; border: none; color: var(--dim); font-size: 18px; cursor: pointer; z-index: 222; transition: color 0.15s ease; }
 .fs-close:hover { color: var(--text); }
