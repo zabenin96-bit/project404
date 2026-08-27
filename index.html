@@ -266,6 +266,18 @@ body.lang-switching { opacity: 0; }
 
 /* ── TEST / QUIZ ── */
 .test-intro { font-size: 14px; color: var(--dim); line-height: 1.9; max-width: 480px; }
+.test-intro-wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 28px; }
+/* The live question form only ever appears inside the fullscreen overlay
+   (#test-section.fs-mode) now - in the normal page scroll this section is
+   just the intro paragraph and a button that opens it, same as the hero
+   CTA. Without this, scrolling down the page instead of clicking a CTA
+   used to surface the old inline anketa (progress bar + question 1 sitting
+   in the page flow), a second, un-fixed-up version of the same form. */
+#test-section:not(.fs-mode) .progress-wrap,
+#test-section:not(.fs-mode) .q-block {
+  display: none;
+}
+
 .progress-wrap { margin: 40px 0; display: flex; align-items: center; gap: 16px; }
 .progress-track { flex: 1; height: 1px; background: var(--line); }
 .progress-fill { height: 100%; background: var(--amber); transition: width 0.35s ease; width: 0%; }
@@ -731,9 +743,12 @@ body { padding-bottom: 60px; }
   <!-- TEST -->
   <div class="section reveal" id="test-section">
     <button type="button" class="fs-close" id="fs-close" onclick="exitFsMode()" aria-label="Close">✕</button>
-    <div class="section-grid" style="margin-bottom:0">
+    <div class="section-grid">
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
-      <p class="test-intro" id="test-intro">Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.</p>
+      <div class="test-intro-wrap">
+        <p class="test-intro" id="test-intro">Первый шаг: ответь на 11 вопросов, обычно занимает 10-15 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.</p>
+        <a href="#test-section" class="hero-cta" id="test-cta" onclick="goToApplication(); return false;"><span id="test-cta-text">Пройти отбор</span></a>
+      </div>
     </div>
 
     <div class="progress-wrap">
@@ -1182,6 +1197,7 @@ function render(){
   g('hero-hl').textContent = t('heroHl');
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
+  g('test-cta-text').textContent = t('heroCta');
   g('hero-scroll-cue').setAttribute('aria-label', t('scrollCueLabel'));
   g('ab-pre').textContent = t('abPre');
   g('about-body').innerHTML = t('aboutBody').map(p=>`<p>${p}</p>`).join('');
