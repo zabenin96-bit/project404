@@ -979,7 +979,7 @@ const C = {
   en: {
     sErr:'STATUS', sMsg:'now accepting applications',
     sErr2:'ACCESS', sMsg2:'<span class="nb">200 seats - $250/mo</span>', sMsg2Founding:'<span class="nb">200 seats - $100/mo</span> - apply by Aug 31',
-    sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply →', sbCtaDone:'Ask a question →',
+    sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply', sbCtaDone:'Ask a question →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review answers',
     reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
@@ -1073,7 +1073,7 @@ const C = {
   ru: {
     sErr:'СТАТУС',sMsg:'приём заявок открыт',
     sErr2:'ДОСТУП',sMsg2:'<span class="nb">200 мест - $250/мес</span>', sMsg2Founding:'<span class="nb">200 мест - $100/мес</span> до 31 авг',
-    sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Пройти отбор →', sbCtaDone:'Задать вопрос →',
+    sbFounding:'Лимитированный доступ', sbDeadline:'до 31 авг.', sbCta:'Пройти отбор', sbCtaDone:'Задать вопрос →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Далее →', navBack:'← Назад', navSubmit:'Отправить →', navReview:'Проверить ответы',
     reviewTag:'ПРОВЕРКА ОТВЕТОВ', reviewHeading:'Проверь ответы перед отправкой.',
@@ -1892,7 +1892,10 @@ function updateKbInset(){
   const section = g('test-section');
   if(!section || !section.classList.contains('fs-mode')) return;
   const vv = window.visualViewport;
-  const inset = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+  const raw = vv ? Math.max(0, window.innerHeight - vv.height - vv.offsetTop) : 0;
+  // +16px so the nav bar clears the keyboard with a visible gap instead of
+  // sitting flush against it - 0 stays 0 when the keyboard's actually closed.
+  const inset = raw > 0 ? raw + 16 : 0;
   section.style.setProperty('--kb-inset', inset + 'px');
 }
 if(window.visualViewport){
