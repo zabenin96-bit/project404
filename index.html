@@ -344,11 +344,14 @@ body.lang-switching { opacity: 0; }
    run of the animation, same gotcha as .reveal below - confirmed by
    measurement to throw .q-nav thousands of pixels off (its computed
    "static position" fallback with no ancestor left at true viewport size).
-   So opacity-only here; the scale "pop" instead lands on each question's
-   own content (tag/text/field/hint), which never contains .q-nav and so
-   can't trigger the same bug. */
+   So opacity-only here; the slide-up instead lands on the progress bar and
+   each question's own content (tag/text/field/hint), which never contain
+   .q-nav and so can't trigger the same bug. Sliding those up from the
+   bottom (rather than the plain fade the background itself gets) matches
+   where the eye already expects motion to come from - the nav bar living
+   at the bottom edge of the screen. */
 @keyframes fsFadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fsPopIn { from { opacity: 0; transform: scale(0.96); } to { opacity: 1; transform: none; } }
+@keyframes fsSlideUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
 #test-section.fs-mode {
   position: fixed;
   inset: 0;
@@ -379,7 +382,7 @@ body.lang-switching { opacity: 0; }
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
 #test-section.fs-mode .section-grid { display: none; }
-#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsFadeIn 0.3s ease 0.1s both; }
+#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideUp 0.4s cubic-bezier(.16,.8,.24,1) 0.1s both; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
    that ~0.25s it would become the containing block instead of the viewport,
@@ -397,7 +400,7 @@ body.lang-switching { opacity: 0; }
    spacing before a CTA, not as a broken empty middle. */
 #test-section.fs-mode .q-block.active { margin: 40px 0 0; }
 #test-section.fs-mode .q-block.active > *:not(.q-nav) {
-  animation: fsPopIn 0.38s cubic-bezier(.16,.8,.24,1) 0.18s both;
+  animation: fsSlideUp 0.42s cubic-bezier(.16,.8,.24,1) 0.18s both;
 }
 #test-section.fs-mode .q-nav {
   position: fixed;
