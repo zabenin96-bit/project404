@@ -906,7 +906,7 @@ body { padding-bottom: 60px; }
       <input class="q-input" id="q11n" type="text" placeholder="Имя" style="margin-bottom:18px;">
       <input class="q-input" id="q11c" type="text" placeholder="Telegram / Instagram / Email" style="margin-bottom:18px;">
       <input class="q-input" id="q11loc" type="text" placeholder="Где ты находишься?" style="margin-bottom:18px;">
-      <input class="q-input" id="q11link" type="text" placeholder="Ссылка на профиль, который лучше всего тебя отражает - необязательно">
+      <input class="q-input" id="q11link" type="text" placeholder="Ссылка на профиль - необязательно">
       <label class="consent-row" id="q11ageRow"><input type="checkbox" id="q11age18"><span id="q11age18label">Подтверждаю, что мне есть 18 лет.</span></label>
       <label class="consent-row" id="q11consentRow"><input type="checkbox" id="q11consent"><span id="q11cl">Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.</span></label>
       <div class="q-nav q-nav-11"><button class="btn-b" onclick="bk(8)">← Назад</button><button type="button" class="btn-sub" id="skip-review-btn" onclick="submitForm()">Отправить</button><button class="skip-review" id="goto-review-btn" onclick="showReview()">Проверить ответы</button></div>
@@ -1054,7 +1054,7 @@ const C = {
     q5l:'05 / 8 - DEPTH',q5t:'Tell us about a hard decision or failure this year. What did you learn?',q5p:'Be specific. Vague answers tell us nothing.',
     q6l:'06 / 8 - FILTER',q6t:'What do most people in your field get fatally wrong?',q6p:"Be specific - generic takes don't count.",
     q7l:'07 / 8 - FILTER',q7t:'When did you help someone at work, expecting nothing back? What was it?',q7p:"A specific instance - not a general 'I always help people.'",
-    q8l:'08 / 8 - CONTACT',q8t:'Name, a way to reach you, your city, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Link to a profile that represents you best - optional',q11p4:'Where are you based?',
+    q8l:'08 / 8 - CONTACT',q8t:'Name, a way to reach you, your city, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Profile link - optional',q11p4:'Where are you based?',
     ageHint:'Strictly 18+.', attemptLimitHint:'Up to 2 applications per month.', age18Label:"I confirm I'm 18 or older.",
     reqWarnAge:'You must be 18 or older to apply.',
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
@@ -1145,7 +1145,7 @@ const C = {
     q5l:'05 / 8 - ГЛУБИНА',q5t:'Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?',q5p:'Конкретно - расплывчатые ответы ничего не говорят.',
     q6l:'06 / 8 - ФИЛЬТР',q6t:'В чём большинство людей в твоей сфере фатально ошибается или заблуждается?',q6p:'Будь конкретен(-на) - общие фразы не считаются.',
     q7l:'07 / 8 - ФИЛЬТР',q7t:'Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?',q7p:'Конкретный случай - не общие слова про «всегда помогаю людям».',
-    q8l:'08 / 8 - КОНТАКТ',q8t:'Имя, способ связи, город и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль, который лучше всего тебя отражает - необязательно',q11p4:'Где ты находишься?',
+    q8l:'08 / 8 - КОНТАКТ',q8t:'Имя, способ связи, город и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль - необязательно',q11p4:'Где ты находишься?',
     ageHint:'Строго 18+.', attemptLimitHint:'Подать заявку можно не больше 2 раз в месяц.', age18Label:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
@@ -1228,7 +1228,7 @@ function animateMemberCount(target){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced){ el.textContent = target; return; }
-  const duration = 1200;
+  const duration = 3000;
   const start = performance.now();
   function tick(now){
     const progress = Math.min((now - start) / duration, 1);
@@ -2302,10 +2302,27 @@ function initFormFeedback(){
   });
   // Enter advances single-line fields (never textareas - Enter there is a
   // line break) by clicking whatever primary button sits in the same block.
+  // Q8 is the exception: it has 4 stacked inputs, not 1, so "Enter = click
+  // the block's button" would try to submit as soon as just the first one
+  // is filled. Chained to the next field instead, and - since the keyboard
+  // plus the fixed nav bar eat the bottom of the screen - scrolled so
+  // fields 3 and 4 are actually visible once you reach them, instead of
+  // sitting hidden below the fold right when they're needed next.
   document.querySelectorAll('#test-section .q-input').forEach(inp=>{
     inp.addEventListener('keydown', (e)=>{
       if(e.key !== 'Enter') return;
       e.preventDefault();
+      if(inp.id === 'q11n'){ g('q11c')?.focus(); return; }
+      if(inp.id === 'q11c'){
+        g('q11loc')?.focus();
+        g('q11link')?.scrollIntoView({behavior:'smooth', block:'end'});
+        return;
+      }
+      if(inp.id === 'q11loc'){
+        g('q11link')?.focus();
+        g('q11link')?.scrollIntoView({behavior:'smooth', block:'end'});
+        return;
+      }
       const block = inp.closest('.q-block');
       const btn = block && block.querySelector('.q-nav .btn-p, .q-nav .btn-sub');
       if(btn) btn.click();
