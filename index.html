@@ -814,7 +814,7 @@ body { padding-bottom: 60px; }
       <ul class="rules-list reveal-child">
         <li><span class="rule-key" id="proc1t">01 - Заявка</span><span class="rule-val" id="proc1d"> 8 вопросов, без ограничения по времени.</span></li>
         <li><span class="rule-key" id="proc2t">02 - Проверка</span><span class="rule-val" id="proc2d"> Каждый ответ читает человек - не алгоритм и не ИИ. Ответ даём в любом случае.</span></li>
-        <li><span class="rule-key" id="proc3t">03 - Приём либо повторная заявка</span><span class="rule-val" id="proc3d"> Если приняли - поздравляем. Если нет - можно попробовать снова.</span></li>
+        <li><span class="rule-key" id="proc3t">03 - Приём либо повторная заявка</span><span class="rule-val" id="proc3d"> Анкету одобрили - добро пожаловать в сообщество. Если нет - можно попробовать снова.</span></li>
       </ul>
     </div>
   </div>
@@ -825,7 +825,7 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
       <div class="test-intro-wrap">
-        <p class="test-intro" id="test-intro">Первый шаг: ответь на 8 вопросов, обычно занимает 5-10 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.</p>
+        <p class="test-intro" id="test-intro">Первый шаг: ответь на 8 вопросов, обычно занимает 5-10 минут. Ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.</p>
         <a href="#test-section" class="hero-cta" id="test-cta" onclick="goToApplication(); return false;"><span id="test-cta-text">Подать заявку</span></a>
       </div>
     </div>
@@ -928,7 +928,7 @@ body { padding-bottom: 60px; }
         <li><span class="rule-key" id="faq1t">Когда рассмотрят</span><span class="rule-val" id="faq1d"> Обычно 1-3 дня.</span></li>
         <li><span class="rule-key" id="faq2t">Твои данные</span><span class="rule-val" id="faq2d"> Третьим лицам не передаются.</span></li>
         <li><span class="rule-key" id="faq3t">Отказали?</span><span class="rule-val" id="faq3d"> Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.</span></li>
-        <li><span class="rule-key" id="faq4t">Оплата</span><span class="rule-val" id="faq4d"> Если приняли - придёт ссылка на оплату. Сейчас действует лимитированный ранний доступ: первые 2 месяца - $100/мес при подаче заявки до 31 августа, дальше - $250/мес. Отменить можно в любой момент.</span></li>
+        <li><span class="rule-key" id="faq4t">Оплата</span><span class="rule-val" id="faq4d"> Если анкету одобрили и тебя приняли в сообщество - придёт ссылка на оплату. Сейчас действует лимитированный ранний доступ: первые 2 месяца - $100/мес при подаче заявки до 31 августа, дальше - $250/мес. Отменить можно в любой момент.</span></li>
         <li><span class="rule-key" id="faq5t">Почему 200?</span><span class="rule-val" id="faq5d"> Лимит в 200 участников - это разумный максимум. Он позволяет сохранить ценность общения и даёт нам возможность лично отбирать и проверять каждого кандидата.</span></li>
       </ul>
     </div>
@@ -1026,14 +1026,14 @@ const C = {
     procPre:'// PROCESS',
     proc1t:'01 - Apply',proc1d:'8 questions, no time limit.',
     proc2t:'02 - Review',proc2d:'A person reads every answer - not an algorithm, not AI. You get a response either way.',
-    proc3t:'03 - Accept or reapply',proc3d:"Accepted - congrats. Not this round: you can try again.",
+    proc3t:'03 - Accept or reapply',proc3d:"Approved - welcome to the community. Not this round? You can try again.",
     faqPre:'// FAQ',
     faq1t:'When you hear back',faq1d:'Usually 1-3 days.',
     faq2t:'Your data',faq2d:'Not shared with third parties.',
     faq3t:'Rejected?',faq3d:"You can try again - up to 2 attempts a month, counter resets on the 1st.",
-    faq4t:'Payment',faq4d:'If accepted, you get a payment link - $250 charged monthly, cancel anytime.',
+    faq4t:'Payment',faq4d:"Once your application's approved and you're in, you get a payment link - $250 charged monthly, cancel anytime.",
     faq5t:'Why 200?',faq5d:"A 200-member cap is a reasonable maximum. It keeps the conversation worth having and lets us personally screen and review every candidate.",
-    faq4dFounding:'If accepted, you get a payment link. Right now it\'s Limited Early Access: $100/mo for your first 2 months (apply by Aug 31), then $250/mo. Cancel anytime.',
+    faq4dFounding:'Once your application\'s approved and you\'re in, you get a payment link. Right now it\'s Limited Early Access: $100/mo for your first 2 months (apply by Aug 31), then $250/mo. Cancel anytime.',
     rjPre:'// NOT A FIT IF',
     rj1:'You want to use the members as a free lead list for your pitch.',
     rj2:'You\'re still "thinking about starting something" - with nothing behind it.',
@@ -1046,7 +1046,7 @@ const C = {
     notifySent:'Got it - we\'ll remind you later.',
     notifyEmptyWarn:'Enter your Telegram or email.',
     wlPre:'// APPLICATION',
-    testIntro:'First step: answer 8 questions, usually takes 5-10 minutes. No hard time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back.',
+    testIntro:'First step: answer 8 questions, usually takes 5-10 minutes. No time limit - answer honestly, that\'s what we\'re filtering for. Progress saves automatically, so you can close the tab and come back.',
     q1l:'01 / 8 - BASICS',q1t:'What do you do? Describe your main project or work in one sentence.',q1p:'e.g. I run a production studio making AI video content for e-commerce brands.',
     q2l:'02 / 8 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 8 - BASICS',q3t:'What stage is your project at right now?',q3o:['Pre-revenue - testing hypotheses, running on pure hustle.','Getting some traction, but not stable yet - building the plane while flying it.',"Stable - the processes work, but I'm itching to reach for more.","Scaling - the team's growing, and so is the headache."],
@@ -1117,14 +1117,14 @@ const C = {
     procPre:'// ПРОЦЕСС',
     proc1t:'01 - Заявка',proc1d:'8 вопросов, без ограничения по времени.',
     proc2t:'02 - Проверка',proc2d:'Каждый ответ читает человек - не алгоритм и не ИИ. Ответ даём в любом случае.',
-    proc3t:'03 - Приём либо повторная заявка',proc3d:'Если приняли - поздравляем. Если нет - можно попробовать снова.',
+    proc3t:'03 - Приём либо повторная заявка',proc3d:'Анкету одобрили - добро пожаловать в сообщество. Если нет - можно попробовать снова.',
     faqPre:'// FAQ',
     faq1t:'Когда рассмотрят',faq1d:'Обычно 1-3 дня.',
     faq2t:'Твои данные',faq2d:'Третьим лицам не передаются.',
     faq3t:'Отказали?',faq3d:'Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.',
-    faq4t:'Оплата',faq4d:'Если приняли - придёт ссылка на оплату: $250 списывается ежемесячно, отменить можно в любой момент.',
+    faq4t:'Оплата',faq4d:'Если анкету одобрили и тебя приняли в сообщество - придёт ссылка на оплату: $250 списывается ежемесячно, отменить можно в любой момент.',
     faq5t:'Почему 200?',faq5d:'Лимит в 200 участников - это разумный максимум. Он позволяет сохранить ценность общения и даёт нам возможность лично отбирать и проверять каждого кандидата.',
-    faq4dFounding:'Если приняли - придёт ссылка на оплату. Сейчас действует лимитированный ранний доступ: первые 2 месяца - $100/мес при подаче заявки до 31 августа, дальше - $250/мес. Отменить можно в любой момент.',
+    faq4dFounding:'Если анкету одобрили и тебя приняли в сообщество - придёт ссылка на оплату. Сейчас действует лимитированный ранний доступ: первые 2 месяца - $100/мес при подаче заявки до 31 августа, дальше - $250/мес. Отменить можно в любой момент.',
     rjPre:'// НЕ ПОДОЙДЁТ, ЕСЛИ',
     rj1:'Хочешь использовать участников как бесплатную базу для своих питчей.',
     rj2:'Всё ещё "думаешь начать что-то" - без проекта за спиной.',
@@ -1137,7 +1137,7 @@ const C = {
     notifySent:'Записали - напомним позже.',
     notifyEmptyWarn:'Укажи Telegram или email.',
     wlPre:'// ОТБОР',
-    testIntro:'Первый шаг: ответь на 8 вопросов, обычно занимает 5-10 минут. Жёсткого ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.',
+    testIntro:'Первый шаг: ответь на 8 вопросов, обычно занимает 5-10 минут. Ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.',
     q1l:'01 / 8 - ОСНОВЫ',q1t:'Чем занимаешься? Опиши главный проект или работу одним предложением.',q1p:'Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов.',
     q2l:'02 / 8 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 8 - ОСНОВЫ',q3t:'На каком этапе сейчас твой проект?',q3o:['До выручки - тестирую гипотезы, строю на голом энтузиазме.','Есть результаты, но нестабильно - строю самолёт прямо в полёте.','Стабильно - процессы работают, но чешутся руки замахнуться на большее.','Масштабирование - команда растёт, и головная боль вместе с ней.'],
