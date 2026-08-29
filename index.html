@@ -2324,6 +2324,19 @@ function initFormFeedback(){
   // in the group (stay hidden) or somewhere else entirely (show/hide based
   // on q11Answered()).
   g('q8')?.addEventListener('focusout', ()=>{ setTimeout(updateQ8NavVisibility, 0); });
+  // Tapping a checkbox doesn't reliably blur whichever text field still has
+  // focus - on mobile the keyboard often just stays open, so
+  // document.activeElement never actually leaves the 4-field group and the
+  // nav bar's "still typing" check above stays true forever. Explicitly
+  // blurring here (not just the checkbox itself - whatever's actually
+  // focused) is what closes the keyboard and lets the nav bar reappear.
+  [g('q11age18'), g('q11consent')].forEach(cb=>{
+    if(!cb) return;
+    cb.addEventListener('change', ()=>{
+      if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
+      updateQ8NavVisibility();
+    });
+  });
   document.querySelectorAll('#test-section .q-textarea').forEach(ta=>{
     autoGrowTextarea(ta);
     ta.addEventListener('input', ()=>autoGrowTextarea(ta));
