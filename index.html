@@ -2308,8 +2308,16 @@ function initFormFeedback(){
   document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
       inp.classList.toggle('filled', inp.value.trim().length > 0);
-      updateQ8NavVisibility();
+      // Only hides here, never shows: the moment the 3rd field (location)
+      // gets its first character, q11Answered() flips true mid-keystroke -
+      // showing the nav bar right then popped it up over the field the
+      // person is still actively typing into. Showing it is deferred to
+      // blur below instead, once they've actually moved on from the field.
+      if(!q11Answered()) updateQ8NavVisibility();
     });
+  });
+  document.querySelectorAll('#q11n, #q11c, #q11loc').forEach(inp=>{
+    inp.addEventListener('blur', updateQ8NavVisibility);
   });
   document.querySelectorAll('#test-section .q-textarea').forEach(ta=>{
     autoGrowTextarea(ta);
