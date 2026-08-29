@@ -1794,15 +1794,20 @@ function q11Answered(){
 // Q8's nav bar is fixed near the bottom of the screen - on some devices the
 // keyboard resizes the layout viewport itself rather than just the visual
 // one, which throws off the --kb-inset math above and leaves the bar
-// overlapping fields 3/4 instead of sitting cleanly below them (seen on a
-// real phone, not just a quirk of the emulator this was first tested in).
-// Hiding the bar until name/contact/location are all filled sidesteps that
-// per-device viewport guesswork entirely - nothing to overlap while those
-// fields are actually being typed into.
+// overlapping whichever field currently has focus instead of sitting
+// cleanly below all of them (seen on a real phone, not just a quirk of the
+// emulator this was first tested in). Tying visibility to "is focus
+// anywhere in the 4-field group" rather than to any one field individually
+// means it stays hidden through name -> contact -> location -> link in
+// whatever order they're filled, and only appears once focus actually
+// leaves that group (a checkbox, or the keyboard closing) - nothing fixed
+// ever competes with a field that still has focus.
 function updateQ8NavVisibility(){
   const nav = document.querySelector('#q8 .q-nav');
   if(!nav) return;
-  nav.style.display = q11Answered() ? '' : 'none';
+  const active = document.activeElement;
+  const stillInContactFields = active && ['q11n','q11c','q11loc','q11link'].includes(active.id);
+  nav.style.display = (!stillInContactFields && q11Answered()) ? '' : 'none';
 }
 
 function consentChecked(){
@@ -2308,17 +2313,17 @@ function initFormFeedback(){
   document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
       inp.classList.toggle('filled', inp.value.trim().length > 0);
-      // Only hides here, never shows: the moment the 3rd field (location)
-      // gets its first character, q11Answered() flips true mid-keystroke -
-      // showing the nav bar right then popped it up over the field the
-      // person is still actively typing into. Showing it is deferred to
-      // blur below instead, once they've actually moved on from the field.
-      if(!q11Answered()) updateQ8NavVisibility();
+      updateQ8NavVisibility();
     });
   });
-  document.querySelectorAll('#q11n, #q11c, #q11loc').forEach(inp=>{
-    inp.addEventListener('blur', updateQ8NavVisibility);
-  });
+  // focusout (not blur - it bubbles) fires before the browser has moved
+  // focus to whatever's next, so document.activeElement inside the handler
+  // itself would still read the field that's leaving, not the one about to
+  // receive it - the 0ms timeout lets focus land first so
+  // updateQ8NavVisibility() sees where it actually ended up: another field
+  // in the group (stay hidden) or somewhere else entirely (show/hide based
+  // on q11Answered()).
+  g('q8')?.addEventListener('focusout', ()=>{ setTimeout(updateQ8NavVisibility, 0); });
   document.querySelectorAll('#test-section .q-textarea').forEach(ta=>{
     autoGrowTextarea(ta);
     ta.addEventListener('input', ()=>autoGrowTextarea(ta));
