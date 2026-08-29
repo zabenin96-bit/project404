@@ -1791,6 +1791,20 @@ function q11Answered(){
   return (g('q11n')?.value.trim().length||0) > 0 && (g('q11c')?.value.trim().length||0) > 0 && (g('q11loc')?.value.trim().length||0) > 0;
 }
 
+// Q8's nav bar is fixed near the bottom of the screen - on some devices the
+// keyboard resizes the layout viewport itself rather than just the visual
+// one, which throws off the --kb-inset math above and leaves the bar
+// overlapping fields 3/4 instead of sitting cleanly below them (seen on a
+// real phone, not just a quirk of the emulator this was first tested in).
+// Hiding the bar until name/contact/location are all filled sidesteps that
+// per-device viewport guesswork entirely - nothing to overlap while those
+// fields are actually being typed into.
+function updateQ8NavVisibility(){
+  const nav = document.querySelector('#q8 .q-nav');
+  if(!nav) return;
+  nav.style.display = q11Answered() ? '' : 'none';
+}
+
 function consentChecked(){
   return !!g('q11consent')?.checked;
 }
@@ -2294,6 +2308,7 @@ function initFormFeedback(){
   document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
       inp.classList.toggle('filled', inp.value.trim().length > 0);
+      updateQ8NavVisibility();
     });
   });
   document.querySelectorAll('#test-section .q-textarea').forEach(ta=>{
@@ -2378,6 +2393,7 @@ initLoader();
 render();
 updProg(1);
 restoreDraft();
+updateQ8NavVisibility();
 initAutosave();
 initReveal();
 initScrollProgress();
