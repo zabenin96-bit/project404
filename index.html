@@ -607,6 +607,14 @@ body { padding-bottom: 60px; }
   .sys-block .sys-line { flex-direction: column; gap: 6px; }
   .sys-block .sys-line .tag { min-width: 0; font-size: 11px; letter-spacing: 0.14em; }
   .sys-block .sys-line .val { text-wrap: pretty; line-height: 1.6; }
+  /* flex:1 up to 460px (set to stop the button stretching past 1000px+ on
+     an uncapped desktop bar) still reads as an oversized amber block at
+     this width - narrower than the field column above it, more in line
+     with a normal button than a banner. */
+  #test-section.fs-mode .q-nav .btn-p,
+  #test-section.fs-mode .q-nav .btn-sub {
+    max-width: 260px;
+  }
 }
 
 @media (max-width: 700px) {
@@ -614,7 +622,21 @@ body { padding-bottom: 60px; }
   .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li, .q-opt span, .ty-body { font-size: 15px; }
   /* Symmetric top and bottom: the 72px above clears the language switcher,
      which ends at 58px, so the bottom matches it rather than the top shrinking. */
-  .hero { padding: 72px 6vw; min-height: auto; justify-content: flex-start; }
+  /* Bottom padding trimmed to a hairline: margin:auto below only splits the
+     space inside .hero's own content box, not its padding - keeping the
+     old symmetric 72px here would silently eat 72px out of the arrow's
+     "gap to the bottom edge" that never got the chance to balance against
+     its "gap to the button" above, undercentering it no matter how the
+     margins split. */
+  .hero { padding: 72px 6vw 8px; min-height: 100vh; min-height: 100dvh; justify-content: flex-start; }
+  /* Centers the arrow in the leftover space below the CTA button instead of
+     sitting bunched right up against it with a large, unexplained gap of
+     nothing between it and the bottom of the screen - margin:auto on both
+     sides splits whatever room .hero's now-full-viewport height leaves
+     after the content above it. Falls back to sitting right after the CTA
+     (the old behavior) if that content alone already exceeds one viewport,
+     since there's no leftover space left to split at that point. */
+  .hero-scroll-cue { margin-top: auto; margin-bottom: auto; }
   /* The wordmark is the brand's signature and stays on one line, so it is sized to
      the width rather than pinned at the clamp floor of 48px. That floor was both too
      big at 320px, where it wrapped on its own, and too small everywhere above 360px,
