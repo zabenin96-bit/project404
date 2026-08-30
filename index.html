@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://noresults-backend-production.up.railway.app; frame-ancestors 'self';">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no, interactive-widget=resizes-content">
 <meta name="theme-color" content="#0a0a09">
 <title>no results.</title>
 <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -1785,25 +1785,6 @@ function q11Answered(){
   return (g('q11n')?.value.trim().length||0) > 0 && (g('q11c')?.value.trim().length||0) > 0 && (g('q11loc')?.value.trim().length||0) > 0;
 }
 
-// Q8's nav bar is fixed near the bottom of the screen - on some devices the
-// keyboard resizes the layout viewport itself rather than just the visual
-// one, which throws off the --kb-inset math above and leaves the bar
-// overlapping whichever field currently has focus instead of sitting
-// cleanly below all of them (seen on a real phone, not just a quirk of the
-// emulator this was first tested in). Tying visibility to "is focus
-// anywhere in the 4-field group" rather than to any one field individually
-// means it stays hidden through name -> contact -> location -> link in
-// whatever order they're filled, and only appears once focus actually
-// leaves that group (a checkbox, or the keyboard closing) - nothing fixed
-// ever competes with a field that still has focus.
-function updateQ8NavVisibility(){
-  const nav = document.querySelector('#q8 .q-nav');
-  if(!nav) return;
-  const active = document.activeElement;
-  const stillInContactFields = active && ['q11n','q11c','q11loc','q11link'].includes(active.id);
-  nav.style.display = (!stillInContactFields && q11Answered()) ? '' : 'none';
-}
-
 function consentChecked(){
   return !!g('q11consent')?.checked;
 }
@@ -2307,28 +2288,6 @@ function initFormFeedback(){
   document.querySelectorAll('#test-section .q-textarea, #test-section .q-input').forEach(inp=>{
     inp.addEventListener('input', ()=>{
       inp.classList.toggle('filled', inp.value.trim().length > 0);
-      updateQ8NavVisibility();
-    });
-  });
-  // focusout (not blur - it bubbles) fires before the browser has moved
-  // focus to whatever's next, so document.activeElement inside the handler
-  // itself would still read the field that's leaving, not the one about to
-  // receive it - the 0ms timeout lets focus land first so
-  // updateQ8NavVisibility() sees where it actually ended up: another field
-  // in the group (stay hidden) or somewhere else entirely (show/hide based
-  // on q11Answered()).
-  g('q8')?.addEventListener('focusout', ()=>{ setTimeout(updateQ8NavVisibility, 0); });
-  // Tapping a checkbox doesn't reliably blur whichever text field still has
-  // focus - on mobile the keyboard often just stays open, so
-  // document.activeElement never actually leaves the 4-field group and the
-  // nav bar's "still typing" check above stays true forever. Explicitly
-  // blurring here (not just the checkbox itself - whatever's actually
-  // focused) is what closes the keyboard and lets the nav bar reappear.
-  [g('q11age18'), g('q11consent')].forEach(cb=>{
-    if(!cb) return;
-    cb.addEventListener('change', ()=>{
-      if(document.activeElement instanceof HTMLElement) document.activeElement.blur();
-      updateQ8NavVisibility();
     });
   });
   document.querySelectorAll('#test-section .q-textarea').forEach(ta=>{
@@ -2408,7 +2367,6 @@ initLoader();
 render();
 updProg(1);
 restoreDraft();
-updateQ8NavVisibility();
 initAutosave();
 initReveal();
 initScrollProgress();
