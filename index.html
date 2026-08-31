@@ -908,21 +908,21 @@ body { padding-bottom: 60px; }
     <div class="q-block" id="q5">
       <div class="q-tag" id="q5l">05 / 8 - ГЛУБИНА</div>
       <div class="q-text" id="q5t">Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?</div>
-      <textarea class="q-textarea" id="q5v" placeholder="Конкретно - расплывчатые ответы ничего не говорят."></textarea>
+      <textarea class="q-textarea" id="q5v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(5)">← Назад</button><button class="btn-p" onclick="nx(5)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q6">
       <div class="q-tag" id="q6l">06 / 8 - ФИЛЬТР</div>
       <div class="q-text" id="q6t">В чём большинство людей в твоей сфере фатально ошибается или заблуждается?</div>
-      <textarea class="q-textarea" id="q6v" placeholder="Будь конкретен(-на) - общие фразы не считаются."></textarea>
+      <textarea class="q-textarea" id="q6v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(6)">← Назад</button><button class="btn-p" onclick="nx(6)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q7">
       <div class="q-tag" id="q7l">07 / 8 - ФИЛЬТР</div>
       <div class="q-text" id="q7t">Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?</div>
-      <textarea class="q-textarea" id="q7v" placeholder="Конкретный случай - не общие слова про «всегда помогаю людям»."></textarea>
+      <textarea class="q-textarea" id="q7v"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(7)">← Назад</button><button class="btn-p" onclick="nx(7)">Далее →</button></div>
     </div>
 
@@ -1076,9 +1076,9 @@ const C = {
     q2l:'02 / 8 - BASICS',q2t:'How long have you been doing it?',q2o:['Less than 6 months','6 months - 2 years','2 - 5 years','More than 5 years'],
     q3l:'03 / 8 - BASICS',q3t:'What stage is your project at right now?',q3o:['Pre-revenue - testing hypotheses, running on pure hustle.','Getting some traction, but not stable yet - building the plane while flying it.',"Stable - the processes work, but I'm itching to reach for more.","Scaling - the team's growing, and so is the headache."],
     q4l:'04 / 8 - DEPTH',q4t:'What do you actually want from a community like this?',q4o:['Access to specific skills or expertise','Accountability. Someone to answer to','Drop the "successful leader" act and talk about real struggles safely','Find my people - others who think critically the way I do','Honest feedback on my ideas, without the flattery'],
-    q5l:'05 / 8 - DEPTH',q5t:'Tell us about a hard decision or failure this year. What did you learn?',q5p:'Be specific. Vague answers tell us nothing.',
-    q6l:'06 / 8 - FILTER',q6t:'What do most people in your field get fatally wrong?',q6p:"Be specific - generic takes don't count.",
-    q7l:'07 / 8 - FILTER',q7t:'When did you help someone at work, expecting nothing back? What was it?',q7p:"A specific instance - not a general 'I always help people.'",
+    q5l:'05 / 8 - DEPTH',q5t:'Tell us about a hard decision or failure this year. What did you learn?',
+    q6l:'06 / 8 - FILTER',q6t:'What do most people in your field get fatally wrong?',
+    q7l:'07 / 8 - FILTER',q7t:'When did you help someone at work, expecting nothing back? What was it?',
     q8l:'08 / 8 - CONTACT',q8t:'Name, a way to reach you, your city, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Profile link - optional',q11p4:'Where are you based?',
     ageHint:'Strictly 18+.', attemptLimitHint:'Up to 2 applications per month.', age18Label:"I confirm I'm 18 or older.",
     reqWarnAge:'You must be 18 or older to apply.',
@@ -1166,9 +1166,9 @@ const C = {
     q2l:'02 / 8 - ОСНОВЫ',q2t:'Сколько ты этим занимаешься?',q2o:['Меньше 6 месяцев','6 месяцев - 2 года','2 - 5 лет','Больше 5 лет'],
     q3l:'03 / 8 - ОСНОВЫ',q3t:'На каком этапе сейчас твой проект?',q3o:['До выручки - тестирую гипотезы, строю на голом энтузиазме.','Есть результаты, но нестабильно - строю самолёт прямо в полёте.','Стабильно - процессы работают, но чешутся руки замахнуться на большее.','Масштабирование - команда растёт, и головная боль вместе с ней.'],
     q4l:'04 / 8 - ГЛУБИНА',q4t:'Чего ты на самом деле хочешь от такого сообщества?',q4o:['Доступ к конкретным навыкам и экспертизе','Ответственность. Чтобы было перед кем отчитываться','Снять маску «успешного лидера» и безопасно поговорить о трудностях','Найти своих - людей с похожим критическим мышлением','Честную обратную связь на свои идеи без лести'],
-    q5l:'05 / 8 - ГЛУБИНА',q5t:'Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?',q5p:'Конкретно - расплывчатые ответы ничего не говорят.',
-    q6l:'06 / 8 - ФИЛЬТР',q6t:'В чём большинство людей в твоей сфере фатально ошибается или заблуждается?',q6p:'Будь конкретен(-на) - общие фразы не считаются.',
-    q7l:'07 / 8 - ФИЛЬТР',q7t:'Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?',q7p:'Конкретный случай - не общие слова про «всегда помогаю людям».',
+    q5l:'05 / 8 - ГЛУБИНА',q5t:'Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?',
+    q6l:'06 / 8 - ФИЛЬТР',q6t:'В чём большинство людей в твоей сфере фатально ошибается или заблуждается?',
+    q7l:'07 / 8 - ФИЛЬТР',q7t:'Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?',
     q8l:'08 / 8 - КОНТАКТ',q8t:'Имя, способ связи, город и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль - необязательно',q11p4:'Где ты находишься?',
     ageHint:'Строго 18+.', attemptLimitHint:'Подать заявку можно не больше 2 раз в месяц.', age18Label:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
@@ -1308,7 +1308,7 @@ function render(){
     if(lel) lel.textContent=t('q'+i+'l');
     if(tel) tel.textContent=t('q'+i+'t');
   }
-  [1,5,6,7].forEach(i=>{ const e=g('q'+i+'v'); if(e) e.placeholder=t('q'+i+'p'); });
+  g('q1v').placeholder=t('q1p');
   [[2,'q2o'],[3,'q3o'],[4,'q4o']].forEach(([q,k])=>{
     t(k).forEach((o,i)=>{ const e=g('q'+q+'abcde'[i]); if(e) e.textContent=o; });
   });
