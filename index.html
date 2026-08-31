@@ -1913,11 +1913,20 @@ function flagQ11Empty(target){
 // ── APPLY CTA: both the hero button and the sticky bar land here, opening
 // the full-screen application overlay. ──
 // Scroll-cue tap target: moves straight to whatever comes right after the
-// hero, without hardcoding which section that is.
+// hero, without hardcoding which section that is. scrollIntoView's plain
+// block:'start' lines the section up with the very top of the viewport -
+// but the lang switcher sits fixed there over everything, regardless of
+// scroll position, so the section's first line(s) landed hidden behind it.
+// Scrolling to an explicit offset (the lang bar's own height, plus a
+// little breathing room) instead clears it every time.
 function scrollPastHero(){
   const hero = document.querySelector('.hero');
   const next = hero && hero.nextElementSibling;
-  if(next) next.scrollIntoView({behavior:'smooth', block:'start'});
+  if(!next) return;
+  const langBar = document.querySelector('.lang-bar');
+  const clearance = (langBar ? langBar.getBoundingClientRect().height : 0) + 12;
+  const targetY = next.getBoundingClientRect().top + window.scrollY - clearance;
+  window.scrollTo({ top: targetY, behavior: 'smooth' });
 }
 
 // Sticky-bar CTA - kept as its own function since the sticky bar's onclick
