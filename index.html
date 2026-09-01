@@ -212,15 +212,16 @@ body.lang-switching { opacity: 0; }
    background matching the page's own so filter:invert(1) has something
    opaque to flip: the near-black background inverts to a pale tone and the
    near-white text inverts to near-black, same relationship as film. Revealed
-   via a right-to-left clip-path wipe (left inset 100% -> 0%), and retracted
-   the same direction (right inset 0% -> 100%) rather than a plain fade. */
+   via a left-to-right clip-path wipe (right inset 100% -> 0%), and retracted
+   via a right-to-left wipe (right inset 0% -> 100%) rather than a plain
+   fade - open and close deliberately run opposite directions. */
 .hl-center-overlay {
   position: absolute;
   inset: 0;
   background: var(--bg);
   filter: invert(1);
   white-space: nowrap;
-  clip-path: inset(0 0 0 100%);
+  clip-path: inset(0 100% 0 0);
   transition: clip-path 1.5s ease;
   pointer-events: none;
 }
@@ -235,7 +236,7 @@ body.lang-switching { opacity: 0; }
   color: var(--text);
 }
 .hl-center-overlay.hl-in { clip-path: inset(0 0 0 0); }
-/* Ending: retracts with the same right-to-left motion as the reveal
+/* Ending: retracts right-to-left, opposite the left-to-right reveal
    (rather than a flicker or a plain opacity fade) - holds fully revealed,
    then the right edge sweeps leftward until the phrase is fully covered
    again. */
@@ -1407,8 +1408,8 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
 
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(overlays.length && !reduced){
-    // Wipes right-to-left shortly after render, holds for a bit, then
-    // retracts the same direction (via .hl-out) - no flicker, no plain
+    // Wipes left-to-right shortly after render, holds for a bit, then
+    // retracts right-to-left (via .hl-out) - no flicker, no plain
     // fade. The final, settled state is the plain text underneath, not a
     // permanently inverted one - the highlight is a momentary wipe, not a
     // new color. transitionMs must match the clip-path transition duration
