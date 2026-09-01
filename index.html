@@ -131,31 +131,12 @@ body.lang-switching { opacity: 0; }
 .sys-line .nb { white-space: nowrap; }
 
 .hero-name { font-family: var(--font-mark); font-size: clamp(48px, 10vw, 118px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 0.9; display: block; margin-bottom: 8px; }
-.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--amber); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite, cursorGate 10s step-end infinite; }
+.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--amber); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite; }
 @keyframes blink-cur { 0%,100%{opacity:1} 50%{opacity:0} }
-/* Hides the cursor for the same 0-46% window hlSweep spends revealing/holding/
-   receding the highlight below - reads as a real text selection replacing the
-   caret, not two unrelated animations running side by side. Uses visibility
-   (not opacity) so it doesn't fight blink-cur's own opacity toggling. */
-@keyframes cursorGate { 0%,45%{visibility:hidden} 46%,100%{visibility:visible} }
 
-/* ── HIGHLIGHT SWEEP: "results." lights up from its last letter, once every 10s ── */
-.hl-wrap { position: relative; display: inline-block; }
-.hl-overlay {
-  position: absolute;
-  top: 0; right: 0;
-  height: 100%;
-  width: 0%;
-  overflow: hidden;
-  white-space: nowrap;
-  pointer-events: none;
-  animation: hlSweep 10s ease-in-out infinite;
-}
-.hl-overlay .hl-text { position: absolute; top: 0; right: 0; color: var(--amber); white-space: nowrap; }
-
-/* ── LOADING SCREEN: one entrance, not a fake progress readout - the same
-   amber sweep that lights up "results." in the hero, played once at full
-   size as the first thing a visitor sees, then it gets out of the way. ── */
+/* ── LOADING SCREEN: one entrance, not a fake progress readout - plain
+   mark plus a blinking cursor, played once as the first thing a visitor
+   sees, then it gets out of the way. ── */
 #loader {
   position: fixed;
   inset: 0;
@@ -187,14 +168,6 @@ body.lang-switching { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) {
   #loader .loader-cursor { display: none; }
-}
-
-@keyframes hlSweep {
-  0%   { width: 0%; }
-  14%  { width: 100%; }
-  30%  { width: 100%; }
-  46%  { width: 0%; }
-  100% { width: 0%; }
 }
 
 
@@ -782,7 +755,7 @@ body { padding-bottom: 60px; }
 
   <!-- HERO -->
   <div class="hero">
-    <span class="hero-name" id="hero-name-text">no <span class="hl-wrap"><span class="hl-base">results.</span><span class="hl-overlay" id="wordmark-sweep"><span class="hl-text">results.</span></span></span><span class="hero-cursor"></span></span>
+    <span class="hero-name" id="hero-name-text">no results.<span class="hero-cursor"></span></span>
 
     <div class="hero-divider"></div>
 
@@ -1293,11 +1266,8 @@ function positionLangIndicator(){
   indicator.style.width = activeBtn.offsetWidth + 'px';
 }
 
-// Shared delay (ms, from apply() running) before the headline's negative
-// highlight wipes in (see setHeroHeadline) and before the wordmark's own
-// amber sweep restarts (see syncWordmarkSweep) - keeping both on this one
-// constant is what makes the two amber flashes land together on every
-// language switch instead of drifting in and out of sync.
+// Delay (ms, from apply() running) before the headline's negative
+// highlight wipes in - see setHeroHeadline.
 const HL_FLASH_DELAY = 2300;
 
 function setLang(l){
@@ -1309,34 +1279,18 @@ function setLang(l){
     positionLangIndicator();
     render();
     document.body.classList.remove('lang-switching');
-    if(!reduceMotion) syncWordmarkSweep();
   };
   if(reduceMotion){ apply(); return; }
   document.body.classList.add('lang-switching');
   setTimeout(apply, 150);
 }
 
-// Restarts the wordmark's amber sweep (hlSweep - normally a free-running
-// 10s CSS loop) from 0% at HL_FLASH_DELAY, the same offset the headline
-// highlight uses, so the two amber flashes are triggered together on
-// language switch rather than each running on its own independent timer.
-function syncWordmarkSweep(){
-  const el = g('wordmark-sweep');
-  if(!el) return;
-  setTimeout(()=>{
-    el.style.animation = 'none';
-    void el.offsetWidth;
-    el.style.animation = '';
-  }, HL_FLASH_DELAY);
-}
-
 // Renders the headline text immediately (no per-character reveal) and, for
 // each highlightPhrases match, flashes a brief true negative (photo-negative
 // color inversion via filter:invert, not a colored highlight) shortly after
 // render - a momentary emphasis on language switch, not a redraw of the
-// text itself. Built the same way the wordmark's own .hl-overlay sweep is:
-// a plain-text absolutely-positioned duplicate on top of the real text,
-// revealed via clip-path.
+// text itself. Built as a plain-text absolutely-positioned duplicate on
+// top of the real text, revealed via clip-path.
 //
 // mobileBreakBefore (optional): a word to force onto its own new line on
 // mobile only. Natural word-wrap here isn't stable across mobile widths -
@@ -1413,11 +1367,10 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
     // fade. The final, settled state is the plain text underneath, not a
     // permanently inverted one - the highlight is a momentary wipe, not a
     // new color. transitionMs must match the clip-path transition duration
-    // set on .hl-center-overlay in CSS. flashDelay is shared with the
-    // wordmark's own sweep restart (see HL_FLASH_DELAY / syncWordmarkSweep)
-    // so both fire together. Each phrase's start is staggered by
-    // staggerMs so multiple highlighted phrases don't all wipe in perfect
-    // lockstep - each keeps its own full in/hold/out cycle, just offset.
+    // set on .hl-center-overlay in CSS. Each phrase's start is staggered
+    // by staggerMs so multiple highlighted phrases don't all wipe in
+    // perfect lockstep - each keeps its own full in/hold/out cycle, just
+    // offset.
     const flashDelay = HL_FLASH_DELAY;
     const transitionMs = 1500;
     const holdMs = 1200;
