@@ -1326,16 +1326,6 @@ function setLang(l){
   setTimeout(apply, 150);
 }
 
-// Meta's in-app browsers (Instagram, Facebook) run an older embedded
-// WebView that struggles to composite an animated clip-path on a
-// filter:invert(1) element - reported to freeze the page during the
-// highlight wipe, not just stutter it. Detected by user-agent token
-// (both apps include one) rather than feature-testing, since the failure
-// is a real-device rendering limitation no capability check surfaces.
-function isMetaInAppBrowser(){
-  return /Instagram|FBAN|FBAV/.test(navigator.userAgent || '');
-}
-
 // Renders the headline text immediately (no per-character reveal) and, for
 // each highlightPhrases match, flashes a brief true negative (photo-negative
 // color inversion via filter:invert, not a colored highlight) shortly after
@@ -1411,7 +1401,7 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
   });
 
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(overlays.length && !reduced && !isMetaInAppBrowser()){
+  if(overlays.length && !reduced){
     // Wipes left-to-right shortly after render, holds for a bit, then
     // retracts right-to-left (via .hl-out) - no flicker, no plain
     // fade. The final, settled state is the plain text underneath, not a
