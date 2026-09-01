@@ -131,28 +131,26 @@ body.lang-switching { opacity: 0; }
 .sys-line .nb { white-space: nowrap; }
 
 .hero-name { font-family: var(--font-mark); font-size: clamp(48px, 10vw, 118px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 0.9; display: block; margin-bottom: 8px; }
-.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--text); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite, cursorGate 10s step-end infinite 10s; }
+.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--text); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite, cursorGate 7s step-end infinite 5s; }
 @keyframes blink-cur { 0%,100%{opacity:1} 50%{opacity:0} }
 /* Hides the cursor for the same 0-46% window wmSweep spends revealing/
    holding/receding the wordmark highlight - reads as a real text
    selection replacing the caret, not two unrelated animations running
    side by side. Uses visibility (not opacity) so it doesn't fight
-   blink-cur's own opacity toggling. The 10s delay matches wmSweep's own,
-   so the two stay in lockstep from the first pass onward. */
+   blink-cur's own opacity toggling. The 5s delay / 7s duration match
+   wmSweep's own, so the two stay in lockstep from the first pass onward. */
 @keyframes cursorGate { 0%,45%{visibility:hidden} 46%,100%{visibility:visible} }
 
-/* ── WORDMARK SWEEP: "results." lights up from its last letter, once every
-   10s, forever - true negative look, but via mix-blend-mode: difference
-   rather than filter:invert. A plain var(--text)-colored rectangle
-   difference-blended against whatever's underneath produces the same
-   per-pixel inversion (dark page bg -> pale, near-white glyph -> near-
-   black) without a filter pass, which is what made the filter version
-   noticeably janky on phones - not just Instagram's in-app browser, on
-   mobile generally. No duplicate text needed either: blending happens
-   directly against the real "results." text beneath it, so there's
-   nothing to double up on copy/paste. animation-delay pushes the first
-   pass to 10s after load instead of playing immediately; every pass
-   after that follows on the same 10s cadence. */
+/* ── WORDMARK SWEEP: "results." lights up from its last letter, first
+   pass at 5s after load, then every 7s forever - true negative look via
+   mix-blend-mode: difference rather than filter:invert. A plain
+   var(--text)-colored rectangle difference-blended against whatever's
+   underneath produces the same per-pixel inversion (dark page bg ->
+   pale, near-white glyph -> near-black) without a filter pass, which is
+   what made the filter version noticeably janky on phones - not just
+   Instagram's in-app browser, on mobile generally. No duplicate text
+   needed either: blending happens directly against the real "results."
+   text beneath it, so there's nothing to double up on copy/paste. */
 .wm-wrap { position: relative; display: inline-block; }
 .wm-overlay {
   position: absolute;
@@ -161,8 +159,8 @@ body.lang-switching { opacity: 0; }
   mix-blend-mode: difference;
   pointer-events: none;
   clip-path: inset(0 0 0 100%);
-  animation: wmSweep 10s ease-in-out infinite;
-  animation-delay: 10s;
+  animation: wmSweep 7s ease-in-out infinite;
+  animation-delay: 5s;
   will-change: clip-path;
 }
 @keyframes wmSweep {
@@ -222,39 +220,6 @@ body.lang-switching { opacity: 0; }
    mobileBreakBefore in setHeroHeadline(). Inert (no break) elsewhere;
    the mobile override lives in the @media (max-width: 700px) block. */
 .mobile-break { display: none; }
-/* True negative (photo-negative style color inversion, not a colored
-   highlight) for specific callout words in the headline, via
-   mix-blend-mode: difference rather than filter:invert - a plain
-   var(--text)-colored rectangle laid exactly over the real (already-
-   rendered) text, difference-blended against whatever's underneath so
-   the near-black background reads as pale and the near-white text reads
-   as near-black, same relationship as film, without a filter pass. Was
-   filter:invert(1) originally; that was noticeably janky animating on
-   phones (not just Instagram's in-app browser - mobile generally), since
-   filter forces a rasterize pass on every frame the clip-path bounds
-   change. No duplicate text needed either: the blend happens directly
-   against the real text beneath it, so nothing to double up on
-   copy/paste. Revealed via a left-to-right clip-path wipe (right inset
-   100% -> 0%), and retracted via a right-to-left wipe (right inset 0% ->
-   100%) rather than a plain fade - open and close deliberately run
-   opposite directions. */
-.hl-center-overlay {
-  position: absolute;
-  inset: 0;
-  background: var(--text);
-  mix-blend-mode: difference;
-  white-space: nowrap;
-  clip-path: inset(0 100% 0 0);
-  transition: clip-path 1.5s ease-in-out;
-  pointer-events: none;
-  will-change: clip-path;
-}
-.hl-center-overlay.hl-in { clip-path: inset(0 0 0 0); }
-/* Ending: retracts right-to-left, opposite the left-to-right reveal
-   (rather than a flicker or a plain opacity fade) - holds fully revealed,
-   then the right edge sweeps leftward until the phrase is fully covered
-   again. */
-.hl-center-overlay.hl-out { clip-path: inset(0 100% 0 0); transition: clip-path 1s ease-in-out; }
 .hero-body { font-size: 14px; color: var(--dim-hi); line-height: 1.9; max-width: 460px; margin-bottom: 22px; }
 
 .hero-cta { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; width: fit-content; font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--amber); background: transparent; border-radius: 4px; padding: 14px 26px; box-shadow: inset 0 0 0 1px var(--amber); border: none; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease; }
@@ -1307,10 +1272,6 @@ function positionLangIndicator(){
   indicator.style.width = activeBtn.offsetWidth + 'px';
 }
 
-// Delay (ms, from apply() running) before the headline's negative
-// highlight wipes in - see setHeroHeadline.
-const HL_FLASH_DELAY = 2300;
-
 function setLang(l){
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const apply = () => {
@@ -1326,12 +1287,7 @@ function setLang(l){
   setTimeout(apply, 150);
 }
 
-// Renders the headline text immediately (no per-character reveal) and, for
-// each highlightPhrases match, flashes a brief true negative (photo-negative
-// color inversion via filter:invert, not a colored highlight) shortly after
-// render - a momentary emphasis on language switch, not a redraw of the
-// text itself. Built as a plain-text absolutely-positioned duplicate on
-// top of the real text, revealed via clip-path.
+// Renders the headline text immediately, no animation.
 //
 // mobileBreakBefore (optional): a word to force onto its own new line on
 // mobile only. Natural word-wrap here isn't stable across mobile widths -
@@ -1341,101 +1297,24 @@ function setLang(l){
 // (display:none by default, shown only under the site's existing mobile
 // breakpoint) makes that line break unconditional on mobile instead of
 // leaving it up to the viewport's exact width.
-function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
+function setHeroHeadline(el, text, mobileBreakBefore){
   if(!el) return;
   el.innerHTML = '';
 
-  const overlays = [];
-  function appendHighlightSegment(container, segText){
-    const hlWrap = document.createElement('span');
-    hlWrap.style.cssText = 'position:relative; display:inline-block; white-space:nowrap;';
-    hlWrap.appendChild(document.createTextNode(segText));
-    const overlay = document.createElement('span');
-    overlay.className = 'hl-center-overlay';
-    overlay.setAttribute('aria-hidden', 'true');
-    hlWrap.appendChild(overlay);
-    overlays.push(overlay);
-    container.appendChild(hlWrap);
+  if(!mobileBreakBefore){
+    el.appendChild(document.createTextNode(text));
+    return;
   }
-
-  // Cuts `text` into ordered {text, hl} pieces around each highlight phrase,
-  // searching only inside not-yet-highlighted pieces so an earlier match
-  // can't accidentally swallow a later one.
-  let segments = [{ text, hl: false }];
-  (highlightPhrases || []).forEach(phrase => {
-    const next = [];
-    segments.forEach(seg => {
-      if(seg.hl){ next.push(seg); return; }
-      const at = seg.text.indexOf(phrase);
-      if(at === -1){ next.push(seg); return; }
-      if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
-      next.push({ text: phrase, hl: true });
-      const rest = seg.text.slice(at + phrase.length);
-      if(rest) next.push({ text: rest, hl: false });
-    });
-    segments = next;
-  });
-
-  // Same cut, but marking the start of the piece rather than the piece
-  // itself, so a <br> can be inserted right before it at render time.
-  if(mobileBreakBefore){
-    const next = [];
-    segments.forEach(seg => {
-      if(seg.hl){ next.push(seg); return; }
-      const at = seg.text.indexOf(mobileBreakBefore);
-      if(at === -1){ next.push(seg); return; }
-      if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
-      next.push({ text: seg.text.slice(at), hl: false, breakBefore: true });
-    });
-    segments = next;
+  const at = text.indexOf(mobileBreakBefore);
+  if(at === -1){
+    el.appendChild(document.createTextNode(text));
+    return;
   }
-
-  segments.forEach(seg => {
-    if(seg.breakBefore){
-      const br = document.createElement('br');
-      br.className = 'mobile-break';
-      el.appendChild(br);
-    }
-    if(seg.hl) appendHighlightSegment(el, seg.text);
-    else el.appendChild(document.createTextNode(seg.text));
-  });
-
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(overlays.length && !reduced){
-    // Wipes left-to-right shortly after render, holds for a bit, then
-    // retracts right-to-left (via .hl-out) - no flicker, no plain
-    // fade. The final, settled state is the plain text underneath, not a
-    // permanently inverted one - the highlight is a momentary wipe, not a
-    // new color. transitionMs must match the clip-path transition duration
-    // set on .hl-center-overlay in CSS. Each phrase's start is staggered
-    // by staggerMs so multiple highlighted phrases don't all wipe in
-    // perfect lockstep - each keeps its own full in/hold/out cycle, just
-    // offset.
-    const schedule = () => {
-      const flashDelay = HL_FLASH_DELAY;
-      const transitionMs = 1500;
-      const holdMs = 1800;
-      const staggerMs = 300;
-      overlays.forEach((o, i) => {
-        const start = flashDelay + i * staggerMs;
-        setTimeout(()=>{ o.classList.add('hl-in'); }, start);
-        setTimeout(()=>{ o.classList.add('hl-out'); }, start + transitionMs + holdMs);
-      });
-    };
-    // The very first run can land mid-animation on the moment the webfont
-    // finishes loading (display:swap forces a reflow of all text using it
-    // when it swaps in) - reported as a stutter specifically on the first
-    // pass's retract, gone on every run after. Waiting for fonts.ready
-    // before scheduling means the swap-triggered reflow has already
-    // happened by the time the animation starts; document.fonts.ready is
-    // already-resolved on every call after the first, so this costs
-    // nothing once fonts have settled.
-    if(document.fonts && document.fonts.ready){
-      document.fonts.ready.then(schedule);
-    } else {
-      schedule();
-    }
-  }
+  if(at > 0) el.appendChild(document.createTextNode(text.slice(0, at)));
+  const br = document.createElement('br');
+  br.className = 'mobile-break';
+  el.appendChild(br);
+  el.appendChild(document.createTextNode(text.slice(at)));
 }
 
 function render(){
@@ -1443,9 +1322,8 @@ function render(){
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
   g('s-msg2').innerHTML = ' ' + (foundingActive() ? t('sMsg2Founding') : t('sMsg2'));
-  const heroHlHighlights = lang === 'ru' ? ['фаундеров', 'креативных лидеров', 'специалистов'] : ['founders', 'creative leaders', 'specialists'];
   const heroHlMobileBreak = lang === 'ru' ? 'смежных' : 'adjacent';
-  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlHighlights, heroHlMobileBreak);
+  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlMobileBreak);
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
   g('test-cta-text').textContent = t('heroCta');
