@@ -298,7 +298,7 @@ body.lang-switching { opacity: 0; }
 .q-text { font-size: clamp(16px, 1.9vw, 21px); font-weight: 700; color: var(--text); line-height: 1.4; margin-bottom: 24px; max-width: 580px; min-height: 2.8em; }
 
 .q-textarea, .q-input { width: 100%; max-width: 580px; background: var(--surface); border: 1px solid var(--line-strong); border-radius: 4px; padding: 12px 14px; font-family: var(--font); font-size: 16px; color: var(--text); outline: none; resize: none; transition: border-color 0.2s; display: block; }
-.q-textarea { min-height: 90px; overflow-y: hidden; }
+.q-textarea { min-height: 160px; overflow-y: hidden; }
 .q-textarea::placeholder, .q-input::placeholder { color: var(--dim); font-size: 13px; }
 .q-textarea:focus, .q-input:focus { border-color: var(--amber); }
 .q-textarea.filled, .q-input.filled { border-color: var(--green); }
@@ -928,10 +928,10 @@ body { padding-bottom: 60px; }
 
     <div class="q-block" id="q8">
       <div class="q-tag" id="q8l">08 / 8 - КОНТАКТ</div>
-      <div class="q-text" id="q8t">Имя, способ связи, город и ссылка на профиль.</div>
+      <div class="q-text" id="q8t">Имя, способ связи, страна и ссылка на профиль.</div>
       <input class="q-input" id="q11n" type="text" placeholder="Имя" style="margin-bottom:18px;">
       <input class="q-input" id="q11c" type="text" placeholder="Telegram / Instagram / Email" style="margin-bottom:18px;">
-      <input class="q-input" id="q11loc" type="text" placeholder="Где ты находишься?" style="margin-bottom:18px;">
+      <input class="q-input" id="q11loc" type="text" placeholder="Страна проживания и деятельности" style="margin-bottom:18px;">
       <input class="q-input" id="q11link" type="text" placeholder="Ссылка на профиль - необязательно">
       <label class="consent-row" id="q11ageRow"><input type="checkbox" id="q11age18"><span id="q11age18label">Подтверждаю, что мне есть 18 лет.</span></label>
       <label class="consent-row" id="q11consentRow"><input type="checkbox" id="q11consent"><span id="q11cl">Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.</span></label>
@@ -1079,7 +1079,7 @@ const C = {
     q5l:'05 / 8 - DEPTH',q5t:'Tell us about a hard decision or failure this year. What did you learn?',
     q6l:'06 / 8 - FILTER',q6t:'What do most people in your field get fatally wrong?',
     q7l:'07 / 8 - FILTER',q7t:'When did you help someone at work, expecting nothing back? What was it?',
-    q8l:'08 / 8 - CONTACT',q8t:'Name, a way to reach you, your city, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Profile link - optional',q11p4:'Where are you based?',
+    q8l:'08 / 8 - CONTACT',q8t:'Name, a way to reach you, your country, and a profile link.',q11p1:'Name',q11p2:'Telegram / Instagram / Email',q11p3:'Profile link - optional',q11p4:'Country of residence and work',
     ageHint:'Strictly 18+.', attemptLimitHint:'Up to 2 applications per month.', age18Label:"I confirm I'm 18 or older.",
     reqWarnAge:'You must be 18 or older to apply.',
     consentLabel:'I agree to the <a href="privacy-policy.html?lang=en" target="_blank" rel="noopener">Privacy Policy</a>, the <a href="terms.html?lang=en" target="_blank" rel="noopener">Terms of Service</a>, and the processing of my data.',
@@ -1169,7 +1169,7 @@ const C = {
     q5l:'05 / 8 - ГЛУБИНА',q5t:'Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?',
     q6l:'06 / 8 - ФИЛЬТР',q6t:'В чём большинство людей в твоей сфере фатально ошибается или заблуждается?',
     q7l:'07 / 8 - ФИЛЬТР',q7t:'Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?',
-    q8l:'08 / 8 - КОНТАКТ',q8t:'Имя, способ связи, город и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль - необязательно',q11p4:'Где ты находишься?',
+    q8l:'08 / 8 - КОНТАКТ',q8t:'Имя, способ связи, страна и ссылка на профиль.',q11p1:'Имя',q11p2:'Telegram / Instagram / Email',q11p3:'Ссылка на профиль - необязательно',q11p4:'Страна проживания и деятельности',
     ageHint:'Строго 18+.', attemptLimitHint:'Подать заявку можно не больше 2 раз в месяц.', age18Label:'Подтверждаю, что мне есть 18 лет.',
     reqWarnAge:'Мы принимаем только совершеннолетних (18+).',
     consentLabel:'Я согласен(на) с <a href="privacy-policy.html?lang=ru" target="_blank" rel="noopener">политикой конфиденциальности</a>, <a href="terms.html?lang=ru" target="_blank" rel="noopener">условиями использования</a> и обработкой моих данных.',
