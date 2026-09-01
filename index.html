@@ -1274,13 +1274,14 @@ function setLang(l){
   setTimeout(apply, 150);
 }
 
-// Types the headline out character by character, every word advancing in
-// lockstep by character-index rather than one word finishing before the
-// next starts - reads as every line printing at once instead of a single
-// slow left-to-right crawl across the whole (multi-line) headline. All
-// character spans are inserted at once (just opacity:0), so the element's
-// layout/wrapping is correct immediately and nothing reflows as it plays -
-// only the per-character opacity transition is animated.
+// Types the headline out character by character as a single continuous
+// sweep across the whole string (one running index, never reset per word) -
+// the headline reads as one thing typing itself out, not a set of separate
+// per-word animations that happen to start together and finish at
+// different times depending on each word's own length. All character spans
+// are inserted at once (just opacity:0), so the element's layout/wrapping
+// is correct immediately and nothing reflows as it plays - only the
+// per-character opacity transition is animated.
 function typewriterSetText(el, text, duration){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1290,8 +1291,9 @@ function typewriterSetText(el, text, duration){
   const wrap = document.createElement('span');
   wrap.setAttribute('aria-hidden', 'true');
   const words = text.split(' ');
-  const maxLen = Math.max(1, ...words.map(w=>w.length));
-  const step = duration / maxLen;
+  const totalChars = Math.max(1, text.replace(/ /g, '').length);
+  const step = duration / totalChars;
+  let idx = 0;
   words.forEach((word, wi) => {
     const wordSpan = document.createElement('span');
     wordSpan.style.whiteSpace = 'nowrap';
@@ -1299,7 +1301,8 @@ function typewriterSetText(el, text, duration){
       const charSpan = document.createElement('span');
       charSpan.className = 'tw-char';
       charSpan.textContent = word[ci];
-      charSpan.style.transitionDelay = (ci*step) + 'ms';
+      charSpan.style.transitionDelay = (idx*step) + 'ms';
+      idx++;
       wordSpan.appendChild(charSpan);
     }
     wrap.appendChild(wordSpan);
