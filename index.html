@@ -1411,15 +1411,30 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
     // by staggerMs so multiple highlighted phrases don't all wipe in
     // perfect lockstep - each keeps its own full in/hold/out cycle, just
     // offset.
-    const flashDelay = HL_FLASH_DELAY;
-    const transitionMs = 1500;
-    const holdMs = 1200;
-    const staggerMs = 300;
-    overlays.forEach((o, i) => {
-      const start = flashDelay + i * staggerMs;
-      setTimeout(()=>{ o.classList.add('hl-in'); }, start);
-      setTimeout(()=>{ o.classList.add('hl-out'); }, start + transitionMs + holdMs);
-    });
+    const schedule = () => {
+      const flashDelay = HL_FLASH_DELAY;
+      const transitionMs = 1500;
+      const holdMs = 1200;
+      const staggerMs = 300;
+      overlays.forEach((o, i) => {
+        const start = flashDelay + i * staggerMs;
+        setTimeout(()=>{ o.classList.add('hl-in'); }, start);
+        setTimeout(()=>{ o.classList.add('hl-out'); }, start + transitionMs + holdMs);
+      });
+    };
+    // The very first run can land mid-animation on the moment the webfont
+    // finishes loading (display:swap forces a reflow of all text using it
+    // when it swaps in) - reported as a stutter specifically on the first
+    // pass's retract, gone on every run after. Waiting for fonts.ready
+    // before scheduling means the swap-triggered reflow has already
+    // happened by the time the animation starts; document.fonts.ready is
+    // already-resolved on every call after the first, so this costs
+    // nothing once fonts have settled.
+    if(document.fonts && document.fonts.ready){
+      document.fonts.ready.then(schedule);
+    } else {
+      schedule();
+    }
   }
 }
 
