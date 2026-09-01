@@ -1399,7 +1399,15 @@ function typewriterSetText(el, text, duration, highlightPhrases){
     wrap.querySelectorAll('.tw-char').forEach(s=>s.classList.add('tw-in'));
   }); });
   if(overlays.length){
-    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, duration * 0.6);
+    // Flashes on, holds briefly, then collapses back to the same center it
+    // grew from (removing .hl-in reverses the same clip-path transition) -
+    // the final, settled state is the plain typed text, not a permanently
+    // inverted one. The highlight is a momentary emphasis, not a new color.
+    const expandDelay = duration * 0.6;
+    const transitionMs = 500;
+    const holdMs = 400;
+    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, expandDelay);
+    setTimeout(()=>{ overlays.forEach(o=>o.classList.remove('hl-in')); }, expandDelay + transitionMs + holdMs);
   }
 }
 
