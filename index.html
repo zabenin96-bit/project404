@@ -207,6 +207,10 @@ body.lang-switching { opacity: 0; }
    inserted progressively, so the headline's full final size/wrapping is
    correct from the first frame - only opacity animates, nothing reflows. */
 .tw-char { opacity: 0; transition: opacity 0.12s linear; }
+/* Forces a line break before a specific word on mobile only - see
+   mobileBreakBefore in typewriterSetText(). Inert (no break) elsewhere;
+   the mobile override lives in the @media (max-width: 700px) block. */
+.mobile-break { display: none; }
 .tw-char.tw-in { opacity: 1; }
 /* True negative (photo-negative style color inversion, not a colored
    highlight) for specific callout words in the headline - a plain-text
@@ -659,6 +663,7 @@ body { padding-bottom: 60px; }
 @media (max-width: 700px) {
   body { font-size: 16px; }
   .hero-body, .about-text p, .rules-list li, .test-intro, .notify-text, .reject-list li, .q-opt span, .ty-body { font-size: 15px; }
+  .mobile-break { display: inline; }
   /* 96px above clears the language switcher (ends at 58px) with a bit of
      extra breathing room on top of that clearance. */
   /* Bottom padding trimmed to a hairline: margin:auto below only splits the
@@ -1326,7 +1331,16 @@ function setLang(l){
 // duplicate on
 // top of the real (typed) text, revealed via clip-path rather than
 // re-typed itself.
-function typewriterSetText(el, text, duration, highlightPhrases){
+//
+// mobileBreakBefore (optional): a word to force onto its own new line on
+// mobile only. Natural word-wrap here isn't stable across mobile widths -
+// depending on exact viewport width, the trailing phrase either stays
+// together on its own line or splits, leaving a single orphaned word
+// dangling alone. A <br class="mobile-break"> inserted right before it
+// (display:none by default, shown only under the site's existing mobile
+// breakpoint) makes that line break unconditional on mobile instead of
+// leaving it up to the viewport's exact width.
+function typewriterSetText(el, text, duration, highlightPhrases, mobileBreakBefore){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced){ el.textContent = text; el.removeAttribute('aria-label'); return; }
@@ -1401,7 +1415,29 @@ function typewriterSetText(el, text, duration, highlightPhrases){
     });
     segments = next;
   });
-  segments.forEach(seg => (seg.hl ? appendHighlightSegment : appendPlainSegment)(wrap, seg.text));
+
+  // Same cut, but marking the start of the piece rather than the piece
+  // itself, so a <br> can be inserted right before it at render time.
+  if(mobileBreakBefore){
+    const next = [];
+    segments.forEach(seg => {
+      if(seg.hl){ next.push(seg); return; }
+      const at = seg.text.indexOf(mobileBreakBefore);
+      if(at === -1){ next.push(seg); return; }
+      if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
+      next.push({ text: seg.text.slice(at), hl: false, breakBefore: true });
+    });
+    segments = next;
+  }
+
+  segments.forEach(seg => {
+    if(seg.breakBefore){
+      const br = document.createElement('br');
+      br.className = 'mobile-break';
+      wrap.appendChild(br);
+    }
+    (seg.hl ? appendHighlightSegment : appendPlainSegment)(wrap, seg.text);
+  });
 
   el.appendChild(wrap);
   requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
@@ -1427,7 +1463,8 @@ function render(){
   g('s-err2').textContent = t('sErr2');
   g('s-msg2').innerHTML = ' ' + (foundingActive() ? t('sMsg2Founding') : t('sMsg2'));
   const heroHlHighlights = lang === 'ru' ? ['фаундеров', 'креативных лидеров', 'специалистов'] : ['founders', 'creative leaders', 'specialists'];
-  typewriterSetText(g('hero-hl'), t('heroHl'), 3000, heroHlHighlights);
+  const heroHlMobileBreak = lang === 'ru' ? 'смежных' : 'adjacent';
+  typewriterSetText(g('hero-hl'), t('heroHl'), 3000, heroHlHighlights, heroHlMobileBreak);
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
   g('test-cta-text').textContent = t('heroCta');
