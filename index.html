@@ -131,18 +131,18 @@ body.lang-switching { opacity: 0; }
 .sys-line .nb { white-space: nowrap; }
 
 .hero-name { font-family: var(--font-mark); font-size: clamp(48px, 10vw, 118px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 0.9; display: block; margin-bottom: 8px; }
-.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--text); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite, cursorGate 7s step-end infinite 5s; }
+.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--text); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite, cursorGate 11s step-end infinite 5s; }
 @keyframes blink-cur { 0%,100%{opacity:1} 50%{opacity:0} }
 /* Hides the cursor for the same 0-46% window wmSweep spends revealing/
    holding/receding the wordmark highlight - reads as a real text
    selection replacing the caret, not two unrelated animations running
    side by side. Uses visibility (not opacity) so it doesn't fight
-   blink-cur's own opacity toggling. The 5s delay / 7s duration match
+   blink-cur's own opacity toggling. The 5s delay / 11s duration match
    wmSweep's own, so the two stay in lockstep from the first pass onward. */
 @keyframes cursorGate { 0%,45%{visibility:hidden} 46%,100%{visibility:visible} }
 
 /* ── WORDMARK SWEEP: "results." lights up from its last letter, first
-   pass at 5s after load, then every 7s forever - true negative look via
+   pass at 5s after load, then every 11s forever - true negative look via
    mix-blend-mode: difference rather than filter:invert. A plain
    var(--text)-colored rectangle difference-blended against whatever's
    underneath produces the same per-pixel inversion (dark page bg ->
@@ -159,7 +159,7 @@ body.lang-switching { opacity: 0; }
   mix-blend-mode: difference;
   pointer-events: none;
   clip-path: inset(0 0 0 100%);
-  animation: wmSweep 7s ease-in-out infinite;
+  animation: wmSweep 11s ease-in-out infinite;
   animation-delay: 5s;
   will-change: clip-path;
 }
@@ -175,9 +175,10 @@ body.lang-switching { opacity: 0; }
   .hero-cursor { animation: blink-cur 1.1s step-end infinite; }
 }
 
-/* ── LOADING SCREEN: one entrance, not a fake progress readout - plain
-   mark plus a blinking cursor, played once as the first thing a visitor
-   sees, then it gets out of the way. ── */
+/* ── LOADING SCREEN: one entrance, not a fake progress readout - no
+   wordmark text, just a static white square and a blinking dot beside
+   it, played once as the first thing a visitor sees, then it gets out
+   of the way. ── */
 #loader {
   position: fixed;
   inset: 0;
@@ -190,25 +191,28 @@ body.lang-switching { opacity: 0; }
 }
 #loader.hide { opacity: 0; pointer-events: none; }
 #loader .loader-mark {
-  font-family: var(--font-mark);
-  font-size: clamp(21px, 4.7vw, 48px);
-  font-weight: 700;
-  color: var(--text);
-  letter-spacing: -0.02em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
-#loader .loader-cursor {
+#loader .loader-square {
   display: inline-block;
-  width: 2px;
+  width: clamp(16px, 3.3vw, 36px);
   height: clamp(16px, 3.3vw, 36px);
-  background: var(--amber);
-  margin-left: 4px;
-  vertical-align: middle;
+  background: var(--text);
+}
+#loader .loader-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text);
   animation: blink-cur 1.1s step-end infinite;
   animation-delay: 0.3s;
   opacity: 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  #loader .loader-cursor { display: none; }
+  #loader .loader-dot { display: none; }
 }
 
 
@@ -719,7 +723,7 @@ body { padding-bottom: 60px; }
 
 <!-- LOADER: one-shot entrance, removed from the DOM once it finishes -->
 <div id="loader" aria-hidden="true">
-  <span class="loader-mark">no results.<span class="loader-cursor"></span></span>
+  <span class="loader-mark"><span class="loader-square"></span><span class="loader-dot"></span></span>
 </div>
 
 <!-- SCROLL PROGRESS -->
