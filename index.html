@@ -208,15 +208,20 @@ body.lang-switching { opacity: 0; }
    correct from the first frame - only opacity animates, nothing reflows. */
 .tw-char { opacity: 0; transition: opacity 0.08s linear; }
 .tw-char.tw-in { opacity: 1; }
-/* Negative/invert highlight for specific callout words in the headline -
-   a plain-text duplicate laid exactly over the real (already-typed) text,
-   revealed via clip-path insets shrinking symmetrically from 50%/50% (a
-   zero-width sliver at the phrase's own center) to 0/0 (full phrase) - an
-   even expansion outward in both directions, not a left-to-right wipe. */
+/* True negative (photo-negative style color inversion, not a colored
+   highlight) for specific callout words in the headline - a plain-text
+   duplicate laid exactly over the real (already-typed) text, with a solid
+   background matching the page's own so filter:invert(1) has something
+   opaque to flip: the near-black background inverts to a pale tone and the
+   near-white text inverts to near-black, same relationship as film. Revealed
+   via clip-path insets shrinking symmetrically from 50%/50% (a zero-width
+   sliver at the phrase's own center) to 0/0 (full phrase) - an even
+   expansion outward in both directions, not a left-to-right wipe. */
 .hl-center-overlay {
   position: absolute;
   inset: 0;
-  background: var(--amber);
+  background: var(--bg);
+  filter: invert(1);
   white-space: nowrap;
   clip-path: inset(0 50% 0 50%);
   transition: clip-path 0.5s ease;
@@ -230,7 +235,7 @@ body.lang-switching { opacity: 0; }
    truly display-only. */
 .hl-center-overlay::before {
   content: attr(data-text);
-  color: var(--bg);
+  color: var(--text);
 }
 .hl-center-overlay.hl-in { clip-path: inset(0 0 0 0); }
 .hero-body { font-size: 14px; color: var(--dim-hi); line-height: 1.9; max-width: 460px; margin-bottom: 22px; }
@@ -1309,12 +1314,13 @@ function setLang(l){
 // per-character opacity transition is animated.
 //
 // highlightPhrases (optional): exact substrings of `text` (e.g. specific
-// audience callouts) that get a "negative" invert treatment - amber
-// background, dark text, like a highlighter/selection - expanding outward
-// from each phrase's own center once the sweep is 60% done (by then these
-// particular words are already typed, so the highlight lands on finished
-// text rather than racing the cursor). Built the same way the wordmark's
-// own .hl-overlay sweep is: a plain-text absolutely-positioned duplicate on
+// audience callouts) that get a true negative (photo-negative color
+// inversion via filter:invert, not a colored highlight) - expanding
+// outward from each phrase's own center once the sweep is 60% done (by
+// then these particular words are already typed, so the highlight lands
+// on finished text rather than racing the cursor). Built the same way the
+// wordmark's own .hl-overlay sweep is: a plain-text absolutely-positioned
+// duplicate on
 // top of the real (typed) text, revealed via clip-path rather than
 // re-typed itself.
 function typewriterSetText(el, text, duration, highlightPhrases){
