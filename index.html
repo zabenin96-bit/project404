@@ -212,17 +212,16 @@ body.lang-switching { opacity: 0; }
    background matching the page's own so filter:invert(1) has something
    opaque to flip: the near-black background inverts to a pale tone and the
    near-white text inverts to near-black, same relationship as film. Revealed
-   via clip-path insets shrinking symmetrically from 50%/50% (a zero-width
-   sliver at the phrase's own center) to 0/0 (full phrase) - an even
-   expansion outward in both directions, not a left-to-right wipe. */
+   via a left-to-right clip-path wipe (right inset 100% -> 0%), and retracted
+   the same direction (left inset 0% -> 100%) rather than a plain fade. */
 .hl-center-overlay {
   position: absolute;
   inset: 0;
   background: var(--bg);
   filter: invert(1);
   white-space: nowrap;
-  clip-path: inset(0 50% 0 50%);
-  transition: clip-path 0.75s ease, opacity 0.6s ease;
+  clip-path: inset(0 100% 0 0);
+  transition: clip-path 1.5s ease;
   pointer-events: none;
 }
 /* The duplicate text itself lives in generated content (attr()), not a
@@ -236,9 +235,11 @@ body.lang-switching { opacity: 0; }
   color: var(--text);
 }
 .hl-center-overlay.hl-in { clip-path: inset(0 0 0 0); }
-/* Ending: a plain fade rather than a flicker or a narrowing-back-to-center
-   close - holds fully expanded, then just fades out via opacity. */
-.hl-center-overlay.hl-out { opacity: 0; }
+/* Ending: retracts with the same left-to-right motion as the reveal
+   (rather than a flicker or a plain opacity fade) - holds fully revealed,
+   then the left edge sweeps rightward until the phrase is fully covered
+   again. */
+.hl-center-overlay.hl-out { clip-path: inset(0 0 0 100%); transition: clip-path 0.7s ease; }
 .hero-body { font-size: 14px; color: var(--dim-hi); line-height: 1.9; max-width: 460px; margin-bottom: 22px; }
 
 .hero-cta { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; width: fit-content; font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--amber); background: transparent; border-radius: 4px; padding: 14px 26px; box-shadow: inset 0 0 0 1px var(--amber); border: none; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease; }
@@ -780,7 +781,7 @@ body { padding-bottom: 60px; }
 
   <!-- HERO -->
   <div class="hero">
-    <span class="hero-name" id="hero-name-text">no <span class="hl-wrap"><span class="hl-base">results.</span><span class="hl-overlay"><span class="hl-text">results.</span></span></span><span class="hero-cursor"></span></span>
+    <span class="hero-name" id="hero-name-text">no <span class="hl-wrap"><span class="hl-base">results.</span><span class="hl-overlay" id="wordmark-sweep"><span class="hl-text">results.</span></span></span><span class="hero-cursor"></span></span>
 
     <div class="hero-divider"></div>
 
@@ -1291,6 +1292,13 @@ function positionLangIndicator(){
   indicator.style.width = activeBtn.offsetWidth + 'px';
 }
 
+// Shared delay (ms, from apply() running) before the headline's negative
+// highlight wipes in (see setHeroHeadline) and before the wordmark's own
+// amber sweep restarts (see syncWordmarkSweep) - keeping both on this one
+// constant is what makes the two amber flashes land together on every
+// language switch instead of drifting in and out of sync.
+const HL_FLASH_DELAY = 300;
+
 function setLang(l){
   const reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const apply = () => {
@@ -1300,10 +1308,25 @@ function setLang(l){
     positionLangIndicator();
     render();
     document.body.classList.remove('lang-switching');
+    if(!reduceMotion) syncWordmarkSweep();
   };
   if(reduceMotion){ apply(); return; }
   document.body.classList.add('lang-switching');
   setTimeout(apply, 150);
+}
+
+// Restarts the wordmark's amber sweep (hlSweep - normally a free-running
+// 10s CSS loop) from 0% at HL_FLASH_DELAY, the same offset the headline
+// highlight uses, so the two amber flashes are triggered together on
+// language switch rather than each running on its own independent timer.
+function syncWordmarkSweep(){
+  const el = g('wordmark-sweep');
+  if(!el) return;
+  setTimeout(()=>{
+    el.style.animation = 'none';
+    void el.offsetWidth;
+    el.style.animation = '';
+  }, HL_FLASH_DELAY);
 }
 
 // Renders the headline text immediately (no per-character reveal) and, for
@@ -1384,13 +1407,16 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
 
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(overlays.length && !reduced){
-    // Flashes on shortly after render, holds for a couple of seconds, then
-    // just fades out (opacity, via .hl-out) - no flicker, no narrowing back
-    // to center. The final, settled state is the plain text underneath, not
-    // a permanently inverted one - the highlight is a momentary flash, not
-    // a new color.
-    const flashDelay = 300;
-    const transitionMs = 750;
+    // Wipes on left-to-right shortly after render, holds for a couple of
+    // seconds, then retracts the same direction (left-to-right, via
+    // .hl-out) - no flicker, no plain fade. The final, settled state is the
+    // plain text underneath, not a permanently inverted one - the highlight
+    // is a momentary wipe, not a new color. transitionMs must match the
+    // clip-path transition duration set on .hl-center-overlay in CSS.
+    // flashDelay is shared with the wordmark's own sweep restart (see
+    // HL_FLASH_DELAY / syncWordmarkSweep) so both fire together.
+    const flashDelay = HL_FLASH_DELAY;
+    const transitionMs = 1500;
     const holdMs = 2000;
     setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, flashDelay);
     setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-out')); }, flashDelay + transitionMs + holdMs);
