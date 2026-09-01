@@ -722,7 +722,7 @@ body { padding-bottom: 60px; }
     <span class="founding-row">
       <span class="pulse"></span>
       <span class="founding-wrap">
-        <span class="founding" id="sb-founding" style="display:none;">Лимитированный доступ</span>
+        <span class="founding" id="sb-founding">Лимитированный доступ</span>
       </span>
     </span>
     <span class="price-row">
@@ -1017,7 +1017,7 @@ const C = {
   en: {
     sErr:'STATUS', sMsg:'now accepting applications',
     sErr2:'ACCESS', sMsg2:'<span class="nb">200 seats - $250/mo</span>', sMsg2Founding:'<span class="nb">200 seats - $100/mo</span> - apply by Aug 31',
-    sbFounding:'LIMITED EARLY ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply', sbCtaDone:'Ask a question →',
+    sbFounding:'LIMITED ACCESS', sbDeadline:'apply by Aug 31', sbCta:'Apply', sbCtaDone:'Ask a question →',
     sbPrice:'$250', sbPriceFounding:'$100',
     navNext:'Next →', navBack:'← Back', navSubmit:'Submit →', navReview:'Review answers',
     reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
@@ -1481,7 +1481,10 @@ function renderStatusBar(){
   const spots = g('sb-spots');
   const cta = g('sb-cta');
   document.querySelectorAll('.statusbar .sep').forEach(s=>{ s.style.display = active ? '' : 'none'; });
-  if(founding){ founding.style.display = active ? '' : 'none'; founding.textContent = t('sbFounding'); }
+  // Unlike old/spots below, this badge isn't tied to the temporary
+  // founding-rate discount - it's about the permanent 200-seat cap, which
+  // is true with or without an active offer, so it always shows.
+  if(founding){ founding.style.display = ''; founding.textContent = t('sbFounding'); }
   const price = g('sb-price');
   // The current price and the struck-through old price both come from the same key,
   // so the bar can't drift from the rest of the page once the offer ends.
