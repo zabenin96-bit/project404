@@ -1407,19 +1407,25 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
 
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(overlays.length && !reduced){
-    // Wipes on left-to-right shortly after render, holds for a couple of
-    // seconds, then retracts the same direction (left-to-right, via
-    // .hl-out) - no flicker, no plain fade. The final, settled state is the
-    // plain text underneath, not a permanently inverted one - the highlight
-    // is a momentary wipe, not a new color. transitionMs must match the
-    // clip-path transition duration set on .hl-center-overlay in CSS.
-    // flashDelay is shared with the wordmark's own sweep restart (see
-    // HL_FLASH_DELAY / syncWordmarkSweep) so both fire together.
+    // Wipes right-to-left shortly after render, holds for a bit, then
+    // retracts the same direction (via .hl-out) - no flicker, no plain
+    // fade. The final, settled state is the plain text underneath, not a
+    // permanently inverted one - the highlight is a momentary wipe, not a
+    // new color. transitionMs must match the clip-path transition duration
+    // set on .hl-center-overlay in CSS. flashDelay is shared with the
+    // wordmark's own sweep restart (see HL_FLASH_DELAY / syncWordmarkSweep)
+    // so both fire together. Each phrase's start is staggered by
+    // staggerMs so multiple highlighted phrases don't all wipe in perfect
+    // lockstep - each keeps its own full in/hold/out cycle, just offset.
     const flashDelay = HL_FLASH_DELAY;
     const transitionMs = 1500;
     const holdMs = 1200;
-    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, flashDelay);
-    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-out')); }, flashDelay + transitionMs + holdMs);
+    const staggerMs = 150;
+    overlays.forEach((o, i) => {
+      const start = flashDelay + i * staggerMs;
+      setTimeout(()=>{ o.classList.add('hl-in'); }, start);
+      setTimeout(()=>{ o.classList.add('hl-out'); }, start + transitionMs + holdMs);
+    });
   }
 }
 
