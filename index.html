@@ -202,16 +202,10 @@ body.lang-switching { opacity: 0; }
 
 
 .hero-headline { font-size: clamp(15px, 1.8vw, 20px); font-weight: 700; color: var(--text); margin-bottom: 24px; max-width: 560px; }
-/* Typewriter reveal for the headline on language switch. Every character
-   span exists in the DOM immediately (just at opacity:0) rather than being
-   inserted progressively, so the headline's full final size/wrapping is
-   correct from the first frame - only opacity animates, nothing reflows. */
-.tw-char { opacity: 0; transition: opacity 0.12s linear; }
 /* Forces a line break before a specific word on mobile only - see
-   mobileBreakBefore in typewriterSetText(). Inert (no break) elsewhere;
+   mobileBreakBefore in setHeroHeadline(). Inert (no break) elsewhere;
    the mobile override lives in the @media (max-width: 700px) block. */
 .mobile-break { display: none; }
-.tw-char.tw-in { opacity: 1; }
 /* True negative (photo-negative style color inversion, not a colored
    highlight) for specific callout words in the headline - a plain-text
    duplicate laid exactly over the real (already-typed) text, with a solid
@@ -1312,25 +1306,13 @@ function setLang(l){
   setTimeout(apply, 150);
 }
 
-// Types the headline out character by character as a single continuous
-// sweep across the whole string (one running index, never reset per word) -
-// the headline reads as one thing typing itself out, not a set of separate
-// per-word animations that happen to start together and finish at
-// different times depending on each word's own length. All character spans
-// are inserted at once (just opacity:0), so the element's layout/wrapping
-// is correct immediately and nothing reflows as it plays - only the
-// per-character opacity transition is animated.
-//
-// highlightPhrases (optional): exact substrings of `text` (e.g. specific
-// audience callouts) that get a true negative (photo-negative color
-// inversion via filter:invert, not a colored highlight) - expanding
-// outward from each phrase's own center once the sweep is 60% done (by
-// then these particular words are already typed, so the highlight lands
-// on finished text rather than racing the cursor). Built the same way the
-// wordmark's own .hl-overlay sweep is: a plain-text absolutely-positioned
-// duplicate on
-// top of the real (typed) text, revealed via clip-path rather than
-// re-typed itself.
+// Renders the headline text immediately (no per-character reveal) and, for
+// each highlightPhrases match, flashes a brief true negative (photo-negative
+// color inversion via filter:invert, not a colored highlight) shortly after
+// render - a momentary emphasis on language switch, not a redraw of the
+// text itself. Built the same way the wordmark's own .hl-overlay sweep is:
+// a plain-text absolutely-positioned duplicate on top of the real text,
+// revealed via clip-path.
 //
 // mobileBreakBefore (optional): a word to force onto its own new line on
 // mobile only. Natural word-wrap here isn't stable across mobile widths -
@@ -1340,55 +1322,15 @@ function setLang(l){
 // (display:none by default, shown only under the site's existing mobile
 // breakpoint) makes that line break unconditional on mobile instead of
 // leaving it up to the viewport's exact width.
-function typewriterSetText(el, text, duration, highlightPhrases, mobileBreakBefore){
+function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
   if(!el) return;
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduced){ el.textContent = text; el.removeAttribute('aria-label'); return; }
-  el.setAttribute('aria-label', text);
   el.innerHTML = '';
-  const wrap = document.createElement('span');
-  wrap.setAttribute('aria-hidden', 'true');
-  const totalChars = Math.max(1, text.replace(/ /g, '').length);
-  const step = duration / totalChars;
-  let idx = 0;
-
-  function appendWord(container, word){
-    if(!word) return;
-    const wordSpan = document.createElement('span');
-    wordSpan.style.whiteSpace = 'nowrap';
-    for(let ci=0; ci<word.length; ci++){
-      const charSpan = document.createElement('span');
-      charSpan.className = 'tw-char';
-      charSpan.textContent = word[ci];
-      charSpan.style.transitionDelay = (idx*step) + 'ms';
-      idx++;
-      wordSpan.appendChild(charSpan);
-    }
-    container.appendChild(wordSpan);
-  }
-
-  function appendPlainSegment(container, segText){
-    const words = segText.split(' ');
-    words.forEach((word, wi) => {
-      appendWord(container, word);
-      if(wi < words.length - 1) container.appendChild(document.createTextNode(' '));
-    });
-  }
 
   const overlays = [];
   function appendHighlightSegment(container, segText){
     const hlWrap = document.createElement('span');
     hlWrap.style.cssText = 'position:relative; display:inline-block; white-space:nowrap;';
-    for(let ci=0; ci<segText.length; ci++){
-      const ch = segText[ci];
-      if(ch === ' '){ hlWrap.appendChild(document.createTextNode(' ')); continue; }
-      const charSpan = document.createElement('span');
-      charSpan.className = 'tw-char';
-      charSpan.textContent = ch;
-      charSpan.style.transitionDelay = (idx*step) + 'ms';
-      idx++;
-      hlWrap.appendChild(charSpan);
-    }
+    hlWrap.appendChild(document.createTextNode(segText));
     const overlay = document.createElement('span');
     overlay.className = 'hl-center-overlay';
     overlay.setAttribute('data-text', segText);
@@ -1434,26 +1376,24 @@ function typewriterSetText(el, text, duration, highlightPhrases, mobileBreakBefo
     if(seg.breakBefore){
       const br = document.createElement('br');
       br.className = 'mobile-break';
-      wrap.appendChild(br);
+      el.appendChild(br);
     }
-    (seg.hl ? appendHighlightSegment : appendPlainSegment)(wrap, seg.text);
+    if(seg.hl) appendHighlightSegment(el, seg.text);
+    else el.appendChild(document.createTextNode(seg.text));
   });
 
-  el.appendChild(wrap);
-  requestAnimationFrame(()=>{ requestAnimationFrame(()=>{
-    wrap.querySelectorAll('.tw-char').forEach(s=>s.classList.add('tw-in'));
-  }); });
-  if(overlays.length){
-    // Flashes on, holds for a couple of seconds, then just fades out
-    // (opacity, via .hl-out) - no flicker, no narrowing back to center.
-    // The final, settled state is the plain typed text underneath, not a
-    // permanently inverted one - the highlight is a momentary flash, not a
-    // new color.
-    const expandDelay = duration * 0.6;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(overlays.length && !reduced){
+    // Flashes on shortly after render, holds for a couple of seconds, then
+    // just fades out (opacity, via .hl-out) - no flicker, no narrowing back
+    // to center. The final, settled state is the plain text underneath, not
+    // a permanently inverted one - the highlight is a momentary flash, not
+    // a new color.
+    const flashDelay = 300;
     const transitionMs = 750;
     const holdMs = 2000;
-    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, expandDelay);
-    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-out')); }, expandDelay + transitionMs + holdMs);
+    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, flashDelay);
+    setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-out')); }, flashDelay + transitionMs + holdMs);
   }
 }
 
@@ -1464,7 +1404,7 @@ function render(){
   g('s-msg2').innerHTML = ' ' + (foundingActive() ? t('sMsg2Founding') : t('sMsg2'));
   const heroHlHighlights = lang === 'ru' ? ['фаундеров', 'креативных лидеров', 'специалистов'] : ['founders', 'creative leaders', 'specialists'];
   const heroHlMobileBreak = lang === 'ru' ? 'смежных' : 'adjacent';
-  typewriterSetText(g('hero-hl'), t('heroHl'), 3000, heroHlHighlights, heroHlMobileBreak);
+  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlHighlights, heroHlMobileBreak);
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
   g('test-cta-text').textContent = t('heroCta');
