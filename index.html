@@ -131,7 +131,7 @@ body.lang-switching { opacity: 0; }
 .sys-line .nb { white-space: nowrap; }
 
 .hero-name { font-family: var(--font-mark); font-size: clamp(48px, 10vw, 118px); font-weight: 700; color: var(--text); letter-spacing: -0.02em; line-height: 0.9; display: block; margin-bottom: 8px; }
-.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--amber); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite; }
+.hero-cursor { display: inline-block; width: 3px; height: clamp(36px, 7vw, 88px); background: var(--text); margin-left: 6px; vertical-align: middle; animation: blink-cur 1.1s step-end infinite; }
 @keyframes blink-cur { 0%,100%{opacity:1} 50%{opacity:0} }
 
 /* ── LOADING SCREEN: one entrance, not a fake progress readout - plain
@@ -197,6 +197,11 @@ body.lang-switching { opacity: 0; }
   clip-path: inset(0 100% 0 0);
   transition: clip-path 1.5s ease-in-out;
   pointer-events: none;
+  /* Animating clip-path on a filtered element is expensive to composite on
+     mobile GPUs (each frame re-rasterizes the invert(1) region) - this hint
+     promotes the element to its own layer up front instead of paying that
+     promotion cost right when the transition (especially the retract) starts. */
+  will-change: clip-path;
 }
 /* The duplicate text itself lives in generated content (attr()), not a
    real text node - user-select:none alone still left it in el.innerText
