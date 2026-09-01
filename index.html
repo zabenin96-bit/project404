@@ -1417,7 +1417,7 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
     // HL_FLASH_DELAY / syncWordmarkSweep) so both fire together.
     const flashDelay = HL_FLASH_DELAY;
     const transitionMs = 1500;
-    const holdMs = 2000;
+    const holdMs = 1200;
     setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-in')); }, flashDelay);
     setTimeout(()=>{ overlays.forEach(o=>o.classList.add('hl-out')); }, flashDelay + transitionMs + holdMs);
   }
