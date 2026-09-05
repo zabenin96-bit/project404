@@ -2387,9 +2387,19 @@ function scrambleRevealWordmark(){
 
   const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
   const chars = finalText.split('');
-  const perCharMs = 45;
-  const revealSpanMs = 220;
-  const lockAt = chars.map((ch, i) => /\s/.test(ch) ? 0 : i * perCharMs + revealSpanMs);
+  // Fast, snappy lock-in for most of the word, then a suspense beat on the
+  // very last character (the trailing period) before it clicks into place -
+  // a small punctuation-mark payoff rather than one flat, even resolve.
+  const perCharMs = 35;
+  const revealSpanMs = 180;
+  const suspensePauseMs = 650;
+  let lastCharIdx = chars.length - 1;
+  while(lastCharIdx > 0 && /\s/.test(chars[lastCharIdx])) lastCharIdx--;
+  const lockAt = chars.map((ch, i) => {
+    if(/\s/.test(ch)) return 0;
+    const base = i * perCharMs + revealSpanMs;
+    return i === lastCharIdx ? base + suspensePauseMs : base;
+  });
   const totalMs = Math.max(...lockAt);
 
   el.setAttribute('aria-label', finalText);
