@@ -175,46 +175,6 @@ body.lang-switching { opacity: 0; }
   .hero-cursor { animation: blink-cur 1.1s step-end infinite; }
 }
 
-/* ── LOADING SCREEN: one entrance, not a fake progress readout - no
-   wordmark text, just a static white selection block and a blinking dot beside
-   it, played once as the first thing a visitor sees, then it gets out
-   of the way. ── */
-#loader {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background: var(--bg);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: opacity 0.5s ease;
-}
-#loader.hide { opacity: 0; pointer-events: none; }
-#loader .loader-mark {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-}
-/* Taller than wide - reads as a text-selection block, not a plain square. */
-#loader .loader-block {
-  display: inline-block;
-  width: clamp(10px, 2vw, 22px);
-  height: clamp(22px, 4.4vw, 48px);
-  background: var(--text);
-}
-#loader .loader-dot {
-  display: inline-block;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--text);
-  animation: blink-cur 1.1s step-end infinite;
-  animation-delay: 0.3s;
-  opacity: 0;
-}
-@media (prefers-reduced-motion: reduce) {
-  #loader .loader-dot { display: none; }
-}
 
 
 .hero-divider { width: 100%; height: 1px; background: var(--line); margin-bottom: 32px; }
@@ -721,11 +681,6 @@ body { padding-bottom: 60px; }
 </style>
 </head>
 <body>
-
-<!-- LOADER: one-shot entrance, removed from the DOM once it finishes -->
-<div id="loader" aria-hidden="true">
-  <span class="loader-mark"><span class="loader-block"></span><span class="loader-dot"></span></span>
-</div>
 
 <!-- SCROLL PROGRESS -->
 <div class="scroll-progress"><div class="scroll-progress-fill" id="scroll-fill"></div></div>
@@ -2413,31 +2368,53 @@ function initFormFeedback(){
   });
 }
 
-// ── LOADER: hides itself once the sweep has had time to play, then leaves
-// the DOM entirely so it can never intercept a click or sit in the a11y
-// tree. Shortened for prefers-reduced-motion instead of waiting out an
-// animation that isn't actually playing for that visitor. ──
-function initLoader(){
-  const loader = g('loader');
-  if(!loader){ return; }
-  // Once per tab, not once ever - sessionStorage, not localStorage. A fresh
-  // tab/visit still gets the entrance; navigating or reloading within the
-  // same one doesn't replay it. No server round-trip, nothing identifying -
-  // same category of on-device flag as the draft autosave already uses.
-  try{
-    if(sessionStorage.getItem('nrLoaderSeen') === '1'){ loader.remove(); return; }
-    sessionStorage.setItem('nrLoaderSeen', '1');
-  }catch(e){}
+// ── WORDMARK SCRAMBLE: the "no results." entrance itself, no separate
+// loading screen. Every character (except spaces) cycles through random
+// letters and locks into its real value in reading order, left to right -
+// reads as a terminal decrypting access rather than a generic reveal.
+// Once per tab (sessionStorage), same reasoning the old loader used: a
+// fresh tab gets the entrance, navigating back within it doesn't replay
+// it. Skipped entirely under prefers-reduced-motion. ──
+function scrambleRevealWordmark(){
+  const el = g('hero-name-text');
+  if(!el) return;
+  const finalHTML = el.innerHTML;
+  const finalText = el.textContent;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const revealDelay = reduced ? 50 : 950;
-  setTimeout(()=>{
-    loader.classList.add('hide');
-    setTimeout(()=>{ loader.remove(); }, reduced ? 0 : 520);
-  }, revealDelay);
+  let seen = false;
+  try{ seen = sessionStorage.getItem('nrWordmarkSeen') === '1'; sessionStorage.setItem('nrWordmarkSeen', '1'); }catch(e){}
+  if(reduced || seen) return;
+
+  const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+  const chars = finalText.split('');
+  const perCharMs = 45;
+  const revealSpanMs = 220;
+  const lockAt = chars.map((ch, i) => /\s/.test(ch) ? 0 : i * perCharMs + revealSpanMs);
+  const totalMs = Math.max(...lockAt);
+
+  el.setAttribute('aria-label', finalText);
+  el.textContent = '';
+  const startTime = performance.now();
+  function frame(now){
+    const t = now - startTime;
+    let out = '';
+    for(let i = 0; i < chars.length; i++){
+      const ch = chars[i];
+      out += (/\s/.test(ch) || t >= lockAt[i]) ? ch : charset[Math.floor(Math.random() * charset.length)];
+    }
+    el.textContent = out;
+    if(t < totalMs){
+      requestAnimationFrame(frame);
+    } else {
+      el.innerHTML = finalHTML;
+      el.removeAttribute('aria-label');
+    }
+  }
+  requestAnimationFrame(frame);
 }
 
 // ── INIT ──
-initLoader();
+scrambleRevealWordmark();
 render();
 updProg(1);
 restoreDraft();
