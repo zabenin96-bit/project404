@@ -189,7 +189,9 @@ body.lang-switching { opacity: 0; }
    left via transform: scaleX (cheap, GPU-friendly, no filter or
    mix-blend-mode), then retracts the same direction back to its origin
    rather than a plain fade. Plain transform, not width/right, so it
-   never affects layout while animating. */
+   never affects layout while animating. A hairline set a little clear of
+   the text, eased with a slow-in/slow-out curve for a calmer, more
+   deliberate motion than a plain linear/ease timing gives. */
 .uline-wrap {
   position: relative;
   display: inline;
@@ -199,16 +201,16 @@ body.lang-switching { opacity: 0; }
   position: absolute;
   left: 0;
   right: 0;
-  bottom: -2px;
-  height: 2px;
+  bottom: -5px;
+  height: 1px;
   background: var(--text);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 0.5s ease;
+  transition: transform 0.7s cubic-bezier(0.65, 0, 0.35, 1);
   pointer-events: none;
 }
 .uline-wrap.uline-in::after { transform: scaleX(1); }
-.uline-wrap.uline-out::after { transform: scaleX(0); transition: transform 0.4s ease; }
+.uline-wrap.uline-out::after { transform: scaleX(0); transition: transform 0.6s cubic-bezier(0.65, 0, 0.35, 1); }
 .hero-body { font-size: 14px; color: var(--dim-hi); line-height: 1.9; max-width: 460px; margin-bottom: 22px; }
 
 .hero-cta { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; width: fit-content; font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--amber); background: transparent; border-radius: 4px; padding: 14px 26px; box-shadow: inset 0 0 0 1px var(--amber); border: none; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease; }
@@ -785,10 +787,10 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="fmt-pre">// ФОРМАТ</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="fmt2t">Ядро</span><span class="rule-val" id="fmt2d"> Чат - вопросы, обсуждения, интро.</span></li>
-        <li><span class="rule-key" id="fmt3t">Разбор решений</span><span class="rule-val" id="fmt3d"> Скинул сложный кейс - получил прямую, профессиональную обратную связь от людей, которые уже такое проходили.</span></li>
-        <li><span class="rule-key" id="fmt5t">Нетворкинг</span><span class="rule-val" id="fmt5d"> Чат живёт сам по себе, без искусственного разогрева от администраторов. Это экосистема, где ты можешь в любой момент поднять волнующую тему, найти единомышленников для нового проекта или обсудить новости индустрии.</span></li>
-        <li><span class="rule-key" id="fmt6t">Спринт / Ретро</span><span class="rule-val" id="fmt6d"> В понедельник ставишь цели на неделю. В пятницу отчёт/разбор результатов и ошибок.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt2t">Ядро</span><span class="rule-val" id="fmt2d"> Чат - вопросы, обсуждения, интро.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt3t">Разбор решений</span><span class="rule-val" id="fmt3d"> Скинул сложный кейс - получил прямую, профессиональную обратную связь от людей, которые уже такое проходили.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt5t">Нетворкинг</span><span class="rule-val" id="fmt5d"> Чат живёт сам по себе, без искусственного разогрева от администраторов. Это экосистема, где ты можешь в любой момент поднять волнующую тему, найти единомышленников для нового проекта или обсудить новости индустрии.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt6t">Спринт / Ретро</span><span class="rule-val" id="fmt6d"> В понедельник ставишь цели на неделю. В пятницу отчёт/разбор результатов и ошибок.</span></li>
       </ul>
       <div class="sample-chat reveal-child">
         <div class="sample-label" id="sample-label">// из чата</div>
@@ -827,11 +829,11 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="ru-pre">// ПРАВИЛА</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key" id="r1t">Лимит</span><span class="rule-val" id="r1d"> 200 участников, без исключений.</span></li>
-        <li><span class="rule-key" id="r2t">Инвайт</span><span class="rule-val" id="r2d"> Тебя может порекомендовать участник - анкету всё равно заполняют все.</span></li>
-        <li><span class="rule-key" id="r4t">Весь мир</span><span class="rule-val" id="r4d"> Объединяем тех, кто думает на RU/EN по всему миру.</span></li>
-        <li><span class="rule-key" id="r5t">Переманивание запрещено</span><span class="rule-val" id="r5d"> Если ты здесь, чтобы уводить людей к себе - тебе не сюда.</span></li>
-        <li><span class="rule-key" id="r6t">Без питчинга</span><span class="rule-val" id="r6d"> Рекламировать здесь свой продукт или группу нельзя - это спам. Найти клиента или партнёра через живое общение - можно и нормально.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="r1t">Лимит</span><span class="rule-val" id="r1d"> 200 участников, без исключений.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="r2t">Инвайт</span><span class="rule-val" id="r2d"> Тебя может порекомендовать участник - анкету всё равно заполняют все.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="r4t">Весь мир</span><span class="rule-val" id="r4d"> Объединяем тех, кто думает на RU/EN по всему миру.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="r5t">Переманивание запрещено</span><span class="rule-val" id="r5d"> Если ты здесь, чтобы уводить людей к себе - тебе не сюда.</span></li>
+        <li><span class="rule-key uline-wrap js-scroll-uline" id="r6t">Без питчинга</span><span class="rule-val" id="r6d"> Рекламировать здесь свой продукт или группу нельзя - это спам. Найти клиента или партнёра через живое общение - можно и нормально.</span></li>
       </ul>
     </div>
   </div>
@@ -1345,9 +1347,9 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(underlines.length && !reduced){
     const startDelay = 500;
-    const drawMs = 500;
-    const holdMs = 700;
-    const eraseMs = 400;
+    const drawMs = 700;
+    const holdMs = 500;
+    const eraseMs = 600;
     const perPhraseMs = drawMs + holdMs + eraseMs;
     underlines.forEach((span, i) => {
       const start = startDelay + i * perPhraseMs;
@@ -1355,6 +1357,15 @@ function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
       setTimeout(()=> span.classList.add('uline-out'), start + drawMs + holdMs);
     });
   }
+}
+
+// Wraps the first occurrence of `phrase` in `text` with a scroll-triggered
+// underline span (see initScrollUnderlines) - used to accent a lead phrase
+// inside otherwise-plain body copy set via innerHTML.
+function wrapPhrase(text, phrase){
+  const at = text.indexOf(phrase);
+  if(at === -1) return text;
+  return text.slice(0, at) + '<span class="uline-wrap js-scroll-uline">' + phrase + '</span>' + text.slice(at + phrase.length);
 }
 
 function render(){
@@ -1370,13 +1381,18 @@ function render(){
   g('test-cta-text').textContent = t('heroCta');
   g('hero-scroll-cue').setAttribute('aria-label', t('scrollCueLabel'));
   g('ab-pre').textContent = t('abPre');
-  g('about-body').innerHTML = t('aboutBody').map(p=>`<p>${p}</p>`).join('');
+  const aboutLead = lang === 'ru' ? 'то, что за ним стоит' : "what's behind it";
+  g('about-body').innerHTML = t('aboutBody').map(p=>`<p>${wrapPhrase(p, aboutLead)}</p>`).join('');
   g('ru-pre').textContent = t('ruPre');
   ['r1t','r1d','r2t','r2d','r4t','r4d','r5t','r5d','r6t','r6d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('val-pre').textContent = t('valPre');
-  g('value-body').innerHTML = t('valueBody').map(p=>`<p>${p}</p>`).join('');
+  const valueLeads = lang === 'ru'
+    ? ['Ядро уже собрано', 'Естественный нетворкинг', 'Анкету заполняют все']
+    : ['The founding core', 'Organic networking', 'Everyone fills out the application'];
+  g('value-body').innerHTML = t('valueBody').map((p, i)=>`<p>${wrapPhrase(p, valueLeads[i])}</p>`).join('');
   g('fit-pre').textContent = t('fitPre');
-  g('fit-body').innerHTML = t('fitBody').map(p=>`<p>${p}</p>`).join('');
+  const fitLead = lang === 'ru' ? 'Профессия, страна, ниша - не имеют значения' : 'Job title, country, niche - none of that matters';
+  g('fit-body').innerHTML = t('fitBody').map(p=>`<p>${wrapPhrase(p, fitLead)}</p>`).join('');
   g('fmt-pre').textContent = t('fmtPre');
   ['fmt2t','fmt2d','fmt3t','fmt3d','fmt5t','fmt5d','fmt6t','fmt6d'].forEach(k=>{ const e=g(k); if(e) e.textContent=t(k); });
   g('sample-label').textContent = t('sampleLabel');
@@ -1445,6 +1461,34 @@ function render(){
   spaceOutKeyValuePairs();
   renderStatusBar();
   logConsoleHint();
+  observeScrollUnderlines();
+}
+
+// Scroll-triggered version of the same .uline-wrap underline the hero
+// headline uses, but driven by viewport position instead of a fixed
+// timer: a phrase's line draws in as it crosses roughly the reader's
+// eye-line while scrolling, and retracts once they've scrolled past it -
+// rootMargin shrinks the observed area to a horizontal band through the
+// middle of the screen rather than the full viewport, so it responds to
+// where the reader's attention actually is, not just any-edge visibility.
+// One observer instance reused across calls; render() rebuilds
+// about/value/fit's innerHTML on every language switch, so their
+// .js-scroll-uline spans are new elements each time and need
+// re-observing - re-observing an element already being watched (the
+// static rule-key ones) is a harmless no-op.
+let scrollUnderlineObserver = null;
+function observeScrollUnderlines(){
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  if(!scrollUnderlineObserver){
+    scrollUnderlineObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        entry.target.classList.toggle('uline-in', entry.isIntersecting);
+        entry.target.classList.toggle('uline-out', !entry.isIntersecting);
+      });
+    }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+  }
+  document.querySelectorAll('.js-scroll-uline').forEach(el => scrollUnderlineObserver.observe(el));
 }
 
 // Label+value pairs (СТАТУС/ДОСТУП, every RULES/FORMAT/PROCESS/FAQ row, the
