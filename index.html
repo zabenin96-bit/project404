@@ -187,11 +187,17 @@ body.lang-switching { opacity: 0; }
 .mobile-break { display: none; }
 /* Clean underline sweep under a highlighted phrase - grows in from the
    left via transform: scaleX (cheap, GPU-friendly, no filter or
-   mix-blend-mode), then retracts the same direction back to its origin
-   rather than a plain fade. Plain transform, not width/right, so it
-   never affects layout while animating. A hairline set a little clear of
-   the text, eased with a slow-in/slow-out curve for a calmer, more
-   deliberate motion than a plain linear/ease timing gives. */
+   mix-blend-mode), then retracts continuing the SAME left-to-right
+   direction (transform-origin flips to right on the way out, so the
+   line's left edge sweeps rightward to erase it, rather than the more
+   obvious but visually "backwards" collapse toward its own start point).
+   Plain transform, not width/right, so it never affects layout while
+   animating. Linear timing, not eased - constant speed throughout reads
+   as more uniform than a curve that visibly slows at one end. Width
+   defaults to the element's own content (100%) but can be overridden
+   per element via --uline-w (see observeScrollUnderlines), which makes
+   every line in a list-style block match its longest title instead of
+   each phrase's own width. */
 .uline-wrap {
   position: relative;
   display: inline;
@@ -200,17 +206,17 @@ body.lang-switching { opacity: 0; }
   content: '';
   position: absolute;
   left: 0;
-  right: 0;
+  width: var(--uline-w, 100%);
   bottom: -2px;
   height: 1px;
   background: var(--text);
   transform: scaleX(0);
   transform-origin: left;
-  transition: transform 1.75s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: transform 1.75s linear;
   pointer-events: none;
 }
 .uline-wrap.uline-in::after { transform: scaleX(1); }
-.uline-wrap.uline-out::after { transform: scaleX(0); transition: transform 1.5s cubic-bezier(0.65, 0, 0.35, 1); }
+.uline-wrap.uline-out::after { transform: scaleX(0); transform-origin: right; transition: transform 1.5s linear; }
 .hero-body { font-size: 14px; color: var(--dim-hi); line-height: 1.9; max-width: 460px; margin-bottom: 22px; }
 
 .hero-cta { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; width: fit-content; font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--amber); background: transparent; border-radius: 4px; padding: 14px 26px; box-shadow: inset 0 0 0 1px var(--amber); border: none; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease; }
@@ -1483,48 +1489,101 @@ function render(){
 
 // Scroll-triggered version of the same .uline-wrap underline the hero
 // headline uses, but driven by viewport position instead of a fixed
-// timer: a phrase's line draws in as it crosses roughly the reader's
-// eye-line while scrolling, and retracts once they've scrolled past it -
+// timer: a block's underlines draw in as it crosses roughly the reader's
+// eye-line while scrolling, and retract once they've scrolled past it -
 // rootMargin shrinks the observed area to a horizontal band through the
 // middle of the screen rather than the full viewport, so it responds to
 // where the reader's attention actually is, not just any-edge visibility.
-// One observer instance reused across calls; render() rebuilds
-// about/value/fit's innerHTML on every language switch, so their
-// .js-scroll-uline spans are new elements each time and need
-// re-observing - re-observing an element already being watched (the
-// static rule-key ones) is a harmless no-op.
 //
-// The 350ms delay before adding uline-in isn't cosmetic: these elements
-// mostly live inside a .reveal-child section, whose own fade-in
-// (opacity 0 -> 1, up to ~750ms with its per-item stagger) can still be
-// mid-transition when this observer fires during a fast scroll/fling.
-// Since opacity is inherited by the ::after underline too, showing the
-// line before that fade finishes made it look dimmer on some items than
-// others depending on scroll speed - reported as inconsistent
-// brightness. Giving the fade a head start avoids the coincidence
-// without needing to synchronize with the other observer directly.
+// Grouped by block, not by individual phrase: watching each
+// .js-scroll-uline element on its own meant items in the same list could
+// end up out of sync mid-scroll (one still underlined while its
+// neighbors already retracted) and, since IntersectionObserver entries
+// for several elements crossing the threshold in the same scroll frame
+// aren't guaranteed to arrive in DOM order, the reveal order could vary
+// with scroll speed. Observing the shared container instead and driving
+// every member from that one entry fixes both: order always follows DOM
+// position (index in the block), and a whole block moves as one unit.
+// getUlineBlock finds that shared container - the nearest .rules-list
+// (Format/Rules/Process/FAQ) or .about-text (About/Value/Fit), falling
+// back to the immediate parent for a lone item like the CTA button.
+//
+// The 350ms base delay before the first member's uline-in isn't
+// cosmetic: these elements mostly live inside a .reveal-child section,
+// whose own fade-in (opacity 0 -> 1, up to ~750ms with its own
+// per-item stagger) can still be mid-transition when this observer
+// fires during a fast scroll/fling. Since opacity is inherited by the
+// ::after underline too, showing the line before that fade finishes
+// made it look dimmer than usual - reported as inconsistent brightness.
+// Giving the fade a head start avoids the coincidence without needing
+// to synchronize with the other observer directly. Each subsequent
+// member in the block is staggered a further 150ms on top of that, in
+// both directions, so the block reveals and retracts as a short
+// in-order cascade rather than everything at once.
+//
+// One observer instance reused across calls; render() rebuilds
+// about/value/fit's innerHTML on every language switch, but the
+// container elements themselves (#about-body etc.) are stable across
+// that - only their .js-scroll-uline children are new - so blockMembers
+// is fully rebuilt every call and re-observing an already-watched
+// container is a harmless no-op.
 let scrollUnderlineObserver = null;
-const scrollUlineTimers = new WeakMap();
+let scrollUlineBlockMembers = new Map();
+const scrollUlineTimers = new Map();
+function getUlineBlock(el){
+  return el.closest('.rules-list, .about-text') || el.parentElement;
+}
 function observeScrollUnderlines(){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
+
+  const blocks = new Map();
+  document.querySelectorAll('.js-scroll-uline').forEach(el => {
+    const block = getUlineBlock(el);
+    if(!blocks.has(block)) blocks.set(block, []);
+    blocks.get(block).push(el);
+  });
+  scrollUlineBlockMembers = blocks;
+
+  // Lines in a titled list should match the block's longest title rather
+  // than each phrase's own width - measured via Range on the text node
+  // (unaffected by .rule-key being stretched to fill its grid column),
+  // not the stretched element's own bounding box.
+  blocks.forEach((members, container) => {
+    if(!container.classList || !container.classList.contains('rules-list')) return;
+    let maxWidth = 0;
+    members.forEach(el => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      maxWidth = Math.max(maxWidth, range.getBoundingClientRect().width);
+    });
+    members.forEach(el => el.style.setProperty('--uline-w', maxWidth + 'px'));
+  });
+
   if(!scrollUnderlineObserver){
     scrollUnderlineObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        const el = entry.target;
-        const pending = scrollUlineTimers.get(el);
-        if(pending) clearTimeout(pending);
+        const container = entry.target;
+        const members = scrollUlineBlockMembers.get(container);
+        if(!members) return;
+        const pendingTimers = scrollUlineTimers.get(container);
+        if(pendingTimers) pendingTimers.forEach(clearTimeout);
+        const timers = [];
         if(entry.isIntersecting){
-          el.classList.remove('uline-out');
-          scrollUlineTimers.set(el, setTimeout(()=> el.classList.add('uline-in'), 350));
+          members.forEach((el, i) => {
+            el.classList.remove('uline-out');
+            timers.push(setTimeout(()=> el.classList.add('uline-in'), 350 + i * 150));
+          });
         } else {
-          el.classList.remove('uline-in');
-          el.classList.add('uline-out');
+          members.forEach((el, i) => {
+            timers.push(setTimeout(()=> { el.classList.remove('uline-in'); el.classList.add('uline-out'); }, i * 150));
+          });
         }
+        scrollUlineTimers.set(container, timers);
       });
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
-  document.querySelectorAll('.js-scroll-uline').forEach(el => scrollUnderlineObserver.observe(el));
+  blocks.forEach((members, container) => scrollUnderlineObserver.observe(container));
 }
 
 // Label+value pairs (СТАТУС/ДОСТУП, every RULES/FORMAT/PROCESS/FAQ row, the
