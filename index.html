@@ -305,6 +305,89 @@ body.lang-switching { opacity: 0; }
 .rule-key { font-weight: 700; color: var(--text); }
 .rule-val { color: var(--dim); line-height: 1.6; }
 
+/* ── VALUE DIAGRAM ── */
+/* A small line-figure next to the "Ядро уже собрано" copy, in the spirit
+   of a reference the client shared: an axis corner with diagonal lines
+   fanning out to labelled spheres, one dashed, one ending in an open
+   arrowhead. Drawn with the same scroll-triggered mechanic as the rest
+   of the site (see observeValueDiagram): the solid strokes draw in via
+   stroke-dashoffset (classic SVG line-draw - dasharray set to the path's
+   own length via getTotalLength(), so it works regardless of the exact
+   coordinates), while the label text fades/slides in alongside. The
+   dashed stroke doesn't use the same draw technique - animating
+   dashoffset on an already-dashed stroke would either leave the 6/6
+   pattern static while just sliding it along the path (no reveal at
+   all) or require flattening it to one giant dash for the drawing phase
+   (which would render solid, defeating the point) - so it simply fades
+   in with the labels instead. viewBox coordinates double as the SVG's
+   own user-unit space, which stroke-dasharray/dashoffset are specified
+   in too - that space doesn't change with the element's rendered CSS
+   size, so line lengths only need computing once, not on resize.
+   Each line's length is stored as the --len custom property (set once
+   in observeValueDiagram) rather than written to the dasharray/
+   dashoffset style properties directly - an inline style attribute
+   always wins over a stylesheet rule regardless of selector specificity,
+   which would permanently pin dashoffset at full length and block the
+   .vd-drawn rule below from ever overriding it to 0. Routing the value
+   through a custom property keeps both dasharray and dashoffset as
+   ordinary (overridable) stylesheet declarations. */
+/* .section-grid is a 2-column grid (180px label, 1fr content); this is
+   a 3rd grid item after the label and #value-body, and without an
+   explicit column, grid auto-placement drops it into a new row starting
+   back at column 1 (the narrow 180px label track) rather than under
+   value-body's wide content column - it rendered at 180px wide instead
+   of filling the content area. grid-column: 2 pins it to that content
+   track; the mobile media query below resets it once the grid collapses
+   to a single column, where an explicit column 2 would be invalid. */
+.value-diagram-wrap { grid-column: 2; margin-top: 32px; max-width: 480px; }
+.value-diagram { display: block; width: 100%; height: auto; overflow: visible; }
+.value-diagram .vd-axis {
+  stroke: var(--dim);
+  stroke-width: 1;
+  fill: none;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.value-diagram .vd-line, .value-diagram .vd-arrow {
+  stroke: var(--text);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: var(--len);
+  stroke-dashoffset: var(--len);
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.value-diagram .vd-dash {
+  stroke: var(--text);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 6;
+  fill: none;
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.value-diagram .vd-label {
+  font-family: var(--font-mark);
+  font-weight: 700;
+  font-size: 22px;
+  fill: var(--text);
+  opacity: 0;
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(.16,.8,.24,1);
+  transform: translateY(10px);
+}
+.value-diagram .vd-caption {
+  font-family: var(--font);
+  font-size: 11px;
+  font-style: italic;
+  fill: var(--amber);
+  opacity: 0;
+  transition: opacity 0.8s ease;
+}
+.value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-arrow { stroke-dashoffset: 0; }
+.value-diagram.vd-drawn .vd-dash, .value-diagram.vd-drawn .vd-caption { opacity: 1; }
+.value-diagram.vd-drawn .vd-label { opacity: 1; transform: translateY(0); }
+@media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 340px; } }
+
 /* ── NOTIFY ── */
 .notify-wrap { max-width: 480px; }
 .notify-text { font-size: 14px; color: var(--dim); line-height: 1.9; margin-bottom: 20px; }
@@ -841,6 +924,22 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
       <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, мы только в начале пути.</p><p>Естественный нетворкинг: мы не обещаем готовых сделок, но внутри сообщества создаётся среда, где фаундеры и специалисты находят друг друга сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
+      <div class="value-diagram-wrap">
+        <svg class="value-diagram" id="value-diagram" viewBox="0 0 480 300" aria-hidden="true">
+          <line class="vd-axis" x1="50" y1="20" x2="50" y2="230"></line>
+          <line class="vd-axis" x1="50" y1="230" x2="340" y2="230"></line>
+          <line class="vd-dash" x1="90" y1="80" x2="150" y2="255"></line>
+          <line class="vd-line" x1="90" y1="80" x2="300" y2="165"></line>
+          <line class="vd-line" x1="50" y1="230" x2="330" y2="55"></line>
+          <line class="vd-arrow" x1="330" y1="55" x2="304" y2="61"></line>
+          <line class="vd-arrow" x1="330" y1="55" x2="316" y2="81"></line>
+          <text class="vd-label" x="60" y="60">SEO</text>
+          <text class="vd-label" x="308" y="172">CGI</text>
+          <text class="vd-label" x="95" y="290">3D</text>
+          <text class="vd-label" x="352" y="238">Creators</text>
+          <text class="vd-caption" x="345" y="115">// сферы</text>
+        </svg>
+      </div>
     </div>
   </div>
 
@@ -1605,6 +1704,30 @@ function observeXMarks(){
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
   xMarkObserver.observe(list);
+}
+
+// Scroll-triggered draw-in for the small line-figure next to the VALUE
+// copy (see the CSS comment on .value-diagram for the shape/technique).
+// Solid strokes (.vd-axis/.vd-line/.vd-arrow) get their stroke-dasharray
+// set to their own getTotalLength() once, up front, so the CSS
+// transition from that length down to 0 works regardless of exactly
+// where each line's endpoints are - only needs doing once since the
+// underlying viewBox coordinates (and so the path length in user units)
+// never change with the element's rendered size. Same band/toggle
+// mechanic as observeXMarks - .vd-drawn on the whole <svg> drives every
+// child via CSS, so there's no per-element stagger to hand-roll here.
+function observeValueDiagram(){
+  const svg = g('value-diagram');
+  if(!svg) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  svg.querySelectorAll('.vd-axis, .vd-line, .vd-arrow').forEach(line => {
+    line.style.setProperty('--len', line.getTotalLength());
+  });
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => svg.classList.toggle('vd-drawn', entry.isIntersecting));
+  }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+  observer.observe(svg);
 }
 
 // Label+value pairs (СТАТУС/ДОСТУП, every RULES/FORMAT/PROCESS/FAQ row, the
@@ -2820,6 +2943,7 @@ render();
 playHeroDotSweep();
 observeCtaDotSweep();
 observeXMarks();
+observeValueDiagram();
 updProg(1);
 restoreDraft();
 initAutosave();
