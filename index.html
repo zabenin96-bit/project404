@@ -328,9 +328,21 @@ body.lang-switching { opacity: 0; }
      triangle-inscribed-in-a-square construction.
    - A final diagonal "mission" line drawn last, starting at the same
      origin point the axes share (not floating in from outside the
-     figure), in the same white as the other solid lines but a bit
-     thicker - the only line that ends in an arrowhead, and the only one
-     without its own label.
+     figure) - the only line that ends in an arrowhead, and the only one
+     without its own label. Same thickness as every other line here
+     (matching the reference, which is uniform throughout) - it read as
+     mismatched when it was thicker/differently colored.
+   All labels sit outside the triangle/quadrilateral's combined bounding
+   box (with real clearance, not just clear of the one line nearest
+   them) since text tucked in close to a vertex kept reading as touching
+   whichever line converged there depending on exact rendering. Sans-
+   serif, not the site's usual monospace - the reference's own labels are
+   a bold grotesque, and matching that mattered more here than the
+   site's normal type consistency, since the whole point of this figure
+   is to evoke that reference. The whole triangle/quadrilateral cluster
+   also sits in the lower half of the figure, not spanning its full
+   height, again matching the reference's own proportions (a tall mostly
+   empty vertical axis with the actual shapes clustered lower down).
    All English regardless of site language (see observeValueDiagram),
    same as the earlier versions - these read as fixed labels, not copy to
    translate.
@@ -382,47 +394,45 @@ body.lang-switching { opacity: 0; }
 .value-diagram-wrap { grid-column: 2; margin-top: 32px; max-width: 500px; }
 .value-diagram { display: block; width: 100%; height: auto; overflow: visible; }
 .value-diagram .vd-axis, .value-diagram .vd-line, .value-diagram .vd-mission, .value-diagram .vd-arrow {
+  stroke: var(--text);
   stroke-width: 1.5;
   stroke-linecap: round;
   fill: none;
   stroke-dasharray: var(--len);
   stroke-dashoffset: var(--len);
-  transition: stroke-dashoffset 0.65s cubic-bezier(0.65, 0, 0.35, 1);
+  transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
-.value-diagram .vd-axis { stroke: var(--dim); stroke-width: 1; }
-.value-diagram .vd-line { stroke: var(--text); }
-.value-diagram .vd-mission, .value-diagram .vd-arrow { stroke: var(--text); stroke-width: 2.2; }
 .value-diagram .vd-dashdot {
   stroke: var(--text);
   stroke-width: 1.5;
   stroke-dasharray: 9 4 2 4;
   fill: none;
   opacity: 0;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s ease;
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
 .value-diagram .vd-label {
-  font-family: var(--font-mark);
+  font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 18px;
   fill: var(--text);
   opacity: 0;
-  transition: opacity 0.4s ease, transform 0.4s cubic-bezier(.16,.8,.24,1);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.16,.8,.24,1);
   transition-delay: calc(var(--i, 0) * 0.1s);
   transform: translateY(8px);
 }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-arrow, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  transition-duration: 0.65s;
-  transition-delay: calc(var(--i, 0) * 0.65s);
+  transition-duration: 0.9s;
+  transition-delay: calc(var(--i, 0) * 0.9s);
 }
 .value-diagram.vd-drawn .vd-label {
   opacity: 1;
   transform: translateY(0);
-  transition-duration: 0.45s;
-  transition-delay: calc(var(--i, 0) * 0.65s + 0.65s);
+  transition-duration: 0.55s;
+  transition-delay: calc(var(--i, 0) * 0.9s + 0.9s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 420px; } .value-diagram .vd-label { font-size: 14px; } }
 
@@ -963,43 +973,46 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
       <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, мы только в начале пути.</p><p>Естественный нетворкинг: мы не обещаем готовых сделок, но внутри сообщества создаётся среда, где фаундеры и специалисты находят друг друга сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
       <div class="value-diagram-wrap">
-        <svg class="value-diagram" id="value-diagram" viewBox="0 0 560 340" aria-hidden="true">
-          <!-- axes, sharing their corner (50,300) with the mission line below -->
-          <line class="vd-axis" style="--i:0" x1="50" y1="300" x2="50" y2="30"></line>
-          <text class="vd-label" style="--i:0" x="58" y="45">Founders</text>
-          <line class="vd-axis" style="--i:3" x1="50" y1="300" x2="380" y2="300"></line>
-          <text class="vd-label" style="--i:3" x="374" y="284" text-anchor="end">Specialists</text>
+        <svg class="value-diagram" id="value-diagram" viewBox="0 0 580 420" aria-hidden="true">
+          <!-- axes, sharing their corner (60,380) with the mission line below.
+               The vertical axis runs tall and mostly empty above the shapes,
+               matching the reference's own proportions - the shapes cluster
+               in the lower half rather than spanning the full height. -->
+          <line class="vd-axis" style="--i:0" x1="60" y1="380" x2="60" y2="40"></line>
+          <text class="vd-label" style="--i:0" x="68" y="55">Founders</text>
+          <line class="vd-axis" style="--i:3" x1="60" y1="380" x2="420" y2="380"></line>
+          <text class="vd-label" style="--i:3" x="414" y="364" text-anchor="end">Specialists</text>
 
           <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers -->
-          <line class="vd-line" style="--i:0" x1="150" y1="50" x2="380" y2="160"></line>
-          <text class="vd-label" style="--i:0" x="392" y="165">CGI</text>
+          <line class="vd-line" style="--i:0" x1="170" y1="150" x2="410" y2="230"></line>
+          <text class="vd-label" style="--i:0" x="482" y="235" text-anchor="start">CGI</text>
 
-          <line class="vd-line" style="--i:1" x1="380" y1="160" x2="200" y2="270"></line>
-          <text class="vd-label" style="--i:1" x="140" y="276" text-anchor="end">Creators</text>
+          <line class="vd-line" style="--i:1" x1="410" y1="230" x2="230" y2="340"></line>
+          <text class="vd-label" style="--i:1" x="140" y="345" text-anchor="end">Creators</text>
 
-          <line class="vd-dashdot" style="--i:2" x1="200" y1="270" x2="150" y2="50"></line>
-          <text class="vd-label" style="--i:2" x="158" y="40">Designers</text>
+          <line class="vd-dashdot" style="--i:2" x1="230" y1="340" x2="170" y2="150"></line>
+          <text class="vd-label" style="--i:2" x="178" y="120" text-anchor="start">Designers</text>
 
           <!-- quadrilateral overlapping the triangle (shares the Creators corner,
                Designers sits outside it) rather than symmetrically framing it:
                Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
-          <line class="vd-line" style="--i:3" x1="200" y1="270" x2="430" y2="270"></line>
-          <text class="vd-label" style="--i:3" x="442" y="275">SEO</text>
+          <line class="vd-line" style="--i:3" x1="230" y1="340" x2="470" y2="340"></line>
+          <text class="vd-label" style="--i:3" x="482" y="305" text-anchor="start">SEO</text>
 
-          <line class="vd-line" style="--i:4" x1="430" y1="270" x2="430" y2="100"></line>
-          <text class="vd-label" style="--i:4" x="442" y="90">Investors</text>
+          <line class="vd-line" style="--i:4" x1="470" y1="340" x2="470" y2="180"></line>
+          <text class="vd-label" style="--i:4" x="482" y="175" text-anchor="start">Investors</text>
 
-          <line class="vd-line" style="--i:5" x1="430" y1="100" x2="200" y2="100"></line>
-          <text class="vd-label" style="--i:5" x="188" y="82" text-anchor="end">Traders</text>
+          <line class="vd-line" style="--i:5" x1="470" y1="180" x2="230" y2="180"></line>
+          <text class="vd-label" style="--i:5" x="285" y="120" text-anchor="start">Traders</text>
 
-          <line class="vd-line" style="--i:6" x1="200" y1="100" x2="200" y2="270"></line>
+          <line class="vd-line" style="--i:6" x1="230" y1="180" x2="230" y2="340"></line>
 
           <!-- mission: drawn last, starting at the same origin corner the axes
                share, piercing through both shapes - the only line with an
                arrowhead, and (like the axes) it has no label of its own. -->
-          <line class="vd-mission" style="--i:7" x1="50" y1="300" x2="480" y2="30"></line>
-          <line class="vd-arrow" style="--i:7" x1="480" y1="30" x2="454" y2="36"></line>
-          <line class="vd-arrow" style="--i:7" x1="480" y1="30" x2="472" y2="56"></line>
+          <line class="vd-mission" style="--i:7" x1="60" y1="380" x2="520" y2="60"></line>
+          <line class="vd-arrow" style="--i:7" x1="520" y1="60" x2="494" y2="66"></line>
+          <line class="vd-arrow" style="--i:7" x1="520" y1="60" x2="512" y2="86"></line>
         </svg>
       </div>
     </div>
