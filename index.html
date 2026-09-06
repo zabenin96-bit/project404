@@ -321,11 +321,17 @@ body.lang-switching { opacity: 0; }
      sharing their corner (the "origin") with the mission line below.
    - A triangle (Designers, CGI, Creators) whose closing side (back to
      Designers, drawn from Creators) is dash-dot styled.
-   - A quadrilateral overlapping that triangle rather than framing it
-     symmetrically: shares the Creators corner and continues Creators ->
-     SEO -> Investors -> Traders -> back to Creators, with Designers
-     sitting outside its bounds - an intentionally loose overlap, not a
-     triangle-inscribed-in-a-square construction.
+   - A square overlapping that triangle rather than framing it
+     symmetrically, sharing the Creators corner (Designers sits outside
+     its bounds) and continuing Creators -> SEO -> Investors -> Traders ->
+     back to Creators - but tilted rather than axis-aligned, so its four
+     sides run diagonally like every other line in the figure. An
+     axis-aligned square here read as a flat, orthogonal box dropped into
+     an otherwise all-diagonal composition (the reference has no right
+     angles anywhere except the axes' own corner) - rotating it keeps it
+     recognizably a square (equal sides, still closes into 4 corners)
+     while fitting the same visual language as the triangle and mission
+     line.
    - A final diagonal "mission" line drawn last, starting at the same
      origin point the axes share (not floating in from outside the
      figure) - the only line that ends in an arrowhead, and the only one
@@ -973,46 +979,49 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
       <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, мы только в начале пути.</p><p>Естественный нетворкинг: мы не обещаем готовых сделок, но внутри сообщества создаётся среда, где фаундеры и специалисты находят друг друга сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
       <div class="value-diagram-wrap">
-        <svg class="value-diagram" id="value-diagram" viewBox="0 0 580 420" aria-hidden="true">
-          <!-- axes, sharing their corner (60,380) with the mission line below.
+        <svg class="value-diagram" id="value-diagram" viewBox="0 0 460 400" aria-hidden="true">
+          <!-- axes, sharing their corner (60,360) with the mission line below.
                The vertical axis runs tall and mostly empty above the shapes,
                matching the reference's own proportions - the shapes cluster
                in the lower half rather than spanning the full height. -->
-          <line class="vd-axis" style="--i:0" x1="60" y1="380" x2="60" y2="40"></line>
-          <text class="vd-label" style="--i:0" x="68" y="55">Founders</text>
-          <line class="vd-axis" style="--i:3" x1="60" y1="380" x2="420" y2="380"></line>
-          <text class="vd-label" style="--i:3" x="414" y="364" text-anchor="end">Specialists</text>
+          <line class="vd-axis" style="--i:0" x1="60" y1="360" x2="60" y2="20"></line>
+          <text class="vd-label" style="--i:0" x="68" y="35">Founders</text>
+          <line class="vd-axis" style="--i:3" x1="60" y1="360" x2="400" y2="360"></line>
+          <text class="vd-label" style="--i:3" x="394" y="344" text-anchor="end">Specialists</text>
 
           <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers -->
-          <line class="vd-line" style="--i:0" x1="170" y1="150" x2="410" y2="230"></line>
-          <text class="vd-label" style="--i:0" x="482" y="235" text-anchor="start">CGI</text>
+          <line class="vd-line" style="--i:0" x1="120" y1="90" x2="350" y2="280"></line>
+          <text class="vd-label" style="--i:0" x="405" y="285" text-anchor="start">CGI</text>
 
-          <line class="vd-line" style="--i:1" x1="410" y1="230" x2="230" y2="340"></line>
-          <text class="vd-label" style="--i:1" x="140" y="345" text-anchor="end">Creators</text>
+          <line class="vd-line" style="--i:1" x1="350" y1="280" x2="230" y2="320"></line>
+          <text class="vd-label" style="--i:1" x="140" y="340" text-anchor="end">Creators</text>
 
-          <line class="vd-dashdot" style="--i:2" x1="230" y1="340" x2="170" y2="150"></line>
-          <text class="vd-label" style="--i:2" x="178" y="120" text-anchor="start">Designers</text>
+          <line class="vd-dashdot" style="--i:2" x1="230" y1="320" x2="120" y2="90"></line>
+          <text class="vd-label" style="--i:2" x="128" y="75" text-anchor="start">Designers</text>
 
-          <!-- quadrilateral overlapping the triangle (shares the Creators corner,
-               Designers sits outside it) rather than symmetrically framing it:
+          <!-- quadrilateral overlapping the triangle - tilted rather than
+               axis-aligned, so its sides run diagonally like every other
+               line here instead of reading as a flat, orthogonal box
+               dropped into an otherwise all-diagonal composition. Shares
+               the Creators corner (Designers sits outside it):
                Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
-          <line class="vd-line" style="--i:3" x1="230" y1="340" x2="470" y2="340"></line>
-          <text class="vd-label" style="--i:3" x="482" y="305" text-anchor="start">SEO</text>
+          <line class="vd-line" style="--i:3" x1="230" y1="320" x2="395" y2="225"></line>
+          <text class="vd-label" style="--i:3" x="405" y="230" text-anchor="start">SEO</text>
 
-          <line class="vd-line" style="--i:4" x1="470" y1="340" x2="470" y2="180"></line>
-          <text class="vd-label" style="--i:4" x="482" y="175" text-anchor="start">Investors</text>
+          <line class="vd-line" style="--i:4" x1="395" y1="225" x2="300" y2="61"></line>
+          <text class="vd-label" style="--i:4" x="300" y="42" text-anchor="middle">Investors</text>
 
-          <line class="vd-line" style="--i:5" x1="470" y1="180" x2="230" y2="180"></line>
-          <text class="vd-label" style="--i:5" x="285" y="120" text-anchor="start">Traders</text>
+          <line class="vd-line" style="--i:5" x1="300" y1="61" x2="135" y2="156"></line>
+          <text class="vd-label" style="--i:5" x="100" y="135" text-anchor="start">Traders</text>
 
-          <line class="vd-line" style="--i:6" x1="230" y1="180" x2="230" y2="340"></line>
+          <line class="vd-line" style="--i:6" x1="135" y1="156" x2="230" y2="320"></line>
 
           <!-- mission: drawn last, starting at the same origin corner the axes
                share, piercing through both shapes - the only line with an
                arrowhead, and (like the axes) it has no label of its own. -->
-          <line class="vd-mission" style="--i:7" x1="60" y1="380" x2="520" y2="60"></line>
-          <line class="vd-arrow" style="--i:7" x1="520" y1="60" x2="494" y2="66"></line>
-          <line class="vd-arrow" style="--i:7" x1="520" y1="60" x2="512" y2="86"></line>
+          <line class="vd-mission" style="--i:7" x1="60" y1="360" x2="430" y2="40"></line>
+          <line class="vd-arrow" style="--i:7" x1="430" y1="40" x2="404" y2="46"></line>
+          <line class="vd-arrow" style="--i:7" x1="430" y1="40" x2="422" y2="66"></line>
         </svg>
       </div>
     </div>
