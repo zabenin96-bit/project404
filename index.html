@@ -2850,6 +2850,26 @@ function runDotSweep(el){
   let nextRect = null;
   let prefetchedFor = -1;
 
+  // Segment 0 doesn't go through the mid-flight prefetch below (that only
+  // ever refreshes the *next* line, starting once segment 0 is already
+  // under way) - left as-is, it would run its entire duration on the very
+  // first measureAll() taken back when runDotSweep was called, before
+  // startDelayMs even elapsed. Anything still settling during that pause
+  // (the font-ready gate only covers the font swap itself, not necessarily
+  // every other bit of layout finishing this early on the page) would
+  // leave the first line's y-position stale for its whole run - reported
+  // as the trail sitting at the wrong height specifically on the first
+  // line, on both mobile and desktop, after a cold reload. Re-measuring
+  // right as the pause ends closes that gap the same way the per-line
+  // prefetch does for every line after it.
+  function primeFirstSegment(){
+    const fresh = measureAll();
+    if(!fresh.length) return;
+    lineCount = fresh.length;
+    rect = fresh[0];
+    segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
+  }
+
   function easeFor(idx){
     const isFirst = idx === 0, isLast = idx === lineCount - 1;
     if(isFirst && isLast) return easeInOutSine;
@@ -2905,7 +2925,7 @@ function runDotSweep(el){
     }
     requestAnimationFrame(frame);
   }
-  setTimeout(()=> requestAnimationFrame(frame), startDelayMs);
+  setTimeout(()=> { primeFirstSegment(); requestAnimationFrame(frame); }, startDelayMs);
 }
 
 // Hero: plays once, on this page load only (not on language switch, not
