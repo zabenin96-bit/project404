@@ -458,7 +458,7 @@ body.lang-switching { opacity: 0; }
   font-size: 24px;
   fill: var(--text);
   opacity: 0;
-  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.16,.8,.24,1);
+  transition: opacity 0.55s ease-in-out, transform 0.55s cubic-bezier(.16,.8,.24,1);
   transform: translateY(8px);
 }
 .value-diagram .vd-label.vd-lit { opacity: 1; transform: translateY(0); }
@@ -466,9 +466,9 @@ body.lang-switching { opacity: 0; }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  transition-duration: 0.4s;
+  transition-duration: 0.65s;
   transition-timing-function: linear;
-  transition-delay: calc(var(--i, 0) * 0.4s);
+  transition-delay: calc(var(--i, 0) * 0.65s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 420px; } .value-diagram .vd-label { font-size: 18px; } }
 
@@ -1846,7 +1846,7 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-const VD_STEP_MS = 400;
+const VD_STEP_MS = 650;
 // Shape-vertex labels in the order their line completes (matches the
 // --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
 // Investors=4, Traders=5) - these are the ones that take a turn in the
