@@ -210,7 +210,7 @@ body.lang-switching { opacity: 0; }
   left: 0;
   width: var(--uline-w, 100%);
   bottom: -2px;
-  height: 1px;
+  height: 2px;
   background: var(--text);
   transform: scaleX(0);
   transform-origin: left;
@@ -1281,19 +1281,13 @@ function setLang(l){
   setTimeout(apply, 150);
 }
 
-// Renders the headline text immediately (no delay to readability), then
-// draws a clean underline under each group in highlightGroups. A group is
-// one or more consecutive phrase strings that act as a single beat - most
-// groups are one phrase, but a phrase that must be able to break onto its
-// own line on mobile (see mobileBreakBefore) is split into multiple
-// strings that render as separate spans yet animate together.
-//
-// Sequence: groups draw in quickly one after another (not waiting for
-// each to finish before the next starts), hold together once all are
-// drawn, then retract one at a time in REVERSE order - last drawn erases
-// first - like a stack unwinding rather than a mirrored replay of the
-// build. Plain transform: scaleX on a ::after pseudo-element - no filter,
-// no mix-blend-mode, so none of the mobile compositing cost those carried.
+// Renders the headline text immediately (no delay to readability). Each
+// highlightPhrases match gets the same scroll-triggered underline used
+// everywhere else on the site (see observeScrollUnderlines) rather than
+// a bespoke entrance animation - #hero-hl is just another block there,
+// grouped and staggered the same way Format/Rules/Value etc. are, since
+// its underline spans' shared parent (getUlineBlock's fallback) is
+// #hero-hl itself.
 //
 // mobileBreakBefore (optional): a word to force onto its own new line on
 // mobile only. Natural word-wrap here isn't stable across mobile widths -
@@ -1305,37 +1299,33 @@ function setLang(l){
 // leaving it up to the viewport's exact width. Checked against the START
 // of every segment (highlighted or not), since the break word can end up
 // as the first word of its own highlighted span.
-function setHeroHeadline(el, text, highlightGroups, mobileBreakBefore){
+function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
   if(!el) return;
   el.innerHTML = '';
 
-  const groups = [];
-  function appendUnderlineSegment(container, segText, groupIdx){
+  function appendUnderlineSegment(container, segText){
     const span = document.createElement('span');
-    span.className = 'uline-wrap';
+    span.className = 'uline-wrap js-scroll-uline';
     span.textContent = segText;
-    (groups[groupIdx] || (groups[groupIdx] = [])).push(span);
     container.appendChild(span);
   }
 
-  // Cuts `text` into ordered {text, hl, gi} pieces around each phrase in
-  // every group, searching only inside not-yet-highlighted pieces so an
+  // Cuts `text` into ordered {text, hl} pieces around each highlight
+  // phrase, searching only inside not-yet-highlighted pieces so an
   // earlier match can't accidentally swallow a later one.
   let segments = [{ text, hl: false }];
-  (highlightGroups || []).forEach((group, gi) => {
-    group.forEach(phrase => {
-      const next = [];
-      segments.forEach(seg => {
-        if(seg.hl){ next.push(seg); return; }
-        const at = seg.text.indexOf(phrase);
-        if(at === -1){ next.push(seg); return; }
-        if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
-        next.push({ text: phrase, hl: true, gi });
-        const rest = seg.text.slice(at + phrase.length);
-        if(rest) next.push({ text: rest, hl: false });
-      });
-      segments = next;
+  (highlightPhrases || []).forEach(phrase => {
+    const next = [];
+    segments.forEach(seg => {
+      if(seg.hl){ next.push(seg); return; }
+      const at = seg.text.indexOf(phrase);
+      if(at === -1){ next.push(seg); return; }
+      if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
+      next.push({ text: phrase, hl: true });
+      const rest = seg.text.slice(at + phrase.length);
+      if(rest) next.push({ text: rest, hl: false });
     });
+    segments = next;
   });
 
   if(mobileBreakBefore){
@@ -1356,30 +1346,9 @@ function setHeroHeadline(el, text, highlightGroups, mobileBreakBefore){
       br.className = 'mobile-break';
       el.appendChild(br);
     }
-    if(seg.hl) appendUnderlineSegment(el, seg.text, seg.gi);
+    if(seg.hl) appendUnderlineSegment(el, seg.text);
     else el.appendChild(document.createTextNode(seg.text));
   });
-
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(groups.length && !reduced){
-    const startDelay = 500;
-    const buildStaggerMs = 150;
-    const unwindStaggerMs = 150;
-    const drawMs = 550;
-    const holdMs = 300;
-
-    groups.forEach((spans, gi) => {
-      const start = startDelay + gi * buildStaggerMs;
-      setTimeout(()=> spans.forEach(s => s.classList.add('uline-in')), start);
-    });
-
-    const lastBuildStart = startDelay + (groups.length - 1) * buildStaggerMs;
-    const unwindStart = lastBuildStart + drawMs + holdMs;
-    groups.slice().reverse().forEach((spans, ri) => {
-      const start = unwindStart + ri * unwindStaggerMs;
-      setTimeout(()=> spans.forEach(s => s.classList.add('uline-out')), start);
-    });
-  }
 }
 
 // Wraps the first occurrence of `phrase` in `text` with a scroll-triggered
@@ -1396,11 +1365,11 @@ function render(){
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
   g('s-msg2').innerHTML = ' ' + (foundingActive() ? t('sMsg2Founding') : t('sMsg2'));
-  const heroHlGroups = lang === 'ru'
-    ? [['фаундеров'], ['креативных лидеров'], ['специалистов', 'смежных сфер']]
-    : [['founders'], ['creative leaders'], ['specialists in', 'adjacent fields']];
+  const heroHlPhrases = lang === 'ru'
+    ? ['фаундеров', 'креативных лидеров', 'специалистов', 'смежных сфер']
+    : ['founders', 'creative leaders', 'specialists in', 'adjacent fields'];
   const heroHlMobileBreak = lang === 'ru' ? 'смежных' : 'adjacent';
-  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlGroups, heroHlMobileBreak);
+  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlPhrases, heroHlMobileBreak);
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
   g('test-cta-text').textContent = t('heroCta');
@@ -1536,6 +1505,27 @@ const scrollUlineTimers = new Map();
 function getUlineBlock(el){
   return el.closest('.rules-list, .about-text') || el.parentElement;
 }
+
+// Shared by the IntersectionObserver callback and #hero-hl's forced
+// first reveal below - one code path, so "same mechanic everywhere"
+// actually means the same code, not just similar-looking constants.
+function setUlineBlockShown(container, members, shown){
+  const pendingTimers = scrollUlineTimers.get(container);
+  if(pendingTimers) pendingTimers.forEach(clearTimeout);
+  const timers = [];
+  if(shown){
+    members.forEach((el, i) => {
+      el.classList.remove('uline-out');
+      timers.push(setTimeout(()=> el.classList.add('uline-in'), 200 + i * 80));
+    });
+  } else {
+    members.forEach((el, i) => {
+      timers.push(setTimeout(()=> { el.classList.remove('uline-in'); el.classList.add('uline-out'); }, i * 80));
+    });
+  }
+  scrollUlineTimers.set(container, timers);
+}
+
 function observeScrollUnderlines(){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
@@ -1566,27 +1556,32 @@ function observeScrollUnderlines(){
   if(!scrollUnderlineObserver){
     scrollUnderlineObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        const container = entry.target;
-        const members = scrollUlineBlockMembers.get(container);
+        const members = scrollUlineBlockMembers.get(entry.target);
         if(!members) return;
-        const pendingTimers = scrollUlineTimers.get(container);
-        if(pendingTimers) pendingTimers.forEach(clearTimeout);
-        const timers = [];
-        if(entry.isIntersecting){
-          members.forEach((el, i) => {
-            el.classList.remove('uline-out');
-            timers.push(setTimeout(()=> el.classList.add('uline-in'), 200 + i * 80));
-          });
-        } else {
-          members.forEach((el, i) => {
-            timers.push(setTimeout(()=> { el.classList.remove('uline-in'); el.classList.add('uline-out'); }, i * 80));
-          });
-        }
-        scrollUlineTimers.set(container, timers);
+        setUlineBlockShown(entry.target, members, entry.isIntersecting);
       });
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
-  blocks.forEach((members, container) => scrollUnderlineObserver.observe(container));
+  // #hero-hl sits at the top of the page, above the -40%/-40% center
+  // band the observer below uses for everything else - on a typical
+  // viewport height it would never once cross into that band without
+  // the visitor scrolling up (impossible, it's already at the top), so
+  // it's excluded from geometric observation entirely and forced to
+  // reveal directly instead, through the exact same setUlineBlockShown
+  // used for scroll-driven blocks - same mechanic (timing, order,
+  // easing), just not scroll-gated. It has to be excluded, not just
+  // shown first: observe() reports the target's current state
+  // asynchronously shortly after being called, and that first report
+  // (isIntersecting: false, since it's above the band) would otherwise
+  // land after this forced reveal and cancel it right back to "out".
+  const heroBlock = g('hero-hl');
+  blocks.forEach((members, container) => {
+    if(container === heroBlock) return;
+    scrollUnderlineObserver.observe(container);
+  });
+  if(heroBlock && blocks.has(heroBlock)){
+    setUlineBlockShown(heroBlock, blocks.get(heroBlock), true);
+  }
 }
 
 // Label+value pairs (СТАТУС/ДОСТУП, every RULES/FORMAT/PROCESS/FAQ row, the
