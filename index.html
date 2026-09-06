@@ -339,9 +339,16 @@ body.lang-switching { opacity: 0; }
      (matching the reference, which is uniform throughout) - it read as
      mismatched when it was thicker/differently colored.
    All labels sit outside the triangle/quadrilateral's combined bounding
-   box (with real clearance, not just clear of the one line nearest
-   them) since text tucked in close to a vertex kept reading as touching
-   whichever line converged there depending on exact rendering. Sans-
+   box, with generous clearance - a real screenshot from an actual
+   browser (not just the headless one used while building this) showed
+   text still getting cut through by whichever line converged at that
+   vertex, worse once the label font-size went up. Some vertices (Traders
+   especially) sit deep enough in the cluster that clearing every nearby
+   line meant moving the label a real distance away - each such vertex
+   gets a small marker dot (.vd-dot) at its exact point so the word stays
+   visibly tied to it despite the distance, the same role a leader line
+   would play, without adding another line that could itself cross
+   something. Sans-
    serif, not the site's usual monospace - the reference's own labels are
    a bold grotesque, and matching that mattered more here than the
    site's normal type consistency, since the whole point of this figure
@@ -445,6 +452,12 @@ body.lang-switching { opacity: 0; }
   transition-delay: calc(var(--i, 0) * 0.1s);
   transform: translateY(8px);
 }
+.value-diagram .vd-dot {
+  fill: var(--text);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  transition-delay: calc(var(--i, 0) * 0.1s);
+}
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-arrow, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
@@ -456,6 +469,11 @@ body.lang-switching { opacity: 0; }
   opacity: 1;
   transform: translateY(0);
   transition-duration: 0.4s;
+  transition-delay: calc(var(--i, 0) * 0.6s + 0.6s);
+}
+.value-diagram.vd-drawn .vd-dot {
+  opacity: 1;
+  transition-duration: 0.3s;
   transition-delay: calc(var(--i, 0) * 0.6s + 0.6s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 420px; } .value-diagram .vd-label { font-size: 18px; } }
@@ -997,25 +1015,33 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
       <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, мы только в начале пути.</p><p>Естественный нетворкинг: мы не обещаем готовых сделок, но внутри сообщества создаётся среда, где фаундеры и специалисты находят друг друга сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
       <div class="value-diagram-wrap">
-        <svg class="value-diagram" id="value-diagram" viewBox="0 0 460 400" aria-hidden="true">
-          <!-- axes, sharing their corner (60,360) with the mission line below.
+        <svg class="value-diagram" id="value-diagram" viewBox="0 0 660 460" aria-hidden="true">
+          <!-- axes, sharing their corner (80,400) with the mission line below.
                The vertical axis runs tall and mostly empty above the shapes,
                matching the reference's own proportions - the shapes cluster
                in the lower half rather than spanning the full height. -->
-          <line class="vd-axis" style="--i:0" x1="60" y1="360" x2="60" y2="20"></line>
-          <text class="vd-label" style="--i:0" x="68" y="35">Founders</text>
-          <line class="vd-axis" style="--i:3" x1="60" y1="360" x2="400" y2="360"></line>
-          <text class="vd-label" style="--i:3" x="394" y="344" text-anchor="end">Specialists</text>
+          <line class="vd-axis" style="--i:0" x1="80" y1="400" x2="80" y2="40"></line>
+          <text class="vd-label" style="--i:0" x="92" y="58">Founders</text>
+          <line class="vd-axis" style="--i:3" x1="80" y1="400" x2="480" y2="400"></line>
+          <text class="vd-label" style="--i:3" x="474" y="382" text-anchor="end">Specialists</text>
 
-          <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers -->
-          <line class="vd-line" style="--i:0" x1="120" y1="90" x2="350" y2="280"></line>
-          <text class="vd-label" style="--i:0" x="405" y="285" text-anchor="start">CGI</text>
+          <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers.
+               Every vertex below gets a small marker dot (.vd-dot) at the
+               exact point, since the label itself sits a good distance away
+               to clear the lines converging there - the dot is what ties the
+               word back to its specific point, the way a leader line would,
+               without a line of its own crossing back through the cluster. -->
+          <line class="vd-line" style="--i:0" x1="140" y1="90" x2="420" y2="260"></line>
+          <circle class="vd-dot" style="--i:0" cx="420" cy="260" r="4"></circle>
+          <text class="vd-label" style="--i:0" x="490" y="265" text-anchor="start">CGI</text>
 
-          <line class="vd-line" style="--i:1" x1="350" y1="280" x2="230" y2="320"></line>
-          <text class="vd-label" style="--i:1" x="170" y="340" text-anchor="end">Creators</text>
+          <line class="vd-line" style="--i:1" x1="420" y1="260" x2="250" y2="350"></line>
+          <circle class="vd-dot" style="--i:1" cx="250" cy="350" r="4"></circle>
+          <text class="vd-label" style="--i:1" x="140" y="380" text-anchor="start">Creators</text>
 
-          <line class="vd-dashdot" style="--i:2" x1="230" y1="320" x2="120" y2="90"></line>
-          <text class="vd-label" style="--i:2" x="128" y="75" text-anchor="start">Designers</text>
+          <line class="vd-dashdot" style="--i:2" x1="250" y1="350" x2="140" y2="90"></line>
+          <circle class="vd-dot" style="--i:2" cx="140" cy="90" r="4"></circle>
+          <text class="vd-label" style="--i:2" x="400" y="430" text-anchor="middle">Designers</text>
 
           <!-- quadrilateral overlapping the triangle - tilted rather than
                axis-aligned, so its sides run diagonally like every other
@@ -1023,23 +1049,26 @@ body { padding-bottom: 60px; }
                dropped into an otherwise all-diagonal composition. Shares
                the Creators corner (Designers sits outside it):
                Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
-          <line class="vd-line" style="--i:3" x1="230" y1="320" x2="395" y2="225"></line>
-          <text class="vd-label" style="--i:3" x="405" y="230" text-anchor="start">SEO</text>
+          <line class="vd-line" style="--i:3" x1="250" y1="350" x2="450" y2="285"></line>
+          <circle class="vd-dot" style="--i:3" cx="450" cy="285" r="4"></circle>
+          <text class="vd-label" style="--i:3" x="515" y="320" text-anchor="start">SEO</text>
 
-          <line class="vd-line" style="--i:4" x1="395" y1="225" x2="300" y2="61"></line>
-          <text class="vd-label" style="--i:4" x="300" y="42" text-anchor="middle">Investors</text>
+          <line class="vd-line" style="--i:4" x1="450" y1="285" x2="385" y2="85"></line>
+          <circle class="vd-dot" style="--i:4" cx="385" cy="85" r="4"></circle>
+          <text class="vd-label" style="--i:4" x="400" y="52" text-anchor="middle">Investors</text>
 
-          <line class="vd-line" style="--i:5" x1="300" y1="61" x2="135" y2="156"></line>
-          <text class="vd-label" style="--i:5" x="100" y="135" text-anchor="start">Traders</text>
+          <line class="vd-line" style="--i:5" x1="385" y1="85" x2="185" y2="150"></line>
+          <circle class="vd-dot" style="--i:5" cx="185" cy="150" r="4"></circle>
+          <text class="vd-label" style="--i:5" x="515" y="150" text-anchor="start">Traders</text>
 
-          <line class="vd-line" style="--i:6" x1="135" y1="156" x2="230" y2="320"></line>
+          <line class="vd-line" style="--i:6" x1="185" y1="150" x2="250" y2="350"></line>
 
           <!-- mission: drawn last, starting at the same origin corner the axes
                share, piercing through both shapes - the only line with an
                arrowhead, and (like the axes) it has no label of its own. -->
-          <line class="vd-mission" style="--i:7" x1="60" y1="360" x2="430" y2="40"></line>
-          <line class="vd-arrow" style="--i:8" x1="430" y1="40" x2="404" y2="46"></line>
-          <line class="vd-arrow" style="--i:8" x1="430" y1="40" x2="422" y2="66"></line>
+          <line class="vd-mission" style="--i:7" x1="80" y1="400" x2="500" y2="60"></line>
+          <line class="vd-arrow" style="--i:8" x1="500" y1="60" x2="473" y2="67"></line>
+          <line class="vd-arrow" style="--i:8" x1="500" y1="60" x2="491" y2="87"></line>
         </svg>
       </div>
     </div>
