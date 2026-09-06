@@ -2643,11 +2643,30 @@ function easeInOutSine(t){ return -(Math.cos(Math.PI * t) - 1) / 2; }
 // sitting in - subtracting that half-leading back out is what gets the
 // trail visually flush under the letters rather than floating a
 // noticeably larger gap beneath them.
+//
+// Measurement is deferred until document.fonts.ready (same signal
+// positionLangIndicator/syncTipBubbleHeight wait on below) because the
+// site's text renders in a fallback font first and swaps to IBM Plex
+// Mono/Space Mono once the Google Fonts request lands (font-display:
+// swap). Measuring the line rects before that swap captures fallback-
+// font positions and line-wrap points; the real font then swaps in with
+// different metrics and the text shifts under the already-running
+// animation, which reads as the trail sitting lower than the text after
+// a cold reload, and - on headlines long enough to wrap 3 lines - a line
+// transition landing before the dot visually reaches the end of the
+// text it was actually measured against.
 function playDotSweep(el){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
+  if(document.fonts && document.fonts.status !== 'loaded'){
+    document.fonts.ready.then(()=> runDotSweep(el));
+  } else {
+    runDotSweep(el);
+  }
+}
 
+function runDotSweep(el){
   const range = document.createRange();
   range.selectNodeContents(el);
   const scrollX = window.scrollX, scrollY = window.scrollY;
