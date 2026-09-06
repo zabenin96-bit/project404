@@ -181,6 +181,27 @@ body.lang-switching { opacity: 0; }
 
 
 .hero-headline { font-size: clamp(15px, 1.8vw, 20px); font-weight: 700; color: var(--text); margin-bottom: 24px; max-width: 560px; }
+/* Traveling dot with a comet-style tracer for the hero entrance - see
+   playHeroDotSweep(). Fixed positioning matches getClientRects()'
+   viewport-relative coordinates directly, no offset math needed. The
+   trail is a fixed set of leftward box-shadows (not rotated per
+   direction) since the dot's motion is predominantly left-to-right, only
+   turning briefly to a new line - a static trailing glow reads fine
+   without needing to track the exact instantaneous heading. */
+.hero-dot-sweep {
+  position: fixed;
+  top: 0; left: 0;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow:
+    -7px 0 5px 0 rgba(251, 251, 249, 0.45),
+    -14px 0 9px 0 rgba(251, 251, 249, 0.22),
+    -22px 0 12px 1px rgba(251, 251, 249, 0.1);
+  pointer-events: none;
+  z-index: 500;
+  will-change: transform;
+}
 /* Forces a line break before a specific word on mobile only - see
    mobileBreakBefore in setHeroHeadline(). Inert (no break) elsewhere;
    the mobile override lives in the @media (max-width: 700px) block. */
@@ -210,7 +231,7 @@ body.lang-switching { opacity: 0; }
   left: 0;
   width: var(--uline-w, 100%);
   bottom: -2px;
-  height: 2px;
+  height: 3px;
   background: var(--text);
   transform: scaleX(0);
   transform-origin: left;
@@ -1281,13 +1302,8 @@ function setLang(l){
   setTimeout(apply, 150);
 }
 
-// Renders the headline text immediately (no delay to readability). Each
-// highlightPhrases match gets the same scroll-triggered underline used
-// everywhere else on the site (see observeScrollUnderlines) rather than
-// a bespoke entrance animation - #hero-hl is just another block there,
-// grouped and staggered the same way Format/Rules/Value etc. are, since
-// its underline spans' shared parent (getUlineBlock's fallback) is
-// #hero-hl itself.
+// Renders the headline text immediately, no per-phrase highlight anymore -
+// the entrance accent is now playHeroDotSweep's traveling dot instead.
 //
 // mobileBreakBefore (optional): a word to force onto its own new line on
 // mobile only. Natural word-wrap here isn't stable across mobile widths -
@@ -1296,59 +1312,24 @@ function setLang(l){
 // dangling alone. A <br class="mobile-break"> inserted right before it
 // (display:none by default, shown only under the site's existing mobile
 // breakpoint) makes that line break unconditional on mobile instead of
-// leaving it up to the viewport's exact width. Checked against the START
-// of every segment (highlighted or not), since the break word can end up
-// as the first word of its own highlighted span.
-function setHeroHeadline(el, text, highlightPhrases, mobileBreakBefore){
+// leaving it up to the viewport's exact width.
+function setHeroHeadline(el, text, mobileBreakBefore){
   if(!el) return;
   el.innerHTML = '';
-
-  function appendUnderlineSegment(container, segText){
-    const span = document.createElement('span');
-    span.className = 'uline-wrap js-scroll-uline';
-    span.textContent = segText;
-    container.appendChild(span);
+  if(!mobileBreakBefore){
+    el.appendChild(document.createTextNode(text));
+    return;
   }
-
-  // Cuts `text` into ordered {text, hl} pieces around each highlight
-  // phrase, searching only inside not-yet-highlighted pieces so an
-  // earlier match can't accidentally swallow a later one.
-  let segments = [{ text, hl: false }];
-  (highlightPhrases || []).forEach(phrase => {
-    const next = [];
-    segments.forEach(seg => {
-      if(seg.hl){ next.push(seg); return; }
-      const at = seg.text.indexOf(phrase);
-      if(at === -1){ next.push(seg); return; }
-      if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
-      next.push({ text: phrase, hl: true });
-      const rest = seg.text.slice(at + phrase.length);
-      if(rest) next.push({ text: rest, hl: false });
-    });
-    segments = next;
-  });
-
-  if(mobileBreakBefore){
-    const next = [];
-    segments.forEach(seg => {
-      const at = seg.text.indexOf(mobileBreakBefore);
-      if(at === 0){ next.push(Object.assign({}, seg, { breakBefore: true })); return; }
-      if(seg.hl || at === -1){ next.push(seg); return; }
-      if(at > 0) next.push({ text: seg.text.slice(0, at), hl: false });
-      next.push({ text: seg.text.slice(at), hl: false, breakBefore: true });
-    });
-    segments = next;
+  const at = text.indexOf(mobileBreakBefore);
+  if(at === -1){
+    el.appendChild(document.createTextNode(text));
+    return;
   }
-
-  segments.forEach(seg => {
-    if(seg.breakBefore){
-      const br = document.createElement('br');
-      br.className = 'mobile-break';
-      el.appendChild(br);
-    }
-    if(seg.hl) appendUnderlineSegment(el, seg.text);
-    else el.appendChild(document.createTextNode(seg.text));
-  });
+  if(at > 0) el.appendChild(document.createTextNode(text.slice(0, at)));
+  const br = document.createElement('br');
+  br.className = 'mobile-break';
+  el.appendChild(br);
+  el.appendChild(document.createTextNode(text.slice(at)));
 }
 
 // Wraps the first occurrence of `phrase` in `text` with a scroll-triggered
@@ -1365,11 +1346,8 @@ function render(){
   g('s-msg').textContent = t('sMsg');
   g('s-err2').textContent = t('sErr2');
   g('s-msg2').innerHTML = ' ' + (foundingActive() ? t('sMsg2Founding') : t('sMsg2'));
-  const heroHlPhrases = lang === 'ru'
-    ? ['фаундеров', 'креативных лидеров', 'специалистов', 'смежных сфер']
-    : ['founders', 'creative leaders', 'specialists in', 'adjacent fields'];
   const heroHlMobileBreak = lang === 'ru' ? 'смежных' : 'adjacent';
-  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlPhrases, heroHlMobileBreak);
+  setHeroHeadline(g('hero-hl'), t('heroHl'), heroHlMobileBreak);
   g('hero-body').textContent = t('heroBody');
   g('hero-cta-text').textContent = t('heroCta');
   g('test-cta-text').textContent = t('heroCta');
@@ -1562,26 +1540,7 @@ function observeScrollUnderlines(){
       });
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
-  // #hero-hl sits at the top of the page, above the -40%/-40% center
-  // band the observer below uses for everything else - on a typical
-  // viewport height it would never once cross into that band without
-  // the visitor scrolling up (impossible, it's already at the top), so
-  // it's excluded from geometric observation entirely and forced to
-  // reveal directly instead, through the exact same setUlineBlockShown
-  // used for scroll-driven blocks - same mechanic (timing, order,
-  // easing), just not scroll-gated. It has to be excluded, not just
-  // shown first: observe() reports the target's current state
-  // asynchronously shortly after being called, and that first report
-  // (isIntersecting: false, since it's above the band) would otherwise
-  // land after this forced reveal and cancel it right back to "out".
-  const heroBlock = g('hero-hl');
-  blocks.forEach((members, container) => {
-    if(container === heroBlock) return;
-    scrollUnderlineObserver.observe(container);
-  });
-  if(heroBlock && blocks.has(heroBlock)){
-    setUlineBlockShown(heroBlock, blocks.get(heroBlock), true);
-  }
+  blocks.forEach((members, container) => scrollUnderlineObserver.observe(container));
 }
 
 // Label+value pairs (СТАТУС/ДОСТУП, every RULES/FORMAT/PROCESS/FAQ row, the
@@ -2586,8 +2545,67 @@ function initFormFeedback(){
   });
 }
 
+// Plays once, on this page load only (not on language switch, not on
+// scroll) - a small dot travels along the actual rendered lines of the
+// hero subheadline, left to right, wrapping down a line at a time,
+// leaving the .hero-dot-sweep trail behind it. Uses a Range over the
+// element's text to get one clientRect per visual line (a plain
+// el.getClientRects() on a block element returns its own single
+// border-box rect, not per-line - a Range over its contents is what
+// actually segments by line). Each line's share of the total duration
+// is proportional to its width, so the dot moves at a constant real
+// speed instead of at a constant per-line duration.
+function playHeroDotSweep(){
+  const heroEl = g('hero-hl');
+  if(!heroEl) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+
+  const range = document.createRange();
+  range.selectNodeContents(heroEl);
+  const rects = Array.from(range.getClientRects()).filter(r => r.width > 0);
+  if(!rects.length) return;
+
+  const totalWidth = rects.reduce((sum, r) => sum + r.width, 0);
+  const totalDurationMs = 1800;
+  const startDelayMs = 600;
+  const yOffset = 4;
+
+  const dot = document.createElement('div');
+  dot.className = 'hero-dot-sweep';
+  dot.style.opacity = '0';
+  document.body.appendChild(dot);
+
+  let segIdx = 0;
+  let segStartTime = null;
+
+  function frame(now){
+    if(segStartTime === null) segStartTime = now;
+    const rect = rects[segIdx];
+    const segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
+    const t = Math.min(1, (now - segStartTime) / segDurationMs);
+    const x = rect.left + (rect.right - rect.left) * t;
+    const y = rect.bottom + yOffset;
+    dot.style.opacity = '1';
+    dot.style.transform = `translate(${x}px, ${y}px)`;
+    if(t >= 1){
+      segIdx++;
+      segStartTime = now;
+      if(segIdx >= rects.length){
+        dot.style.transition = 'opacity 0.4s ease';
+        dot.style.opacity = '0';
+        setTimeout(()=> dot.remove(), 450);
+        return;
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  setTimeout(()=> requestAnimationFrame(frame), startDelayMs);
+}
+
 // ── INIT ──
 render();
+playHeroDotSweep();
 updProg(1);
 restoreDraft();
 initAutosave();
