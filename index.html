@@ -182,19 +182,25 @@ body.lang-switching { opacity: 0; }
 
 .hero-headline { font-size: clamp(15px, 1.8vw, 20px); font-weight: 700; color: var(--text); margin-bottom: 24px; max-width: 560px; }
 /* Traveling dot with a streak tracer - see playDotSweep(), used for the
-   hero entrance and the "Подать заявку" CTA. Absolutely positioned
-   against the document (playDotSweep adds window.scrollX/Y to the
-   measured coordinates) rather than fixed against the viewport - fixed
-   positioning ignored scrolling entirely, so scrolling mid-sweep left
-   the dot's coordinates stale and it visibly drifted away from the text
-   it's supposed to be tracking. Absolute positioning scrolls with the
-   page like the text itself does, so it stays put relative to it
-   regardless of what the visitor does with the scroll position mid-
-   animation. The trail is a thin fading gradient line, not a blurred
-   glow (a heavily-blurred box-shadow just read as a smudge) - reads
-   closer to a meteor streak. A fixed leftward trail (not rotated per
-   direction) since motion is predominantly left-to-right, only turning
-   briefly at a line wrap. */
+   hero entrance and the "Подать заявку" CTA (each plays exactly once).
+   Absolutely positioned against the document (playDotSweep adds
+   window.scrollX/Y to the measured coordinates) rather than fixed
+   against the viewport - fixed positioning ignored scrolling entirely,
+   so scrolling mid-sweep left the dot's coordinates stale and it
+   visibly drifted away from the text it's supposed to be tracking.
+   Absolute positioning scrolls with the page like the text itself does,
+   so it stays put relative to it regardless of what the visitor does
+   with the scroll position mid-animation. The trail is a thin fading
+   gradient line, not a blurred glow (a heavily-blurred box-shadow just
+   read as a smudge) - reads closer to a meteor streak. A fixed leftward
+   trail (not rotated per direction) since motion is predominantly
+   left-to-right, only turning briefly at a line wrap. Its length is
+   driven by --trail-len (set every frame in playDotSweep, grown from 0
+   as the dot travels) rather than a fixed width, so the streak never
+   extends past the start of the line it's currently tracing - a fixed
+   28px trail made the very first frame of each line look like it had
+   arrived from off in the margin instead of growing out of the text
+   itself. */
 .dot-sweep {
   position: absolute;
   top: 0; left: 0;
@@ -211,7 +217,7 @@ body.lang-switching { opacity: 0; }
   right: 50%;
   top: 50%;
   transform: translateY(-50%);
-  width: 28px;
+  width: var(--trail-len, 0px);
   height: 1px;
   background: linear-gradient(to left, rgba(251, 251, 249, 0.65), rgba(251, 251, 249, 0));
 }
@@ -311,22 +317,23 @@ body.lang-switching { opacity: 0; }
 .reject-list li { display: flex; align-items: baseline; gap: 12px; padding: 14px 4px; margin: 0 -4px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--text); }
 .reject-list li:first-child { border-top: 1px solid var(--line); }
 .reject-list li .x { flex-shrink: 0; width: 12px; }
-/* Classic SVG line-draw reveal: each stroke's dasharray equals its own
-   length, dashoffset starts equal to that (fully hidden), then
-   transitions to 0 - the line appears to draw itself in, rather than
-   just fading/appearing. Scroll-triggered the same way the rest of the
-   site's blocks are (see observeXMarks): grouped, staggered, in order. */
-.reject-list li .x svg { display: block; overflow: visible; }
-.reject-list li .x line {
-  fill: none;
-  stroke: var(--red);
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-dasharray: 14.5;
-  stroke-dashoffset: 14.5;
-  transition: stroke-dashoffset 0.7s cubic-bezier(0.65, 0, 0.35, 1);
+/* Each mark spins into place rather than just fading or drawing in -
+   rotated well past upright and eased back to 0deg with a strongly
+   decelerating curve (fast start, long soft settle), like a spinner
+   coming to rest. Alternates spin direction per item (odd: counter-
+   clockwise, even: clockwise) for variety. Scroll-triggered the same
+   way the rest of the site's blocks are (see observeXMarks): grouped,
+   staggered, in order. */
+.reject-list li .x svg {
+  display: block;
+  overflow: visible;
+  opacity: 0;
+  transform: rotate(-170deg);
+  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
 }
-.reject-list li.x-drawn .x line { stroke-dashoffset: 0; }
+.reject-list li:nth-child(even) .x svg { transform: rotate(170deg); }
+.reject-list li.x-drawn .x svg { opacity: 1; transform: rotate(0deg); }
+.reject-list li .x line { fill: none; stroke: var(--red); stroke-width: 1.5; stroke-linecap: round; }
 
 /* ── TEST / QUIZ ── */
 .test-intro { font-size: 14px; color: var(--dim); line-height: 1.9; max-width: 480px; }
@@ -842,10 +849,10 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="fmt-pre">// ФОРМАТ</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt2t">Ядро</span><span class="rule-val" id="fmt2d"> Чат - вопросы, обсуждения, интро.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt3t">Разбор решений</span><span class="rule-val" id="fmt3d"> Скинул сложный кейс - получил прямую, профессиональную обратную связь от людей, которые уже такое проходили.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt5t">Нетворкинг</span><span class="rule-val" id="fmt5d"> Чат живёт сам по себе, без искусственного разогрева от администраторов. Это экосистема, где ты можешь в любой момент поднять волнующую тему, найти единомышленников для нового проекта или обсудить новости индустрии.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="fmt6t">Спринт / Ретро</span><span class="rule-val" id="fmt6d"> В понедельник ставишь цели на неделю. В пятницу отчёт/разбор результатов и ошибок.</span></li>
+        <li><span class="rule-key" id="fmt2t">Ядро</span><span class="rule-val" id="fmt2d"> Чат - вопросы, обсуждения, интро.</span></li>
+        <li><span class="rule-key" id="fmt3t">Разбор решений</span><span class="rule-val" id="fmt3d"> Скинул сложный кейс - получил прямую, профессиональную обратную связь от людей, которые уже такое проходили.</span></li>
+        <li><span class="rule-key" id="fmt5t">Нетворкинг</span><span class="rule-val" id="fmt5d"> Чат живёт сам по себе, без искусственного разогрева от администраторов. Это экосистема, где ты можешь в любой момент поднять волнующую тему, найти единомышленников для нового проекта или обсудить новости индустрии.</span></li>
+        <li><span class="rule-key" id="fmt6t">Спринт / Ретро</span><span class="rule-val" id="fmt6d"> В понедельник ставишь цели на неделю. В пятницу отчёт/разбор результатов и ошибок.</span></li>
       </ul>
       <div class="sample-chat reveal-child">
         <div class="sample-label" id="sample-label">// из чата</div>
@@ -884,11 +891,11 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="ru-pre">// ПРАВИЛА</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="r1t">Лимит</span><span class="rule-val" id="r1d"> 200 участников, без исключений.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="r2t">Инвайт</span><span class="rule-val" id="r2d"> Тебя может порекомендовать участник - анкету всё равно заполняют все.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="r4t">Весь мир</span><span class="rule-val" id="r4d"> Объединяем тех, кто думает на RU/EN по всему миру.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="r5t">Переманивание запрещено</span><span class="rule-val" id="r5d"> Если ты здесь, чтобы уводить людей к себе - тебе не сюда.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="r6t">Без питчинга</span><span class="rule-val" id="r6d"> Рекламировать здесь свой продукт или группу нельзя - это спам. Найти клиента или партнёра через живое общение - можно и нормально.</span></li>
+        <li><span class="rule-key" id="r1t">Лимит</span><span class="rule-val" id="r1d"> 200 участников, без исключений.</span></li>
+        <li><span class="rule-key" id="r2t">Инвайт</span><span class="rule-val" id="r2d"> Тебя может порекомендовать участник - анкету всё равно заполняют все.</span></li>
+        <li><span class="rule-key" id="r4t">Весь мир</span><span class="rule-val" id="r4d"> Объединяем тех, кто думает на RU/EN по всему миру.</span></li>
+        <li><span class="rule-key" id="r5t">Переманивание запрещено</span><span class="rule-val" id="r5d"> Если ты здесь, чтобы уводить людей к себе - тебе не сюда.</span></li>
+        <li><span class="rule-key" id="r6t">Без питчинга</span><span class="rule-val" id="r6d"> Рекламировать здесь свой продукт или группу нельзя - это спам. Найти клиента или партнёра через живое общение - можно и нормально.</span></li>
       </ul>
     </div>
   </div>
@@ -898,9 +905,9 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="proc-pre">// ПРОЦЕСС</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="proc1t">01 - Заявка</span><span class="rule-val" id="proc1d"> 8 вопросов, без ограничения по времени.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="proc2t">02 - Проверка</span><span class="rule-val" id="proc2d"> Каждый ответ читает человек - не алгоритм и не ИИ. Ответ даём в любом случае.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="proc3t">03 - Приём либо повторная заявка</span><span class="rule-val" id="proc3d"> Анкету одобрили - добро пожаловать в сообщество. Если нет - можно попробовать снова.</span></li>
+        <li><span class="rule-key" id="proc1t">01 - Заявка</span><span class="rule-val" id="proc1d"> 8 вопросов, без ограничения по времени.</span></li>
+        <li><span class="rule-key" id="proc2t">02 - Проверка</span><span class="rule-val" id="proc2d"> Каждый ответ читает человек - не алгоритм и не ИИ. Ответ даём в любом случае.</span></li>
+        <li><span class="rule-key" id="proc3t">03 - Приём либо повторная заявка</span><span class="rule-val" id="proc3d"> Анкету одобрили - добро пожаловать в сообщество. Если нет - можно попробовать снова.</span></li>
       </ul>
     </div>
   </div>
@@ -1011,11 +1018,11 @@ body { padding-bottom: 60px; }
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="faq-pre">// FAQ</span></div>
       <ul class="rules-list reveal-child">
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="faq1t">Когда рассмотрят</span><span class="rule-val" id="faq1d"> Обычно 1-3 дня.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="faq2t">Твои данные</span><span class="rule-val" id="faq2d"> Третьим лицам не передаются.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="faq3t">Отказали?</span><span class="rule-val" id="faq3d"> Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="faq4t">Оплата</span><span class="rule-val" id="faq4d"> Если анкету одобрили и тебя приняли в сообщество - придёт ссылка на оплату: $250 списывается ежемесячно, отменить можно в любой момент.</span></li>
-        <li><span class="rule-key uline-wrap js-scroll-uline" id="faq5t">Почему 200?</span><span class="rule-val" id="faq5d"> Лимит в 200 участников - это разумный максимум. Он позволяет сохранить ценность общения и даёт нам возможность лично отбирать и проверять каждого кандидата.</span></li>
+        <li><span class="rule-key" id="faq1t">Когда рассмотрят</span><span class="rule-val" id="faq1d"> Обычно 1-3 дня.</span></li>
+        <li><span class="rule-key" id="faq2t">Твои данные</span><span class="rule-val" id="faq2d"> Третьим лицам не передаются.</span></li>
+        <li><span class="rule-key" id="faq3t">Отказали?</span><span class="rule-val" id="faq3d"> Можно попробовать снова - до 2 попыток в месяц, счётчик обнуляется 1 числа.</span></li>
+        <li><span class="rule-key" id="faq4t">Оплата</span><span class="rule-val" id="faq4d"> Если анкету одобрили и тебя приняли в сообщество - придёт ссылка на оплату: $250 списывается ежемесячно, отменить можно в любой момент.</span></li>
+        <li><span class="rule-key" id="faq5t">Почему 200?</span><span class="rule-val" id="faq5d"> Лимит в 200 участников - это разумный максимум. Он позволяет сохранить ценность общения и даёт нам возможность лично отбирать и проверять каждого кандидата.</span></li>
       </ul>
     </div>
   </div>
@@ -1569,11 +1576,11 @@ function observeScrollUnderlines(){
   blocks.forEach((members, container) => scrollUnderlineObserver.observe(container));
 }
 
-// Scroll-triggered SVG line-draw for the "×" marks in НЕ ПОДОЙДЁТ -
-// same block/stagger/order mechanic as observeScrollUnderlines (see its
+// Scroll-triggered spin-in for the "×" marks in НЕ ПОДОЙДЁТ - same
+// block/stagger/order mechanic as observeScrollUnderlines (see its
 // comment), just toggling .x-drawn on each <li> instead of .uline-in/out,
-// since these are stroke-dashoffset transitions on real <line> elements
-// rather than a background-size underline.
+// since these drive a rotate() transform on the mark's <svg> rather than
+// a background-size underline.
 let xMarkObserver = null;
 const xMarkTimers = new Map();
 function observeXMarks(){
@@ -2606,18 +2613,36 @@ function easeInOutSine(t){ return -(Math.cos(Math.PI * t) - 1) / 2; }
 
 // A small dot travels along the actual rendered lines of `el`, left to
 // right, wrapping down a line at a time, leaving the .dot-sweep trail
-// behind it - used for the hero subheadline (once on page load) and the
-// "Подать заявку" CTA (each time it scrolls into view). Uses a Range
-// over the element's text to get one clientRect per visual line (a
-// plain el.getClientRects() on a block element returns its own single
-// border-box rect, not per-line - a Range over its contents is what
-// actually segments by line). Each line's share of the total duration
-// is proportional to its width, so the dot moves at a constant real
-// speed rather than a constant per-line duration; total duration itself
-// scales with the total width too (pxToMs), so a short CTA label still
-// gets a visible sweep without the long hero headline dragging on
+// behind it - used for the hero subheadline and the "Подать заявку" CTA,
+// each exactly once (see playHeroDotSweep/observeCtaDotSweep below).
+// Uses a Range over the element's text to get one clientRect per visual
+// line (a plain el.getClientRects() on a block element returns its own
+// single border-box rect, not per-line - a Range over its contents is
+// what actually segments by line). Each line's share of the total
+// duration is proportional to its width, so the dot moves at a constant
+// real speed rather than a constant per-line duration; total duration
+// itself scales with the total width too (pxToMs), so a short CTA label
+// still gets a visible sweep without the long hero headline dragging on
 // on the same fixed duration. easeInOutSine per segment for a gentler
-// start/end than the raw linear progress would give.
+// start/end than the raw linear progress would give, and segments chain
+// straight into each other with no added pause between them - segIdx
+// simply advances and the same rAF loop keeps going.
+//
+// The trail's length is grown from 0 as the dot moves through the first
+// ~trailMaxLen px of *each* line (not just the very first one), rather
+// than being a constant length from frame one - otherwise the streak's
+// fixed length would poke out past the left edge of the text the moment
+// a new line starts (including the very start of the whole animation),
+// looking like it arrived from outside the text instead of growing out
+// of it.
+//
+// yOffset is measured from the glyphs, not the line box: a Range's
+// clientRect bottom includes half the font's leading (the gap
+// line-height adds beyond the font's own size), which on this site's
+// generous line-heights was several extra pixels the dot had no business
+// sitting in - subtracting that half-leading back out is what gets the
+// trail visually flush under the letters rather than floating a
+// noticeably larger gap beneath them.
 function playDotSweep(el){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2634,11 +2659,18 @@ function playDotSweep(el){
     .map(r => ({ left: r.left + scrollX, right: r.right + scrollX, bottom: r.bottom + scrollY, width: r.width }));
   if(!rects.length) return;
 
+  const cs = getComputedStyle(el);
+  const fontSize = parseFloat(cs.fontSize) || 14;
+  const parsedLineHeight = parseFloat(cs.lineHeight);
+  const lineHeight = isNaN(parsedLineHeight) ? fontSize * 1.2 : parsedLineHeight;
+  const halfLeading = Math.max(0, (lineHeight - fontSize) / 2);
+
   const totalWidth = rects.reduce((sum, r) => sum + r.width, 0);
   const pxToMs = 4.5;
   const totalDurationMs = Math.max(1200, totalWidth * pxToMs);
   const startDelayMs = 400;
-  const yOffset = 4;
+  const yOffset = 3;
+  const trailMaxLen = 60;
 
   const dot = document.createElement('div');
   dot.className = 'dot-sweep';
@@ -2654,9 +2686,11 @@ function playDotSweep(el){
     const segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
     const t = easeInOutSine(Math.min(1, (now - segStartTime) / segDurationMs));
     const x = rect.left + (rect.right - rect.left) * t;
-    const y = rect.bottom + yOffset;
+    const y = rect.bottom - halfLeading + yOffset;
+    const traveledPx = (rect.right - rect.left) * t;
     dot.style.opacity = '1';
     dot.style.transform = `translate(${x}px, ${y}px)`;
+    dot.style.setProperty('--trail-len', Math.min(trailMaxLen, traveledPx) + 'px');
     if((now - segStartTime) >= segDurationMs){
       segIdx++;
       segStartTime = now;
@@ -2678,18 +2712,25 @@ function playHeroDotSweep(){
   playDotSweep(g('hero-hl'));
 }
 
-// CTA: replays every time "Подать заявку" scrolls into the same
-// center-band the rest of the site's scroll effects use, since (unlike
-// the hero) it isn't something the visitor sees immediately on load.
+// CTA: plays once, the first time "Подать заявку" scrolls into the same
+// center-band the rest of the site's scroll effects use (unobserved
+// right after, so re-scrolling past it doesn't replay the sweep).
 let ctaDotObserver = null;
+let ctaDotPlayed = false;
 function observeCtaDotSweep(){
   const el = g('test-cta-text');
-  if(!el) return;
+  if(!el || ctaDotPlayed) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
   if(!ctaDotObserver){
     ctaDotObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => { if(entry.isIntersecting) playDotSweep(entry.target); });
+      entries.forEach(entry => {
+        if(entry.isIntersecting && !ctaDotPlayed){
+          ctaDotPlayed = true;
+          playDotSweep(entry.target);
+          ctaDotObserver.unobserve(entry.target);
+        }
+      });
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
   ctaDotObserver.observe(el);
