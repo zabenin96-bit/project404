@@ -181,65 +181,68 @@ body.lang-switching { opacity: 0; }
 
 
 .hero-headline { font-size: clamp(15px, 1.8vw, 20px); font-weight: 700; color: var(--text); margin-bottom: 24px; max-width: 560px; }
-/* Traveling dot with a comet-style tracer for the hero entrance - see
-   playHeroDotSweep(). Fixed positioning matches getClientRects()'
-   viewport-relative coordinates directly, no offset math needed. The
-   trail is a fixed set of leftward box-shadows (not rotated per
-   direction) since the dot's motion is predominantly left-to-right, only
-   turning briefly to a new line - a static trailing glow reads fine
-   without needing to track the exact instantaneous heading. */
-.hero-dot-sweep {
+/* Traveling dot with a streak tracer - see playDotSweep(), used for the
+   hero entrance and the "Подать заявку" CTA. Fixed positioning matches
+   getClientRects()' viewport-relative coordinates directly, no offset
+   math needed. The trail is a thin fading gradient line, not a blurred
+   glow (a heavily-blurred box-shadow just read as a smudge) - reads
+   closer to a meteor streak. A fixed leftward trail (not rotated per
+   direction) since motion is predominantly left-to-right, only turning
+   briefly at a line wrap. */
+.dot-sweep {
   position: fixed;
   top: 0; left: 0;
-  width: 5px; height: 5px;
+  width: 1.5px; height: 1.5px;
   border-radius: 50%;
   background: var(--text);
-  box-shadow:
-    -7px 0 5px 0 rgba(251, 251, 249, 0.45),
-    -14px 0 9px 0 rgba(251, 251, 249, 0.22),
-    -22px 0 12px 1px rgba(251, 251, 249, 0.1);
   pointer-events: none;
   z-index: 500;
   will-change: transform;
+}
+.dot-sweep::before {
+  content: '';
+  position: absolute;
+  right: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 1px;
+  background: linear-gradient(to left, rgba(251, 251, 249, 0.65), rgba(251, 251, 249, 0));
 }
 /* Forces a line break before a specific word on mobile only - see
    mobileBreakBefore in setHeroHeadline(). Inert (no break) elsewhere;
    the mobile override lives in the @media (max-width: 700px) block. */
 .mobile-break { display: none; }
-/* Clean underline sweep under a highlighted phrase - grows in from the
-   left via transform: scaleX (cheap, GPU-friendly, no filter or
-   mix-blend-mode), then retracts continuing the SAME left-to-right
-   direction (transform-origin flips to right on the way out, so the
-   line's left edge sweeps rightward to erase it, rather than the more
-   obvious but visually "backwards" collapse toward its own start point).
-   Plain transform, not width/right, so it never affects layout while
-   animating. Back to an eased cubic-bezier (was linear briefly) for a
-   softer, more premium feel; also shortened from 1.5-1.75s to ~0.5s -
-   too slow to keep pace with an actual scroll, especially across a
-   multi-item block where each member also carries its own stagger.
-   Width defaults to the element's own content (100%) but can be overridden
-   per element via --uline-w (see observeScrollUnderlines), which makes
-   every line in a list-style block match its longest title instead of
-   each phrase's own width. */
+/* Clean underline sweep under a highlighted phrase - a background
+   gradient, not an absolutely-positioned pseudo-element. That matters
+   for phrases embedded in flowing paragraph text (About/Value/Fit):
+   when such a phrase wraps onto two lines on mobile, an absolutely-
+   positioned ::after only ever attaches to one fragment of a wrapped
+   inline element (reported: only the last word/line got the line), while
+   a background paints correctly per wrapped fragment natively. Animated
+   via background-size (cheap, GPU-friendly) rather than width, growing
+   left to right, then retracting the same direction (transition duration
+   just changes on the way out, matching the same left-to-right feel
+   rather than collapsing backward toward its own start). Thin (1.5px) -
+   thicker read as heavy-handed against the body copy. Width defaults to
+   the element's own content (100%) but can be overridden per element via
+   --uline-w (see observeScrollUnderlines), which makes every line in a
+   list-style block match its longest title instead of each phrase's own
+   width. */
 .uline-wrap {
-  position: relative;
-  display: inline;
+  padding-bottom: 3px;
+  background-image: linear-gradient(var(--text), var(--text));
+  background-repeat: no-repeat;
+  background-position: left bottom;
+  background-size: 0% 1.5px;
+  transition: background-size 0.55s cubic-bezier(0.65, 0, 0.35, 1);
 }
-.uline-wrap::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  width: var(--uline-w, 100%);
-  bottom: -2px;
-  height: 3px;
-  background: var(--text);
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.55s cubic-bezier(0.65, 0, 0.35, 1);
-  pointer-events: none;
-}
-.uline-wrap.uline-in::after { transform: scaleX(1); }
-.uline-wrap.uline-out::after { transform: scaleX(0); transform-origin: right; transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
+.uline-wrap.uline-in { background-size: var(--uline-w, 100%) 1.5px; }
+/* background-position flips to the right so the shrink-to-0% consumes the
+   image from its left edge (sweeping rightward) instead of from the
+   right edge (which left-anchored would do) - erase keeps the same
+   left-to-right sense the draw has, rather than collapsing backward. */
+.uline-wrap.uline-out { background-position: right bottom; background-size: 0% 1.5px; transition: background-size 0.5s cubic-bezier(0.65, 0, 0.35, 1); }
 .hero-body { font-size: 14px; color: var(--dim-hi); line-height: 1.9; max-width: 460px; margin-bottom: 22px; }
 
 .hero-cta { display: inline-flex; align-items: center; gap: 10px; text-decoration: none; width: fit-content; font-family: var(--font); font-size: 14px; font-weight: 700; letter-spacing: 0.02em; color: var(--amber); background: transparent; border-radius: 4px; padding: 14px 26px; box-shadow: inset 0 0 0 1px var(--amber); border: none; transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease; }
@@ -886,7 +889,7 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="wl-pre">// ОТБОР</span></div>
       <div class="test-intro-wrap">
         <p class="test-intro" id="test-intro">Первый шаг: ответь на 8 вопросов, обычно занимает 5-10 минут. Ограничения по времени нет - важна честность ответов, это и есть фильтр. Прогресс сохраняется автоматически - можно закрыть вкладку и вернуться позже.</p>
-        <a href="#test-section" class="hero-cta" id="test-cta" onclick="goToApplication(); return false;"><span id="test-cta-text" class="uline-wrap js-scroll-uline">Подать заявку</span></a>
+        <a href="#test-section" class="hero-cta" id="test-cta" onclick="goToApplication(); return false;"><span id="test-cta-text">Подать заявку</span></a>
       </div>
     </div>
 
@@ -2545,34 +2548,40 @@ function initFormFeedback(){
   });
 }
 
-// Plays once, on this page load only (not on language switch, not on
-// scroll) - a small dot travels along the actual rendered lines of the
-// hero subheadline, left to right, wrapping down a line at a time,
-// leaving the .hero-dot-sweep trail behind it. Uses a Range over the
-// element's text to get one clientRect per visual line (a plain
-// el.getClientRects() on a block element returns its own single
+function easeInOutSine(t){ return -(Math.cos(Math.PI * t) - 1) / 2; }
+
+// A small dot travels along the actual rendered lines of `el`, left to
+// right, wrapping down a line at a time, leaving the .dot-sweep trail
+// behind it - used for the hero subheadline (once on page load) and the
+// "Подать заявку" CTA (each time it scrolls into view). Uses a Range
+// over the element's text to get one clientRect per visual line (a
+// plain el.getClientRects() on a block element returns its own single
 // border-box rect, not per-line - a Range over its contents is what
 // actually segments by line). Each line's share of the total duration
 // is proportional to its width, so the dot moves at a constant real
-// speed instead of at a constant per-line duration.
-function playHeroDotSweep(){
-  const heroEl = g('hero-hl');
-  if(!heroEl) return;
+// speed rather than a constant per-line duration; total duration itself
+// scales with the total width too (pxToMs), so a short CTA label still
+// gets a visible sweep without the long hero headline dragging on
+// on the same fixed duration. easeInOutSine per segment for a gentler
+// start/end than the raw linear progress would give.
+function playDotSweep(el){
+  if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
 
   const range = document.createRange();
-  range.selectNodeContents(heroEl);
+  range.selectNodeContents(el);
   const rects = Array.from(range.getClientRects()).filter(r => r.width > 0);
   if(!rects.length) return;
 
   const totalWidth = rects.reduce((sum, r) => sum + r.width, 0);
-  const totalDurationMs = 1800;
-  const startDelayMs = 600;
+  const pxToMs = 4.5;
+  const totalDurationMs = Math.max(1200, totalWidth * pxToMs);
+  const startDelayMs = 400;
   const yOffset = 4;
 
   const dot = document.createElement('div');
-  dot.className = 'hero-dot-sweep';
+  dot.className = 'dot-sweep';
   dot.style.opacity = '0';
   document.body.appendChild(dot);
 
@@ -2583,12 +2592,12 @@ function playHeroDotSweep(){
     if(segStartTime === null) segStartTime = now;
     const rect = rects[segIdx];
     const segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
-    const t = Math.min(1, (now - segStartTime) / segDurationMs);
+    const t = easeInOutSine(Math.min(1, (now - segStartTime) / segDurationMs));
     const x = rect.left + (rect.right - rect.left) * t;
     const y = rect.bottom + yOffset;
     dot.style.opacity = '1';
     dot.style.transform = `translate(${x}px, ${y}px)`;
-    if(t >= 1){
+    if((now - segStartTime) >= segDurationMs){
       segIdx++;
       segStartTime = now;
       if(segIdx >= rects.length){
@@ -2603,9 +2612,33 @@ function playHeroDotSweep(){
   setTimeout(()=> requestAnimationFrame(frame), startDelayMs);
 }
 
+// Hero: plays once, on this page load only (not on language switch, not
+// on scroll).
+function playHeroDotSweep(){
+  playDotSweep(g('hero-hl'));
+}
+
+// CTA: replays every time "Подать заявку" scrolls into the same
+// center-band the rest of the site's scroll effects use, since (unlike
+// the hero) it isn't something the visitor sees immediately on load.
+let ctaDotObserver = null;
+function observeCtaDotSweep(){
+  const el = g('test-cta-text');
+  if(!el) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  if(!ctaDotObserver){
+    ctaDotObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => { if(entry.isIntersecting) playDotSweep(entry.target); });
+    }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+  }
+  ctaDotObserver.observe(el);
+}
+
 // ── INIT ──
 render();
 playHeroDotSweep();
+observeCtaDotSweep();
 updProg(1);
 restoreDraft();
 initAutosave();
