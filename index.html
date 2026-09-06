@@ -380,7 +380,15 @@ body.lang-switching { opacity: 0; }
      4: square's SEO->Investors side
      5: square's Investors->Traders side
      6: square's closing Traders->Creators side
-     7: the mission line (+ its arrowhead)
+     7: the mission line
+     8: its arrowhead
+   The arrowhead gets its own slot after the mission line's rather than
+   sharing slot 7 with it - sharing meant both drew simultaneously, so
+   the arrowhead was already visibly forming before the shaft had
+   actually reached that point in space. Giving it the next slot instead
+   means it only starts extending out from the tip once the shaft's own
+   draw finishes there - unpacking from the previous element the same
+   way every label already does from its line.
    A label's --i matches the slot of whichever line's endpoint is that
    label's vertex (the line that "reaches" it), so its word fades in
    right as that line finishes - e.g. CGI's label shares slot 0 (the
@@ -415,7 +423,7 @@ body.lang-switching { opacity: 0; }
   fill: none;
   stroke-dasharray: var(--len);
   stroke-dashoffset: var(--len);
-  transition: stroke-dashoffset 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: stroke-dashoffset 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
 .value-diagram .vd-dashdot {
@@ -424,33 +432,33 @@ body.lang-switching { opacity: 0; }
   stroke-dasharray: 9 4 2 4;
   fill: none;
   opacity: 0;
-  transition: opacity 0.6s ease;
+  transition: opacity 0.4s ease;
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
 .value-diagram .vd-label {
   font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 24px;
   fill: var(--text);
   opacity: 0;
-  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(.16,.8,.24,1);
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(.16,.8,.24,1);
   transition-delay: calc(var(--i, 0) * 0.1s);
   transform: translateY(8px);
 }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-arrow, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  transition-duration: 0.9s;
+  transition-duration: 0.6s;
   transition-timing-function: linear;
-  transition-delay: calc(var(--i, 0) * 0.9s);
+  transition-delay: calc(var(--i, 0) * 0.6s);
 }
 .value-diagram.vd-drawn .vd-label {
   opacity: 1;
   transform: translateY(0);
-  transition-duration: 0.55s;
-  transition-delay: calc(var(--i, 0) * 0.9s + 0.9s);
+  transition-duration: 0.4s;
+  transition-delay: calc(var(--i, 0) * 0.6s + 0.6s);
 }
-@media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 420px; } .value-diagram .vd-label { font-size: 14px; } }
+@media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 420px; } .value-diagram .vd-label { font-size: 18px; } }
 
 /* ── NOTIFY ── */
 .notify-wrap { max-width: 480px; }
@@ -1004,7 +1012,7 @@ body { padding-bottom: 60px; }
           <text class="vd-label" style="--i:0" x="405" y="285" text-anchor="start">CGI</text>
 
           <line class="vd-line" style="--i:1" x1="350" y1="280" x2="230" y2="320"></line>
-          <text class="vd-label" style="--i:1" x="140" y="340" text-anchor="end">Creators</text>
+          <text class="vd-label" style="--i:1" x="170" y="340" text-anchor="end">Creators</text>
 
           <line class="vd-dashdot" style="--i:2" x1="230" y1="320" x2="120" y2="90"></line>
           <text class="vd-label" style="--i:2" x="128" y="75" text-anchor="start">Designers</text>
@@ -1030,8 +1038,8 @@ body { padding-bottom: 60px; }
                share, piercing through both shapes - the only line with an
                arrowhead, and (like the axes) it has no label of its own. -->
           <line class="vd-mission" style="--i:7" x1="60" y1="360" x2="430" y2="40"></line>
-          <line class="vd-arrow" style="--i:7" x1="430" y1="40" x2="404" y2="46"></line>
-          <line class="vd-arrow" style="--i:7" x1="430" y1="40" x2="422" y2="66"></line>
+          <line class="vd-arrow" style="--i:8" x1="430" y1="40" x2="404" y2="46"></line>
+          <line class="vd-arrow" style="--i:8" x1="430" y1="40" x2="422" y2="66"></line>
         </svg>
       </div>
     </div>
