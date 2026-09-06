@@ -2645,16 +2645,24 @@ function easeInOutSine(t){ return -(Math.cos(Math.PI * t) - 1) / 2; }
 // noticeably larger gap beneath them.
 //
 // Measurement is deferred until document.fonts.ready (same signal
-// positionLangIndicator/syncTipBubbleHeight wait on below) because the
+// positionLangIndicator/syncTipBubbleHeight wait on below), since the
 // site's text renders in a fallback font first and swaps to IBM Plex
 // Mono/Space Mono once the Google Fonts request lands (font-display:
-// swap). Measuring the line rects before that swap captures fallback-
-// font positions and line-wrap points; the real font then swaps in with
-// different metrics and the text shifts under the already-running
-// animation, which reads as the trail sitting lower than the text after
-// a cold reload, and - on headlines long enough to wrap 3 lines - a line
-// transition landing before the dot visually reaches the end of the
-// text it was actually measured against.
+// swap) - but that swap isn't the only thing that can still be settling
+// this early in the page's life (other layout right around the hero can
+// still be resolving too), so on top of that each line's rect is
+// re-measured fresh from the still-live Range right as the dot reaches
+// it, rather than trusting one snapshot taken at the very start for the
+// whole animation. A one-time-only snapshot meant that if anything
+// nudged the text's position after that snapshot was taken, every line
+// the dot swept after that point (rather than just the first) would be
+// running against a coordinate that no longer matched what was actually
+// on screen - the trail sitting visibly lower than the text after a
+// cold reload, and on headlines that wrap 3 lines, a line transition
+// landing before the dot visually reached the end of the previous line.
+// Re-measuring per line makes each segment self-correct against
+// whatever the text's *current* position actually is, regardless of why
+// it moved.
 function playDotSweep(el){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2669,14 +2677,19 @@ function playDotSweep(el){
 function runDotSweep(el){
   const range = document.createRange();
   range.selectNodeContents(el);
-  const scrollX = window.scrollX, scrollY = window.scrollY;
-  // Converted to document coordinates once, up front, to match the
-  // .dot-sweep element's own (now absolute, not fixed) positioning -
-  // see the CSS comment for why.
-  const rects = Array.from(range.getClientRects())
-    .filter(r => r.width > 0)
-    .map(r => ({ left: r.left + scrollX, right: r.right + scrollX, bottom: r.bottom + scrollY, width: r.width }));
-  if(!rects.length) return;
+  // Converted to document coordinates every time this runs, to match the
+  // .dot-sweep element's own (absolute, not fixed) positioning - see the
+  // CSS comment for why - and re-called fresh per segment below rather
+  // than cached once (see the comment above this function).
+  function measure(){
+    const scrollX = window.scrollX, scrollY = window.scrollY;
+    return Array.from(range.getClientRects())
+      .filter(r => r.width > 0)
+      .map(r => ({ left: r.left + scrollX, right: r.right + scrollX, bottom: r.bottom + scrollY, width: r.width }));
+  }
+
+  const initialRects = measure();
+  if(!initialRects.length) return;
 
   const cs = getComputedStyle(el);
   const fontSize = parseFloat(cs.fontSize) || 14;
@@ -2684,7 +2697,7 @@ function runDotSweep(el){
   const lineHeight = isNaN(parsedLineHeight) ? fontSize * 1.2 : parsedLineHeight;
   const halfLeading = Math.max(0, (lineHeight - fontSize) / 2);
 
-  const totalWidth = rects.reduce((sum, r) => sum + r.width, 0);
+  const totalWidth = initialRects.reduce((sum, r) => sum + r.width, 0);
   const pxToMs = 4.5;
   const totalDurationMs = Math.max(1200, totalWidth * pxToMs);
   const startDelayMs = 400;
@@ -2696,13 +2709,28 @@ function runDotSweep(el){
   dot.style.opacity = '0';
   document.body.appendChild(dot);
 
-  let segIdx = 0;
+  let segIdx = -1;
   let segStartTime = null;
+  let rect = null;
+  let segDurationMs = 0;
+
+  // Re-measures right as a line starts, so this segment tracks the
+  // text's actual current position rather than a snapshot from whenever
+  // the sweep as a whole began.
+  function enterSegment(idx, now){
+    const rects = measure();
+    rect = rects[idx] || null;
+    segDurationMs = rect ? Math.max(16, totalDurationMs * (rect.width / totalWidth)) : 0;
+    segStartTime = now;
+    return rects.length;
+  }
 
   function frame(now){
-    if(segStartTime === null) segStartTime = now;
-    const rect = rects[segIdx];
-    const segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
+    if(segIdx === -1){ segIdx = 0; enterSegment(0, now); }
+    if(!rect){
+      dot.remove();
+      return;
+    }
     const t = easeInOutSine(Math.min(1, (now - segStartTime) / segDurationMs));
     const x = rect.left + (rect.right - rect.left) * t;
     const y = rect.bottom - halfLeading + yOffset;
@@ -2712,8 +2740,8 @@ function runDotSweep(el){
     dot.style.setProperty('--trail-len', Math.min(trailMaxLen, traveledPx) + 'px');
     if((now - segStartTime) >= segDurationMs){
       segIdx++;
-      segStartTime = now;
-      if(segIdx >= rects.length){
+      const lineCount = enterSegment(segIdx, now);
+      if(segIdx >= lineCount || !rect){
         dot.style.transition = 'opacity 0.4s ease';
         dot.style.opacity = '0';
         setTimeout(()=> dot.remove(), 450);
