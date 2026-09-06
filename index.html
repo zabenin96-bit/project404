@@ -306,22 +306,33 @@ body.lang-switching { opacity: 0; }
 .rule-val { color: var(--dim); line-height: 1.6; }
 
 /* ── VALUE DIAGRAM ── */
-/* A structured figure next to the "Ядро уже собрано" copy, replacing an
-   earlier hub-and-spoke version per client feedback that everything
-   radiating from one point wasn't what their reference showed. Now:
-   - An X/Y axis pair: Y labelled Founders, X labelled Specialists.
+/* A structured figure next to the "Ядро уже собрано" copy. Went through
+   two prior shapes per client feedback: first a hub with everything
+   radiating from one point (too uniform, not what their reference
+   showed), then a too-tidy triangle perfectly inscribed in a centered
+   square (still read as too orderly/symmetric next to their reference,
+   which is an asymmetric cluster of lines off one corner). This version
+   goes back to that reference's actual asymmetric layout - an off-center
+   point with two spoke lines and one dashed one - closed into a small
+   triangle rather than left as bare spokes, with a separate, similarly
+   asymmetric quadrilateral overlapping it (not a clean inscribed shape),
+   plus axes and a final line piercing through both:
+   - An X/Y axis pair: Y labelled Founders, X labelled Specialists,
+     sharing their corner (the "origin") with the mission line below.
    - A triangle (Designers, CGI, Creators) whose closing side (back to
      Designers, drawn from Creators) is dash-dot styled.
-   - A square inscribed around that triangle, sharing the Creators corner
-     with it and continuing Creators -> SEO -> Investors -> Traders -> back
-     to Creators; the triangle's other two vertices sit at the midpoints
-     of the square's far edges, so it reads as genuinely inscribed rather
-     than just adjacent.
-   - A final diagonal "mission" line drawn last, in the accent color,
-     passing through the shared center of both shapes - the only line
-     that ends in an arrowhead, and the only one without its own label.
+   - A quadrilateral overlapping that triangle rather than framing it
+     symmetrically: shares the Creators corner and continues Creators ->
+     SEO -> Investors -> Traders -> back to Creators, with Designers
+     sitting outside its bounds - an intentionally loose overlap, not a
+     triangle-inscribed-in-a-square construction.
+   - A final diagonal "mission" line drawn last, starting at the same
+     origin point the axes share (not floating in from outside the
+     figure), in the same white as the other solid lines but a bit
+     thicker - the only line that ends in an arrowhead, and the only one
+     without its own label.
    All English regardless of site language (see observeValueDiagram),
-   same as the earlier version - these read as fixed labels, not copy to
+   same as the earlier versions - these read as fixed labels, not copy to
    translate.
    Solid strokes (.vd-axis/.vd-line/.vd-mission/.vd-arrow) draw in via
    stroke-dashoffset (classic SVG line-draw - dasharray set to the path's
@@ -381,7 +392,7 @@ body.lang-switching { opacity: 0; }
 }
 .value-diagram .vd-axis { stroke: var(--dim); stroke-width: 1; }
 .value-diagram .vd-line { stroke: var(--text); }
-.value-diagram .vd-mission, .value-diagram .vd-arrow { stroke: var(--amber); }
+.value-diagram .vd-mission, .value-diagram .vd-arrow { stroke: var(--text); stroke-width: 2.2; }
 .value-diagram .vd-dashdot {
   stroke: var(--text);
   stroke-width: 1.5;
@@ -952,39 +963,43 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
       <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, мы только в начале пути.</p><p>Естественный нетворкинг: мы не обещаем готовых сделок, но внутри сообщества создаётся среда, где фаундеры и специалисты находят друг друга сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
       <div class="value-diagram-wrap">
-        <svg class="value-diagram" id="value-diagram" viewBox="0 0 600 600" aria-hidden="true">
-          <!-- axes -->
-          <line class="vd-axis" style="--i:0" x1="50" y1="560" x2="50" y2="70"></line>
-          <text class="vd-label" style="--i:0" x="62" y="68">Founders</text>
-          <line class="vd-axis" style="--i:3" x1="50" y1="560" x2="570" y2="560"></line>
-          <text class="vd-label" style="--i:3" x="566" y="542" text-anchor="end">Specialists</text>
+        <svg class="value-diagram" id="value-diagram" viewBox="0 0 560 340" aria-hidden="true">
+          <!-- axes, sharing their corner (50,300) with the mission line below -->
+          <line class="vd-axis" style="--i:0" x1="50" y1="300" x2="50" y2="30"></line>
+          <text class="vd-label" style="--i:0" x="58" y="45">Founders</text>
+          <line class="vd-axis" style="--i:3" x1="50" y1="300" x2="380" y2="300"></line>
+          <text class="vd-label" style="--i:3" x="374" y="284" text-anchor="end">Specialists</text>
 
           <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers -->
-          <line class="vd-line" style="--i:0" x1="310" y1="150" x2="470" y2="310"></line>
-          <text class="vd-label" style="--i:0" x="494" y="316">CGI</text>
+          <line class="vd-line" style="--i:0" x1="150" y1="50" x2="380" y2="160"></line>
+          <text class="vd-label" style="--i:0" x="392" y="165">CGI</text>
 
-          <line class="vd-line" style="--i:1" x1="470" y1="310" x2="150" y2="470"></line>
-          <text class="vd-label" style="--i:1" x="95" y="498" text-anchor="end">Creators</text>
+          <line class="vd-line" style="--i:1" x1="380" y1="160" x2="200" y2="270"></line>
+          <text class="vd-label" style="--i:1" x="140" y="276" text-anchor="end">Creators</text>
 
-          <line class="vd-dashdot" style="--i:2" x1="150" y1="470" x2="310" y2="150"></line>
-          <text class="vd-label" style="--i:2" x="310" y="126" text-anchor="middle">Designers</text>
+          <line class="vd-dashdot" style="--i:2" x1="200" y1="270" x2="150" y2="50"></line>
+          <text class="vd-label" style="--i:2" x="158" y="40">Designers</text>
 
-          <!-- square inscribing the triangle: Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
-          <line class="vd-line" style="--i:3" x1="150" y1="470" x2="470" y2="470"></line>
-          <text class="vd-label" style="--i:3" x="482" y="498">SEO</text>
+          <!-- quadrilateral overlapping the triangle (shares the Creators corner,
+               Designers sits outside it) rather than symmetrically framing it:
+               Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
+          <line class="vd-line" style="--i:3" x1="200" y1="270" x2="430" y2="270"></line>
+          <text class="vd-label" style="--i:3" x="442" y="275">SEO</text>
 
-          <line class="vd-line" style="--i:4" x1="470" y1="470" x2="470" y2="150"></line>
-          <text class="vd-label" style="--i:4" x="482" y="128">Investors</text>
+          <line class="vd-line" style="--i:4" x1="430" y1="270" x2="430" y2="100"></line>
+          <text class="vd-label" style="--i:4" x="442" y="90">Investors</text>
 
-          <line class="vd-line" style="--i:5" x1="470" y1="150" x2="150" y2="150"></line>
-          <text class="vd-label" style="--i:5" x="138" y="128" text-anchor="end">Traders</text>
+          <line class="vd-line" style="--i:5" x1="430" y1="100" x2="200" y2="100"></line>
+          <text class="vd-label" style="--i:5" x="188" y="82" text-anchor="end">Traders</text>
 
-          <line class="vd-line" style="--i:6" x1="150" y1="150" x2="150" y2="470"></line>
+          <line class="vd-line" style="--i:6" x1="200" y1="100" x2="200" y2="270"></line>
 
-          <!-- mission: drawn last, pierces through the center of both shapes, the only line with an arrowhead -->
-          <line class="vd-mission" style="--i:7" x1="25" y1="585" x2="585" y2="25"></line>
-          <line class="vd-arrow" style="--i:7" x1="585" y1="25" x2="561" y2="31"></line>
-          <line class="vd-arrow" style="--i:7" x1="585" y1="25" x2="579" y2="49"></line>
+          <!-- mission: drawn last, starting at the same origin corner the axes
+               share, piercing through both shapes - the only line with an
+               arrowhead, and (like the axes) it has no label of its own. -->
+          <line class="vd-mission" style="--i:7" x1="50" y1="300" x2="480" y2="30"></line>
+          <line class="vd-arrow" style="--i:7" x1="480" y1="30" x2="454" y2="36"></line>
+          <line class="vd-arrow" style="--i:7" x1="480" y1="30" x2="472" y2="56"></line>
         </svg>
       </div>
     </div>
