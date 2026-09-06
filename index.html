@@ -334,21 +334,24 @@ body.lang-switching { opacity: 0; }
      line.
    - A final diagonal "mission" line drawn last, starting at the same
      origin point the axes share (not floating in from outside the
-     figure) - the only line that ends in an arrowhead, and the only one
-     without its own label. Same thickness as every other line here
-     (matching the reference, which is uniform throughout) - it read as
-     mismatched when it was thicker/differently colored.
+     figure) - plain, the same as every other line here (no arrowhead,
+     no different thickness/color) - both of those read as mismatched
+     next to the reference, which is uniform throughout.
    All labels sit outside the triangle/quadrilateral's combined bounding
    box, with generous clearance - a real screenshot from an actual
    browser (not just the headless one used while building this) showed
    text still getting cut through by whichever line converged at that
    vertex, worse once the label font-size went up. Some vertices (Traders
    especially) sit deep enough in the cluster that clearing every nearby
-   line meant moving the label a real distance away - each such vertex
-   gets a small marker dot (.vd-dot) at its exact point so the word stays
-   visibly tied to it despite the distance, the same role a leader line
-   would play, without adding another line that could itself cross
-   something. Sans-
+   line means the label ends up a real distance from its own point. An
+   earlier pass tied each such label back with a small marker dot at the
+   exact vertex; this version drops dots and leader lines entirely in
+   favor of a "spotlight" instead - see the comment on .vd-label and
+   runValueDiagramReveal(): only one label is ever at full brightness at
+   a time (dimming once the next one lights up, all relighting together
+   once the figure finishes), so which word belongs to which line is
+   never ambiguous regardless of how far apart they sit, without needing
+   any connecting mark at all. Sans-
    serif, not the site's usual monospace - the reference's own labels are
    a bold grotesque, and matching that mattered more here than the
    site's normal type consistency, since the whole point of this figure
@@ -359,7 +362,7 @@ body.lang-switching { opacity: 0; }
    All English regardless of site language (see observeValueDiagram),
    same as the earlier versions - these read as fixed labels, not copy to
    translate.
-   Solid strokes (.vd-axis/.vd-line/.vd-mission/.vd-arrow) draw in via
+   Solid strokes (.vd-axis/.vd-line/.vd-mission) draw in via
    stroke-dashoffset (classic SVG line-draw - dasharray set to the path's
    own length via getTotalLength()); the dash-dot triangle side can't use
    that technique without either not animating at all or briefly
@@ -387,23 +390,20 @@ body.lang-switching { opacity: 0; }
      4: square's SEO->Investors side
      5: square's Investors->Traders side
      6: square's closing Traders->Creators side
-     7: the mission line
-     8: its arrowhead
-   The arrowhead gets its own slot after the mission line's rather than
-   sharing slot 7 with it - sharing meant both drew simultaneously, so
-   the arrowhead was already visibly forming before the shaft had
-   actually reached that point in space. Giving it the next slot instead
-   means it only starts extending out from the tip once the shaft's own
-   draw finishes there - unpacking from the previous element the same
-   way every label already does from its line.
-   A label's --i matches the slot of whichever line's endpoint is that
-   label's vertex (the line that "reaches" it), so its word fades in
-   right as that line finishes - e.g. CGI's label shares slot 0 (the
-   Designers->CGI side ends there), Creators' shares slot 1 (CGI->Creators
-   ends there). The mission line has no label. Retracting (scrolling
-   away) doesn't replay this slow one-by-one construction in reverse - it
-   uses a quick simultaneous-ish stagger instead, the same convention the
-   rest of the site's scroll-out retracts use.
+     7: the mission line (last, no arrowhead, no label)
+   This --i sequencing only drives the *lines* now (a plain draw/don't-draw
+   toggle per element via .vd-drawn, still expressible with CSS delays).
+   Labels moved to a separate JS-timed sequence - see runValueDiagramReveal
+   - since the spotlight behavior (lit -> dimmed -> relit) needs three
+   states over time per label, more than transition-delay off one class
+   toggle can express. VD_SEQUENCE there lists the shape-vertex labels in
+   the same order as the slots above (CGI, Creators, Designers, SEO,
+   Investors, Traders); each lights up at the same moment its --i slot
+   would have fired here. Retracting (scrolling away) doesn't replay the
+   construction in reverse - it uses a quick simultaneous-ish stagger for
+   the lines and just clears every label's lit/dim state directly, the
+   same "fast undo" convention the rest of the site's scroll-out retracts
+   use.
    The reveal's stroke-dashoffset transitions use linear timing, not the
    eased curve the base rule declares (that one's still in effect for
    retracting). Each line's own slot starts exactly when the previous one's
@@ -423,7 +423,7 @@ body.lang-switching { opacity: 0; }
    to a single column, where an explicit column 2 would be invalid. */
 .value-diagram-wrap { grid-column: 2; margin-top: 32px; max-width: 500px; }
 .value-diagram { display: block; width: 100%; height: auto; overflow: visible; }
-.value-diagram .vd-axis, .value-diagram .vd-line, .value-diagram .vd-mission, .value-diagram .vd-arrow {
+.value-diagram .vd-axis, .value-diagram .vd-line, .value-diagram .vd-mission {
   stroke: var(--text);
   stroke-width: 1.5;
   stroke-linecap: round;
@@ -442,50 +442,33 @@ body.lang-switching { opacity: 0; }
   transition: opacity 0.3s ease;
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
+/* Labels no longer just fade in once and stay - see runValueDiagramReveal():
+   each lights up (.vd-lit) as its line finishes, then dims (.vd-dim) once
+   the *next* one lights up, so attention keeps moving along the sequence
+   instead of every label competing for the eye at once - the "spotlight"
+   approach chosen over a marker-dot/leader-line fix for the same overlap
+   problem. Everything relights together once the whole figure finishes
+   drawing, so the settled end state still shows every label at full
+   strength - the dimming is a build-up device, not a permanent state.
+   Axis labels (Founders/Specialists) only ever get .vd-lit, never .vd-dim -
+   they're the coordinate frame, not part of the called-out sequence. */
 .value-diagram .vd-label {
   font-family: -apple-system, 'Helvetica Neue', Helvetica, Arial, sans-serif;
   font-weight: 700;
   font-size: 24px;
   fill: var(--text);
   opacity: 0;
-  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(.16,.8,.24,1);
-  transition-delay: calc(var(--i, 0) * 0.1s);
+  transition: opacity 0.3s ease, transform 0.3s cubic-bezier(.16,.8,.24,1);
   transform: translateY(8px);
 }
-/* transform-box/-origin: fill-box/center makes the scale below grow out
-   from the dot's own middle rather than the SVG's (0,0) corner (the
-   default transform-origin for SVG elements, unlike HTML ones). Scale,
-   not just opacity, guards against ever reading as visible pre-reveal -
-   at scale(0) there's no rendered area to be visible regardless of any
-   opacity edge case, plus it doubles as a nicer "pop in" for the dot
-   than a flat fade alone would give. */
-.value-diagram .vd-dot {
-  fill: var(--text);
-  opacity: 0;
-  transform-box: fill-box;
-  transform-origin: center;
-  transform: scale(0);
-  transition: opacity 0.2s ease, transform 0.25s cubic-bezier(.34,1.56,.64,1);
-  transition-delay: calc(var(--i, 0) * 0.1s);
-}
-.value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-arrow, .value-diagram.vd-drawn .vd-dashdot {
+.value-diagram .vd-label.vd-lit { opacity: 1; transform: translateY(0); }
+.value-diagram .vd-label.vd-dim { opacity: 0.35; transform: translateY(0); }
+.value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
   transition-duration: 0.4s;
   transition-timing-function: linear;
   transition-delay: calc(var(--i, 0) * 0.4s);
-}
-.value-diagram.vd-drawn .vd-label {
-  opacity: 1;
-  transform: translateY(0);
-  transition-duration: 0.3s;
-  transition-delay: calc(var(--i, 0) * 0.4s + 0.4s);
-}
-.value-diagram.vd-drawn .vd-dot {
-  opacity: 1;
-  transform: scale(1);
-  transition-duration: 0.25s;
-  transition-delay: calc(var(--i, 0) * 0.4s + 0.4s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 420px; } .value-diagram .vd-label { font-size: 18px; } }
 
@@ -1032,27 +1015,24 @@ body { padding-bottom: 60px; }
                matching the reference's own proportions - the shapes cluster
                in the lower half rather than spanning the full height. -->
           <line class="vd-axis" style="--i:0" x1="80" y1="400" x2="80" y2="40"></line>
-          <text class="vd-label" style="--i:0" x="92" y="58">Founders</text>
+          <text class="vd-label" x="92" y="58">Founders</text>
           <line class="vd-axis" style="--i:3" x1="80" y1="400" x2="480" y2="400"></line>
-          <text class="vd-label" style="--i:3" x="474" y="382" text-anchor="end">Specialists</text>
+          <text class="vd-label" x="474" y="382" text-anchor="end">Specialists</text>
 
           <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers.
-               Every vertex below gets a small marker dot (.vd-dot) at the
-               exact point, since the label itself sits a good distance away
-               to clear the lines converging there - the dot is what ties the
-               word back to its specific point, the way a leader line would,
-               without a line of its own crossing back through the cluster. -->
+               No marker dots or leader lines tying a distant label back to
+               its vertex - see runValueDiagramReveal() for how the sequence
+               instead lights up one label at a time as its line completes,
+               so there's never more than one "which word is this" question
+               live on screen at once. -->
           <line class="vd-line" style="--i:0" x1="140" y1="90" x2="420" y2="260"></line>
-          <circle class="vd-dot" style="--i:0" cx="420" cy="260" r="4"></circle>
-          <text class="vd-label" style="--i:0" x="490" y="265" text-anchor="start">CGI</text>
+          <text class="vd-label" x="490" y="265" text-anchor="start">CGI</text>
 
           <line class="vd-line" style="--i:1" x1="420" y1="260" x2="250" y2="350"></line>
-          <circle class="vd-dot" style="--i:1" cx="250" cy="350" r="4"></circle>
-          <text class="vd-label" style="--i:1" x="140" y="380" text-anchor="start">Creators</text>
+          <text class="vd-label" x="140" y="380" text-anchor="start">Creators</text>
 
           <line class="vd-dashdot" style="--i:2" x1="250" y1="350" x2="140" y2="90"></line>
-          <circle class="vd-dot" style="--i:2" cx="140" cy="90" r="4"></circle>
-          <text class="vd-label" style="--i:2" x="400" y="430" text-anchor="middle">Designers</text>
+          <text class="vd-label" x="400" y="430" text-anchor="middle">Designers</text>
 
           <!-- quadrilateral overlapping the triangle - tilted rather than
                axis-aligned, so its sides run diagonally like every other
@@ -1061,25 +1041,21 @@ body { padding-bottom: 60px; }
                the Creators corner (Designers sits outside it):
                Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
           <line class="vd-line" style="--i:3" x1="250" y1="350" x2="450" y2="285"></line>
-          <circle class="vd-dot" style="--i:3" cx="450" cy="285" r="4"></circle>
-          <text class="vd-label" style="--i:3" x="515" y="320" text-anchor="start">SEO</text>
+          <text class="vd-label" x="515" y="320" text-anchor="start">SEO</text>
 
           <line class="vd-line" style="--i:4" x1="450" y1="285" x2="385" y2="85"></line>
-          <circle class="vd-dot" style="--i:4" cx="385" cy="85" r="4"></circle>
-          <text class="vd-label" style="--i:4" x="400" y="52" text-anchor="middle">Investors</text>
+          <text class="vd-label" x="400" y="52" text-anchor="middle">Investors</text>
 
           <line class="vd-line" style="--i:5" x1="385" y1="85" x2="185" y2="150"></line>
-          <circle class="vd-dot" style="--i:5" cx="185" cy="150" r="4"></circle>
-          <text class="vd-label" style="--i:5" x="515" y="150" text-anchor="start">Traders</text>
+          <text class="vd-label" x="515" y="150" text-anchor="start">Traders</text>
 
           <line class="vd-line" style="--i:6" x1="185" y1="150" x2="250" y2="350"></line>
 
           <!-- mission: drawn last, starting at the same origin corner the axes
-               share, piercing through both shapes - the only line with an
-               arrowhead, and (like the axes) it has no label of its own. -->
+               share, piercing through both shapes - plain, no arrowhead
+               (matching every other line's plain ends), and like the axes
+               it has no label of its own. -->
           <line class="vd-mission" style="--i:7" x1="80" y1="400" x2="500" y2="60"></line>
-          <line class="vd-arrow" style="--i:8" x1="500" y1="60" x2="473" y2="67"></line>
-          <line class="vd-arrow" style="--i:8" x1="500" y1="60" x2="491" y2="87"></line>
         </svg>
       </div>
     </div>
@@ -1850,26 +1826,80 @@ function observeXMarks(){
 
 // Scroll-triggered draw-in for the triangle/square/axes figure next to
 // the VALUE copy (see the CSS comment on .value-diagram for the shape/
-// technique/sequencing). Solid strokes (.vd-axis/.vd-line/.vd-mission/
-// .vd-arrow) get their stroke-dasharray set to their own
-// getTotalLength() once, up front, so the CSS transition from that
-// length down to 0 works regardless of exactly where each line's
-// endpoints are - only needs doing once since the underlying viewBox
-// coordinates (and so the path length in user units) never change with
-// the element's rendered size. Same band/toggle mechanic as
-// observeXMarks - .vd-drawn on the whole <svg> drives every child via
-// CSS, with each child's own --i (see the markup) staggering it into
-// the construction-order sequence.
+// technique/sequencing). Solid strokes (.vd-axis/.vd-line/.vd-mission)
+// get their stroke-dasharray set to their own getTotalLength() once, up
+// front, so the CSS transition from that length down to 0 works
+// regardless of exactly where each line's endpoints are - only needs
+// doing once since the underlying viewBox coordinates (and so the path
+// length in user units) never change with the element's rendered size.
+//
+// The lines/dashdot still just need one true/false state, so they stay
+// on the simple .vd-drawn toggle. Labels don't - see the CSS comment on
+// .vd-label for the spotlight idea (lit -> dimmed -> relit together at
+// the end), which needs three states over time per label rather than
+// one, more than a single class toggle plus transition-delay can express
+// - so runValueDiagramReveal schedules it directly with setTimeout, the
+// same way setUlineBlockShown/observeXMarks stagger their own timers
+// elsewhere in this file.
+let valueDiagramTimers = [];
+function clearValueDiagramTimers(){
+  valueDiagramTimers.forEach(clearTimeout);
+  valueDiagramTimers = [];
+}
+const VD_STEP_MS = 400;
+// Shape-vertex labels in the order their line completes (matches the
+// --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
+// Investors=4, Traders=5) - these are the ones that take a turn in the
+// spotlight. Founders/Specialists (the axes) light up once and stay lit,
+// handled separately below since they're the coordinate frame, not part
+// of the called-out sequence.
+const VD_SEQUENCE = ['CGI', 'Creators', 'Designers', 'SEO', 'Investors', 'Traders'];
+function runValueDiagramReveal(svg){
+  clearValueDiagramTimers();
+  svg.classList.add('vd-drawn');
+  const byText = {};
+  svg.querySelectorAll('.vd-label').forEach(el => { byText[el.textContent] = el; });
+
+  VD_SEQUENCE.forEach((name, idx) => {
+    const el = byText[name];
+    if(!el) return;
+    const onAt = idx * VD_STEP_MS + VD_STEP_MS;
+    valueDiagramTimers.push(setTimeout(()=> { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); }, onAt));
+    if(idx < VD_SEQUENCE.length - 1){
+      const offAt = (idx + 1) * VD_STEP_MS + VD_STEP_MS;
+      valueDiagramTimers.push(setTimeout(()=> { el.classList.remove('vd-lit'); el.classList.add('vd-dim'); }, offAt));
+    }
+  });
+  if(byText['Founders']) valueDiagramTimers.push(setTimeout(()=> byText['Founders'].classList.add('vd-lit'), 0 * VD_STEP_MS + VD_STEP_MS));
+  if(byText['Specialists']) valueDiagramTimers.push(setTimeout(()=> byText['Specialists'].classList.add('vd-lit'), 3 * VD_STEP_MS + VD_STEP_MS));
+
+  // Slot 7 (the mission line) is the last thing drawn; once it finishes,
+  // bring every label back to full brightness together - the dimming
+  // during the sequence is a build-up device, not meant to leave earlier
+  // words looking permanently faded once the figure has fully settled.
+  const finaleAt = 7 * VD_STEP_MS + VD_STEP_MS;
+  valueDiagramTimers.push(setTimeout(()=> {
+    svg.querySelectorAll('.vd-label').forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
+  }, finaleAt));
+}
+function resetValueDiagramReveal(svg){
+  clearValueDiagramTimers();
+  svg.classList.remove('vd-drawn');
+  svg.querySelectorAll('.vd-label').forEach(el => el.classList.remove('vd-lit', 'vd-dim'));
+}
 function observeValueDiagram(){
   const svg = g('value-diagram');
   if(!svg) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
-  svg.querySelectorAll('.vd-axis, .vd-line, .vd-mission, .vd-arrow').forEach(line => {
+  svg.querySelectorAll('.vd-axis, .vd-line, .vd-mission').forEach(line => {
     line.style.setProperty('--len', line.getTotalLength());
   });
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => svg.classList.toggle('vd-drawn', entry.isIntersecting));
+    entries.forEach(entry => {
+      if(entry.isIntersecting) runValueDiagramReveal(svg);
+      else resetValueDiagramReveal(svg);
+    });
   }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   observer.observe(svg);
 }
