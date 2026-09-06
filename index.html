@@ -2610,6 +2610,8 @@ function initFormFeedback(){
 }
 
 function easeInOutSine(t){ return -(Math.cos(Math.PI * t) - 1) / 2; }
+function easeInSine(t){ return 1 - Math.cos((t * Math.PI) / 2); }
+function easeOutSine(t){ return Math.sin((t * Math.PI) / 2); }
 
 // A small dot travels along the actual rendered lines of `el`, left to
 // right, wrapping down a line at a time, leaving the .dot-sweep trail
@@ -2649,20 +2651,23 @@ function easeInOutSine(t){ return -(Math.cos(Math.PI * t) - 1) / 2; }
 // site's text renders in a fallback font first and swaps to IBM Plex
 // Mono/Space Mono once the Google Fonts request lands (font-display:
 // swap) - but that swap isn't the only thing that can still be settling
-// this early in the page's life (other layout right around the hero can
-// still be resolving too), so on top of that each line's rect is
-// re-measured fresh from the still-live Range right as the dot reaches
-// it, rather than trusting one snapshot taken at the very start for the
-// whole animation. A one-time-only snapshot meant that if anything
-// nudged the text's position after that snapshot was taken, every line
-// the dot swept after that point (rather than just the first) would be
-// running against a coordinate that no longer matched what was actually
-// on screen - the trail sitting visibly lower than the text after a
-// cold reload, and on headlines that wrap 3 lines, a line transition
-// landing before the dot visually reached the end of the previous line.
-// Re-measuring per line makes each segment self-correct against
-// whatever the text's *current* position actually is, regardless of why
-// it moved.
+// this early in the page's life, so each line is also re-measured fresh
+// from the still-live Range as the sweep goes, rather than trusting one
+// snapshot taken at the very start for the whole animation - see the
+// comment on measureAll() below for how that's timed to avoid a new
+// problem it would otherwise cause.
+//
+// Easing is only applied at the two true edges of the whole multi-line
+// sweep - easeInSine on the very first line (starts slow, reaches full
+// speed by its end) and easeOutSine on the very last (already at full
+// speed, decelerates once to a graceful stop) - every line in between
+// moves at constant speed with no easing at either of its own ends.
+// Easing every line's own start and end independently (as if each line
+// were its own complete animation) meant every interior line break
+// carried a full decelerate-then-reaccelerate dip, reported as a small
+// delay at each line jump - and a short final line (few words) spent
+// most of its brief duration inside that dip on both sides at once,
+// reported as the sweep visibly braking right at the end.
 function playDotSweep(el){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -2679,17 +2684,22 @@ function runDotSweep(el){
   range.selectNodeContents(el);
   // Converted to document coordinates every time this runs, to match the
   // .dot-sweep element's own (absolute, not fixed) positioning - see the
-  // CSS comment for why - and re-called fresh per segment below rather
-  // than cached once (see the comment above this function).
-  function measure(){
+  // CSS comment for why. Called once up front, then again mid-way through
+  // each line (see the prefetch in frame() below) rather than right at
+  // the moment a line transition happens - getClientRects() can force a
+  // synchronous layout flush, and doing that on the very same frame the
+  // dot visually jumps to a new line showed up as a small stutter right
+  // at that jump. Measuring a bit ahead of time keeps the self-correcting
+  // behavior (see the comment above) without that coincidence.
+  function measureAll(){
     const scrollX = window.scrollX, scrollY = window.scrollY;
     return Array.from(range.getClientRects())
       .filter(r => r.width > 0)
       .map(r => ({ left: r.left + scrollX, right: r.right + scrollX, bottom: r.bottom + scrollY, width: r.width }));
   }
 
-  const initialRects = measure();
-  if(!initialRects.length) return;
+  let rects = measureAll();
+  if(!rects.length) return;
 
   const cs = getComputedStyle(el);
   const fontSize = parseFloat(cs.fontSize) || 14;
@@ -2697,7 +2707,7 @@ function runDotSweep(el){
   const lineHeight = isNaN(parsedLineHeight) ? fontSize * 1.2 : parsedLineHeight;
   const halfLeading = Math.max(0, (lineHeight - fontSize) / 2);
 
-  const totalWidth = initialRects.reduce((sum, r) => sum + r.width, 0);
+  const totalWidth = rects.reduce((sum, r) => sum + r.width, 0);
   const pxToMs = 4.5;
   const totalDurationMs = Math.max(1200, totalWidth * pxToMs);
   const startDelayMs = 400;
@@ -2709,44 +2719,66 @@ function runDotSweep(el){
   dot.style.opacity = '0';
   document.body.appendChild(dot);
 
-  let segIdx = -1;
+  let lineCount = rects.length;
+  let segIdx = 0;
+  let rect = rects[0];
+  let segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
   let segStartTime = null;
-  let rect = null;
-  let segDurationMs = 0;
+  let nextRect = null;
+  let prefetchedFor = -1;
 
-  // Re-measures right as a line starts, so this segment tracks the
-  // text's actual current position rather than a snapshot from whenever
-  // the sweep as a whole began.
-  function enterSegment(idx, now){
-    const rects = measure();
-    rect = rects[idx] || null;
-    segDurationMs = rect ? Math.max(16, totalDurationMs * (rect.width / totalWidth)) : 0;
-    segStartTime = now;
-    return rects.length;
+  function easeFor(idx){
+    const isFirst = idx === 0, isLast = idx === lineCount - 1;
+    if(isFirst && isLast) return easeInOutSine;
+    if(isFirst) return easeInSine;
+    if(isLast) return easeOutSine;
+    return t => t;
   }
 
   function frame(now){
-    if(segIdx === -1){ segIdx = 0; enterSegment(0, now); }
-    if(!rect){
-      dot.remove();
-      return;
-    }
-    const t = easeInOutSine(Math.min(1, (now - segStartTime) / segDurationMs));
+    if(segStartTime === null) segStartTime = now;
+    const rawT = Math.min(1, (now - segStartTime) / segDurationMs);
+    const t = easeFor(segIdx)(rawT);
     const x = rect.left + (rect.right - rect.left) * t;
     const y = rect.bottom - halfLeading + yOffset;
     const traveledPx = (rect.right - rect.left) * t;
     dot.style.opacity = '1';
     dot.style.transform = `translate(${x}px, ${y}px)`;
     dot.style.setProperty('--trail-len', Math.min(trailMaxLen, traveledPx) + 'px');
-    if((now - segStartTime) >= segDurationMs){
+
+    if(prefetchedFor !== segIdx && rawT > 0.5 && segIdx + 1 < lineCount){
+      rects = measureAll();
+      lineCount = rects.length;
+      nextRect = rects[segIdx + 1] || null;
+      prefetchedFor = segIdx;
+    }
+
+    if(rawT >= 1){
       segIdx++;
-      const lineCount = enterSegment(segIdx, now);
-      if(segIdx >= lineCount || !rect){
+      if(segIdx >= lineCount){
         dot.style.transition = 'opacity 0.4s ease';
         dot.style.opacity = '0';
         setTimeout(()=> dot.remove(), 450);
         return;
       }
+      if(!nextRect){
+        // Segment was too short (floored at 16ms) for the mid-way
+        // prefetch above to ever get a turn - fall back to measuring
+        // right now rather than skip the line.
+        rects = measureAll();
+        lineCount = rects.length;
+        nextRect = rects[segIdx] || null;
+        if(!nextRect){
+          dot.style.transition = 'opacity 0.4s ease';
+          dot.style.opacity = '0';
+          setTimeout(()=> dot.remove(), 450);
+          return;
+        }
+      }
+      rect = nextRect;
+      nextRect = null;
+      segDurationMs = Math.max(16, totalDurationMs * (rect.width / totalWidth));
+      segStartTime = now;
     }
     requestAnimationFrame(frame);
   }
