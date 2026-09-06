@@ -388,7 +388,16 @@ body.lang-switching { opacity: 0; }
    ends there). The mission line has no label. Retracting (scrolling
    away) doesn't replay this slow one-by-one construction in reverse - it
    uses a quick simultaneous-ish stagger instead, the same convention the
-   rest of the site's scroll-out retracts use. */
+   rest of the site's scroll-out retracts use.
+   The reveal's stroke-dashoffset transitions use linear timing, not the
+   eased curve the base rule declares (that one's still in effect for
+   retracting). Each line's own slot starts exactly when the previous one's
+   duration ends, so there's no gap in the numbers - but an eased curve
+   decelerating to a stop right as the next line's eased curve starts
+   slow again compounded into a felt hitch at every handoff. Linear removes
+   that: one continuous, constant-speed draw all the way through, only the
+   overall start (delay 0) and end (the mission line, last) reading as
+   distinct beats. */
 /* .section-grid is a 2-column grid (180px label, 1fr content); this is
    a 3rd grid item after the label and #value-body, and without an
    explicit column, grid auto-placement drops it into a new row starting
@@ -432,6 +441,7 @@ body.lang-switching { opacity: 0; }
   stroke-dashoffset: 0;
   opacity: 1;
   transition-duration: 0.9s;
+  transition-timing-function: linear;
   transition-delay: calc(var(--i, 0) * 0.9s);
 }
 .value-diagram.vd-drawn .vd-label {
