@@ -1911,9 +1911,18 @@ function runValueDiagramReveal(svg){
     svg.querySelectorAll('.vd-label').forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
   }, finaleAt));
 }
+// Leaving the viewport only resets the labels, not the lines - once drawn,
+// the lines stay put permanently (scrolling away and back used to remove
+// .vd-drawn, retracting mid-draw lines instantly and leaving them to
+// redraw again on return, which looked like leftover unfinished pieces
+// finishing themselves when a scroll happened to land just after the
+// figure had nearly completed). runValueDiagramReveal() re-adding
+// .vd-drawn on the next entry is a no-op once it's already set - no
+// transition re-triggers because the class, and so the computed style,
+// doesn't actually change - so lines are never redrawn either, only the
+// label spotlight sequence replays.
 function resetValueDiagramReveal(svg){
   clearValueDiagramTimers();
-  svg.classList.remove('vd-drawn');
   svg.querySelectorAll('.vd-label').forEach(el => el.classList.remove('vd-lit', 'vd-dim'));
 }
 function observeValueDiagram(){
