@@ -1871,6 +1871,11 @@ function clearValueDiagramTimers(){
   valueDiagramTimers = [];
 }
 const VD_STEP_MS = 1100;
+// Labels start lighting up a bit before their line actually finishes
+// drawing (rather than waiting for the exact moment it completes) - reads
+// as the word arriving together with the tail end of its line instead of
+// visibly lagging behind it.
+const VD_LABEL_LEAD_MS = 350;
 // Shape-vertex labels in the order their line completes (matches the
 // --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
 // Investors=4, Traders=5) - these are the ones that take a turn in the
@@ -1887,21 +1892,21 @@ function runValueDiagramReveal(svg){
   VD_SEQUENCE.forEach((name, idx) => {
     const el = byText[name];
     if(!el) return;
-    const onAt = idx * VD_STEP_MS + VD_STEP_MS;
+    const onAt = idx * VD_STEP_MS + VD_STEP_MS - VD_LABEL_LEAD_MS;
     valueDiagramTimers.push(setTimeout(()=> { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); }, onAt));
     if(idx < VD_SEQUENCE.length - 1){
-      const offAt = (idx + 1) * VD_STEP_MS + VD_STEP_MS;
+      const offAt = (idx + 1) * VD_STEP_MS + VD_STEP_MS - VD_LABEL_LEAD_MS;
       valueDiagramTimers.push(setTimeout(()=> { el.classList.remove('vd-lit'); el.classList.add('vd-dim'); }, offAt));
     }
   });
-  if(byText['Founders']) valueDiagramTimers.push(setTimeout(()=> byText['Founders'].classList.add('vd-lit'), 0 * VD_STEP_MS + VD_STEP_MS));
-  if(byText['Specialists']) valueDiagramTimers.push(setTimeout(()=> byText['Specialists'].classList.add('vd-lit'), 3 * VD_STEP_MS + VD_STEP_MS));
+  if(byText['Founders']) valueDiagramTimers.push(setTimeout(()=> byText['Founders'].classList.add('vd-lit'), 0 * VD_STEP_MS + VD_STEP_MS - VD_LABEL_LEAD_MS));
+  if(byText['Specialists']) valueDiagramTimers.push(setTimeout(()=> byText['Specialists'].classList.add('vd-lit'), 3 * VD_STEP_MS + VD_STEP_MS - VD_LABEL_LEAD_MS));
 
   // Slot 7 (the mission line) is the last thing drawn; once it finishes,
   // bring every label back to full brightness together - the dimming
   // during the sequence is a build-up device, not meant to leave earlier
   // words looking permanently faded once the figure has fully settled.
-  const finaleAt = 7 * VD_STEP_MS + VD_STEP_MS;
+  const finaleAt = 7 * VD_STEP_MS + VD_STEP_MS - VD_LABEL_LEAD_MS;
   valueDiagramTimers.push(setTimeout(()=> {
     svg.querySelectorAll('.vd-label').forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
   }, finaleAt));
