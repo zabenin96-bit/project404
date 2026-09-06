@@ -337,26 +337,36 @@ body.lang-switching { opacity: 0; }
      figure) - plain, the same as every other line here (no arrowhead,
      no different thickness/color) - both of those read as mismatched
      next to the reference, which is uniform throughout.
-   The 6 shape-vertex labels (CGI/Creators/Designers/SEO/Investors/
-   Traders) don't sit near their own line's endpoint - they're a plain,
-   evenly spaced list off to the right of the figure instead, in the same
-   order they light up. That's only possible because of how they're
-   disambiguated: a real screenshot from an actual browser (not just the
-   headless one used while building this) showed text getting cut through
-   by whichever line converged at that vertex once placed nearby, worse
-   once the label font-size went up, and even a marker-dot fix (an
-   earlier pass, since discarded) still needed labels shoved into
-   whatever empty space happened to be free of other lines - untidy, and
-   fighting the larger type this round asked for. The "spotlight" this
-   figure uses instead (see the comment on .vd-label and
-   runValueDiagramReveal()) - only one label at full brightness at a
-   time, dimming once the next lights up, all relighting together once
-   the figure finishes - ties each word to its line through *when* it
-   appears, not *where* it sits, so proximity was never actually load-
-   bearing for it. That freed the labels to move into a clean list large
-   type has room to breathe in, rather than needing to dodge geometry.
-   Founders/Specialists stay at their own axis ends, not in the list -
-   they're the coordinate frame, not part of the called-out sequence.
+   Each of the 6 shape-vertex labels (CGI/Creators/Designers/SEO/
+   Investors/Traders) sits right next to its own line's actual endpoint -
+   a brief detour through pulling them into a separate list off to the
+   side (freed up by the "spotlight" described below, since it ties a
+   word to its line through *when* it lights up rather than *where* it
+   sits) got the geometry/label overlap problem out of the way but
+   defeated the point of drawing labelled shapes at all. Getting them
+   back next to their vertices without reintroducing the overlap bugs
+   earlier passes hit (a real screenshot from an actual browser, not just
+   the headless one used while building this, had shown text getting cut
+   through by whichever line converged at that vertex) took redoing the
+   geometry with real spacing between vertices, plus finding each label's
+   exact offset with a small script that tries a ring of candidate
+   positions around the vertex, nearest first, and keeps the first one
+   that clears every line and every other label - by hand this had
+   already gone wrong multiple times running. The whole figure is scaled
+   up from the first "restore the labels" pass (viewBox 992x668, was
+   720x480) because at this font size some vertices - Designers in
+   particular, pinched between the Y-axis and the Investors-Traders line
+   - had no clear offset in any direction at the smaller scale; one
+   vertex (Designers) also moved slightly off its original point for the
+   same reason, still the same triangle corner. The "spotlight" (see the
+   comment on .vd-label and runValueDiagramReveal()) still does the
+   sequencing work - only one label at full brightness at a time, dimming
+   once the next lights up, all relighting together once the figure
+   finishes - so proximity being restored doesn't reintroduce any
+   ambiguity, it's just no longer the only thing being asked to solve the
+   overlap problem on its own.
+   Founders/Specialists stay at their own axis ends - they're the
+   coordinate frame, not part of the called-out sequence.
    Sans-serif, not the site's usual monospace - the reference's own
    labels are a bold grotesque, and matching that mattered more here than
    the site's normal type consistency, since the whole point of this
@@ -426,7 +436,7 @@ body.lang-switching { opacity: 0; }
    of filling the content area. grid-column: 2 pins it to that content
    track; the mobile media query below resets it once the grid collapses
    to a single column, where an explicit column 2 would be invalid. */
-.value-diagram-wrap { grid-column: 2; margin-top: 32px; max-width: 640px; }
+.value-diagram-wrap { grid-column: 2; margin-top: 32px; max-width: 770px; }
 .value-diagram { display: block; width: 100%; height: auto; overflow: visible; }
 .value-diagram .vd-axis, .value-diagram .vd-line, .value-diagram .vd-mission {
   stroke: var(--text);
@@ -475,7 +485,7 @@ body.lang-switching { opacity: 0; }
   transition-timing-function: linear;
   transition-delay: calc(var(--i, 0) * 0.65s);
 }
-@media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 460px; } .value-diagram .vd-label { font-size: 22px; } }
+@media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 630px; } .value-diagram .vd-label { font-size: 30px; } }
 
 /* ── NOTIFY ── */
 .notify-wrap { max-width: 480px; }
@@ -1014,37 +1024,39 @@ body { padding-bottom: 60px; }
       <div class="section-label"><span class="prefix" id="val-pre">// ЦЕННОСТЬ</span></div>
       <div class="about-text" id="value-body"><p>Ядро уже собрано: 3D, SEO, лид-разработка, маркетинговые системы. Мысль зрела год, мы только в начале пути.</p><p>Естественный нетворкинг: мы не обещаем готовых сделок, но внутри сообщества создаётся среда, где фаундеры и специалисты находят друг друга сами.</p><p>Анкету заполняют все, независимо от того, сколько готовы платить.</p></div>
       <div class="value-diagram-wrap">
-        <svg class="value-diagram" id="value-diagram" viewBox="0 0 900 460" aria-hidden="true">
-          <!-- axes, sharing their corner (80,400) with the mission line below.
+        <svg class="value-diagram" id="value-diagram" viewBox="0 0 992 668" aria-hidden="true">
+          <!-- axes, sharing their corner (203,581) with the mission line below.
                The vertical axis runs tall and mostly empty above the shapes,
                matching the reference's own proportions - the shapes cluster
                in the lower half rather than spanning the full height. -->
-          <line class="vd-axis" style="--i:0" x1="80" y1="400" x2="80" y2="40"></line>
-          <text class="vd-label" x="92" y="58">Founders</text>
-          <line class="vd-axis" style="--i:3" x1="80" y1="400" x2="480" y2="400"></line>
-          <text class="vd-label" x="474" y="382" text-anchor="end">Specialists</text>
+          <line class="vd-axis" style="--i:0" x1="203" y1="581" x2="203" y2="54"></line>
+          <text class="vd-label" x="215" y="78">Founders</text>
+          <line class="vd-axis" style="--i:3" x1="203" y1="581" x2="675" y2="581"></line>
+          <text class="vd-label" x="669" y="565" text-anchor="end">Specialists</text>
 
           <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers.
-               No marker dots or leader lines tying a distant label back to
-               its vertex - see runValueDiagramReveal() for how the sequence
-               instead lights up one label at a time as its line completes,
-               so there's never more than one "which word is this" question
-               live on screen at once. The 6 shape-vertex labels themselves
-               don't sit anywhere near their line's endpoint any more either -
-               once proximity stopped being how a label ties to its point
-               (the spotlight sequencing does that instead), there was no
-               reason left to scatter them across whatever gaps happened to
-               be free of other lines. They're a plain, evenly spaced list
-               off to the right instead (in the same order they light up),
-               which is both tidier and leaves room for larger type. -->
-          <line class="vd-line" style="--i:0" x1="140" y1="90" x2="420" y2="260"></line>
-          <text class="vd-label" x="580" y="82" text-anchor="start">CGI</text>
+               Each of these 6 shape-vertex labels sits right by its own point
+               again (not a separate list, and not a distant corner tied back
+               by a marker dot) - every position below was found by a script
+               that tries a ring of candidate offsets around the vertex,
+               nearest first, and keeps the first one clear of every line and
+               every other label, so each word could move back next to its
+               shape without reintroducing the overlap bugs earlier passes
+               hit. Designers itself sits a little further from its original
+               spot (still the same corner of the same triangle) because that
+               original point was wedged directly between the Y-axis and the
+               Investors-Traders line with no room for a label of either
+               size - every offset in either direction crossed one or the
+               other. The spotlight sequencing (see runValueDiagramReveal)
+               still settles which word is "live" at any moment. -->
+          <line class="vd-line" style="--i:0" x1="341" y1="179" x2="689" y2="311"></line>
+          <text class="vd-label" x="729" y="311" text-anchor="start">CGI</text>
 
-          <line class="vd-line" style="--i:1" x1="420" y1="260" x2="250" y2="350"></line>
-          <text class="vd-label" x="580" y="150" text-anchor="start">Creators</text>
+          <line class="vd-line" style="--i:1" x1="689" y1="311" x2="405" y2="473"></line>
+          <text class="vd-label" x="433" y="495" text-anchor="start">Creators</text>
 
-          <line class="vd-dashdot" style="--i:2" x1="250" y1="350" x2="140" y2="90"></line>
-          <text class="vd-label" x="580" y="218" text-anchor="start">Designers</text>
+          <line class="vd-dashdot" style="--i:2" x1="405" y1="473" x2="341" y2="179"></line>
+          <text class="vd-label" x="381" y="179" text-anchor="start">Designers</text>
 
           <!-- quadrilateral overlapping the triangle - tilted rather than
                axis-aligned, so its sides run diagonally like every other
@@ -1052,22 +1064,22 @@ body { padding-bottom: 60px; }
                dropped into an otherwise all-diagonal composition. Shares
                the Creators corner (Designers sits outside it):
                Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
-          <line class="vd-line" style="--i:3" x1="250" y1="350" x2="450" y2="285"></line>
-          <text class="vd-label" x="580" y="286" text-anchor="start">SEO</text>
+          <line class="vd-line" style="--i:3" x1="405" y1="473" x2="693" y2="356"></line>
+          <text class="vd-label" x="733" y="356" text-anchor="start">SEO</text>
 
-          <line class="vd-line" style="--i:4" x1="450" y1="285" x2="385" y2="85"></line>
-          <text class="vd-label" x="580" y="354" text-anchor="start">Investors</text>
+          <line class="vd-line" style="--i:4" x1="693" y1="356" x2="576" y2="69"></line>
+          <text class="vd-label" x="592" y="39" text-anchor="start">Investors</text>
 
-          <line class="vd-line" style="--i:5" x1="385" y1="85" x2="185" y2="150"></line>
-          <text class="vd-label" x="580" y="422" text-anchor="start">Traders</text>
+          <line class="vd-line" style="--i:5" x1="576" y1="69" x2="289" y2="185"></line>
+          <text class="vd-label" x="289" y="141" text-anchor="middle">Traders</text>
 
-          <line class="vd-line" style="--i:6" x1="185" y1="150" x2="250" y2="350"></line>
+          <line class="vd-line" style="--i:6" x1="289" y1="185" x2="405" y2="473"></line>
 
           <!-- mission: drawn last, starting at the same origin corner the axes
                share, piercing through both shapes - plain, no arrowhead
                (matching every other line's plain ends), and like the axes
                it has no label of its own. -->
-          <line class="vd-mission" style="--i:7" x1="80" y1="400" x2="500" y2="60"></line>
+          <line class="vd-mission" style="--i:7" x1="203" y1="581" x2="743" y2="68"></line>
         </svg>
       </div>
     </div>
