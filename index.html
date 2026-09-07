@@ -2,7 +2,14 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://noresults-backend-production.up.railway.app; frame-ancestors 'self';">
+<!-- frame-ancestors is deliberately not set here: the directive is silently
+     ignored by every browser when delivered via a <meta> tag (only an
+     actual HTTP response header can carry it), so it did nothing except
+     print a console warning on every load. Real clickjacking protection
+     for this page has to come from the server/host that serves it, as a
+     genuine X-Frame-Options or Content-Security-Policy response header -
+     not something a static HTML file can add for itself. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://noresults-backend-production.up.railway.app;">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no, interactive-widget=resizes-content">
 <meta name="theme-color" content="#0a0a09">
 <title>no results.</title>
@@ -1000,7 +1007,7 @@ body { padding-bottom: 60px; }
 
   <!-- HERO -->
   <div class="hero">
-    <span class="hero-name" id="hero-name-text">no <span class="wm-wrap"><span class="wm-base">results.</span><span class="wm-overlay"></span></span><span class="hero-cursor"></span></span>
+    <span class="hero-name">no <span class="wm-wrap"><span class="wm-base">results.</span><span class="wm-overlay"></span></span><span class="hero-cursor"></span></span>
 
     <div class="hero-divider"></div>
 
@@ -1114,7 +1121,7 @@ body { padding-bottom: 60px; }
   </div>
 
   <!-- REJECT -->
-  <div class="section reveal" id="reject-section">
+  <div class="section reveal">
     <div class="section-grid">
       <div class="section-label"><span class="prefix" id="rj-pre">// НЕ ПОДОЙДЁТ, ЕСЛИ</span></div>
       <div class="reject-block">
