@@ -489,7 +489,7 @@ body.lang-switching { opacity: 0; }
   font-size: 32px;
   fill: var(--text);
   opacity: 0;
-  transition: opacity 0.5s ease-in-out, transform 0.5s cubic-bezier(.16,.8,.24,1);
+  transition: opacity 0.6s ease-in-out, transform 0.6s cubic-bezier(.16,.8,.24,1);
   transform: translateY(8px) rotate(var(--vd-tilt, 0deg));
   transform-box: fill-box;
   transform-origin: 50% 50%;
@@ -1914,12 +1914,19 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-const VD_STEP_MS = 733;
-// Labels start lighting up a bit before their line actually finishes
-// drawing (rather than waiting for the exact moment it completes) - reads
-// as the word arriving together with the tail end of its line instead of
-// visibly lagging behind it.
-const VD_LABEL_LEAD_MS = 233;
+// Shortened from 733ms - lines now finish drawing in ~1.3s (see the CSS
+// stagger comment on .vd-drawn), and the label sequence used to keep
+// going for another ~4.5s after that on its own separate clock, which
+// read as two animations stitched together rather than one continuous
+// reveal. Still its own pace, independent of the lines, just a tighter
+// one.
+const VD_STEP_MS = 450;
+// How much earlier than its own "slot" a label lights up - a holdover
+// from when this was timed to a line's actual draw completion; now that
+// the two clocks are unrelated it's just a small head start that keeps
+// consecutive words from feeling like they're snapping on with zero
+// overlap.
+const VD_LABEL_LEAD_MS = 140;
 // Shape-vertex labels in the order their line completes (matches the
 // --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
 // Investors=4, Traders=5) - these are the ones that take a turn in the
