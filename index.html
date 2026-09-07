@@ -490,10 +490,12 @@ body.lang-switching { opacity: 0; }
   fill: var(--text);
   opacity: 0;
   transition: opacity 0.5s ease-in-out, transform 0.5s cubic-bezier(.16,.8,.24,1);
-  transform: translateY(8px);
+  transform: translateY(8px) rotate(var(--vd-tilt, 0deg));
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
 }
-.value-diagram .vd-label.vd-lit { opacity: 1; transform: translateY(0); }
-.value-diagram .vd-label.vd-dim { opacity: 0.35; transform: translateY(0); }
+.value-diagram .vd-label.vd-lit { opacity: 1; transform: translateY(0) rotate(var(--vd-tilt, 0deg)); }
+.value-diagram .vd-label.vd-dim { opacity: 0.35; transform: translateY(0) rotate(var(--vd-tilt, 0deg)); }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
@@ -1998,6 +2000,40 @@ function observeValueDiagram(){
     });
   }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   observer.observe(svg);
+  initValueDiagramTilt(svg);
+}
+
+// Small, controlled lean on the labels once the figure has appeared -
+// counterclockwise while the reader keeps scrolling up, clockwise while
+// scrolling down - as a subtle sign of life rather than the full spin
+// first floated (rejected: it fought the legibility this diagram's
+// vertex-label placement was specifically built for). One shared angle
+// for every label via the --vd-tilt custom property (inherited from the
+// svg down to each .vd-label), not an independent angle per label -
+// "restrained" ruled out anything that reads as chaotic. Eases back to
+// level shortly after scrolling stops (the pending timer below) rather
+// than holding the tilt indefinitely once the reader settles.
+function initValueDiagramTilt(svg){
+  const VD_TILT_DEG = 6;
+  const VD_TILT_RESET_MS = 220;
+  let lastY = window.scrollY;
+  let resetTimer = null;
+  let ticking = false;
+  function apply(){
+    ticking = false;
+    if(!svg.classList.contains('vd-drawn')) return;
+    const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if(reduced) return;
+    const y = window.scrollY;
+    const dir = y > lastY ? 1 : y < lastY ? -1 : 0;
+    lastY = y;
+    if(dir !== 0) svg.style.setProperty('--vd-tilt', (dir * VD_TILT_DEG) + 'deg');
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(()=> svg.style.setProperty('--vd-tilt', '0deg'), VD_TILT_RESET_MS);
+  }
+  window.addEventListener('scroll', () => {
+    if(!ticking){ ticking = true; requestAnimationFrame(apply); }
+  });
 }
 
 // Label+value pairs (СТАТУС/ДОСТУП, every RULES/FORMAT/PROCESS/FAQ row, the
