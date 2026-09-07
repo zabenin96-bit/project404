@@ -1955,20 +1955,6 @@ function runValueDiagramReveal(svg){
     svg.querySelectorAll('.vd-label').forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
   }, finaleAt));
 }
-// Leaving the viewport only resets the labels, not the lines - once drawn,
-// the lines stay put permanently (scrolling away and back used to remove
-// .vd-drawn, retracting mid-draw lines instantly and leaving them to
-// redraw again on return, which looked like leftover unfinished pieces
-// finishing themselves when a scroll happened to land just after the
-// figure had nearly completed). runValueDiagramReveal() re-adding
-// .vd-drawn on the next entry is a no-op once it's already set - no
-// transition re-triggers because the class, and so the computed style,
-// doesn't actually change - so lines are never redrawn either, only the
-// label spotlight sequence replays.
-function resetValueDiagramReveal(svg){
-  clearValueDiagramTimers();
-  svg.querySelectorAll('.vd-label').forEach(el => el.classList.remove('vd-lit', 'vd-dim'));
-}
 // Already-in-view-at-load case (see scrollAnimInitialPass): the whole
 // figure jumps straight to its fully-drawn, fully-lit end state - no line
 // draw, no spotlight sequence - with every transition switched off for
@@ -1991,12 +1977,18 @@ function observeValueDiagram(){
   svg.querySelectorAll('.vd-axis, .vd-line, .vd-mission').forEach(line => {
     line.style.setProperty('--len', line.getTotalLength());
   });
+  // Draws once and stays - scrolling away no longer hides the labels
+  // (they used to fade back out and replay from scratch on the next
+  // entry, which read as the figure vanishing rather than settling).
+  // Unobserving after the one reveal is what makes that permanent -
+  // nothing left to do on any later entry or exit.
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
         if(scrollAnimInitialPass) runValueDiagramInstant(svg);
         else runValueDiagramReveal(svg);
-      } else resetValueDiagramReveal(svg);
+        observer.unobserve(svg);
+      }
     });
   }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   observer.observe(svg);
