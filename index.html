@@ -525,22 +525,22 @@ body.lang-switching { opacity: 0; }
 .reject-list li { display: flex; align-items: baseline; gap: 12px; padding: 14px 4px; margin: 0 -4px; border-bottom: 1px solid var(--line); font-size: 14px; color: var(--text); }
 .reject-list li:first-child { border-top: 1px solid var(--line); }
 .reject-list li .x { flex-shrink: 0; width: 12px; }
-/* Each mark spins into place rather than just fading or drawing in -
-   rotated well past upright and eased back to 0deg with a strongly
-   decelerating curve (fast start, long soft settle), like a spinner
-   coming to rest. Alternates spin direction per item (odd: counter-
-   clockwise, even: clockwise) for variety. Scroll-triggered the same
-   way the rest of the site's blocks are (see observeXMarks): grouped,
-   staggered, in order. */
+/* No entrance effect anymore - the marks are just always there, visible
+   from the start like the rest of the list. What used to be a one-time
+   spin-in on first scroll into view is now an ongoing one: each mark
+   keeps rotating as the reader scrolls (see initXMarkSpin), driven
+   directly by scroll distance rather than a fixed timed animation.
+   Alternates direction per item (odd/even) via the sign flip below, same
+   variety the old entrance had. transform-box/-origin center the spin on
+   each mark's own middle instead of the svg's default top-left corner. */
 .reject-list li .x svg {
   display: block;
   overflow: visible;
-  opacity: 0;
-  transform: rotate(-170deg);
-  transition: transform 0.9s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+  transform: rotate(var(--x-rot, 0deg));
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
 }
-.reject-list li:nth-child(even) .x svg { transform: rotate(170deg); }
-.reject-list li.x-drawn .x svg { opacity: 1; transform: rotate(0deg); }
+.reject-list li:nth-child(even) .x svg { transform: rotate(calc(-1 * var(--x-rot, 0deg))); }
 .reject-list li .x line { fill: none; stroke: var(--red); stroke-width: 1.5; stroke-linecap: round; }
 
 /* ── TEST / QUIZ ── */
@@ -1853,43 +1853,40 @@ function observeScrollUnderlines(){
   blocks.forEach((members, container) => scrollUnderlineObserver.observe(container));
 }
 
-// Scroll-triggered spin-in for the "×" marks in НЕ ПОДОЙДЁТ - same
-// block/stagger/order mechanic as observeScrollUnderlines (see its
-// comment), just toggling .x-drawn on each <li> instead of .uline-in/out,
-// since these drive a rotate() transform on the mark's <svg> rather than
-// a background-size underline.
-let xMarkObserver = null;
-const xMarkTimers = new Map();
-function observeXMarks(){
+// The "×" marks in НЕ ПОДОЙДЁТ have no entrance effect anymore - always
+// visible, same as the rest of the list - and instead keep spinning for
+// as long as the reader keeps scrolling: direction follows scroll
+// direction and the amount of rotation follows scroll distance, rather
+// than playing a fixed one-time animation. angle keeps accumulating
+// (not eased back to 0 when scrolling stops, unlike the VALUE diagram's
+// restrained tilt) - these are decorative symbols, not text that needs
+// to stay legible, so a full continuous spin reads fine here. Only does
+// the scroll math while the list is actually in view.
+function initXMarkSpin(){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
   const list = g('reject-list');
   if(!list) return;
-  const items = Array.from(list.children);
-  if(!xMarkObserver){
-    xMarkObserver = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const pending = xMarkTimers.get(entry.target);
-        if(pending) pending.forEach(clearTimeout);
-        const timers = [];
-        if(entry.isIntersecting && scrollAnimInitialPass){
-          items.forEach(li => {
-            const svg = li.querySelector('.x svg');
-            if(svg) svg.style.transition = 'none';
-            li.classList.add('x-drawn');
-          });
-          void list.offsetHeight;
-          items.forEach(li => { const svg = li.querySelector('.x svg'); if(svg) svg.style.transition = ''; });
-        } else if(entry.isIntersecting){
-          items.forEach((li, i) => timers.push(setTimeout(()=> li.classList.add('x-drawn'), 250 + i * 130)));
-        } else {
-          items.forEach((li, i) => timers.push(setTimeout(()=> li.classList.remove('x-drawn'), i * 130)));
-        }
-        xMarkTimers.set(entry.target, timers);
-      });
-    }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
+  const XMARK_DEG_PER_PX = 0.3;
+  let active = false;
+  let lastY = window.scrollY;
+  let angle = 0;
+  let ticking = false;
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => { active = entry.isIntersecting; });
+    if(active) lastY = window.scrollY;
+  }, { threshold: 0 }).observe(list);
+  function apply(){
+    ticking = false;
+    if(!active) return;
+    const y = window.scrollY;
+    angle += (y - lastY) * XMARK_DEG_PER_PX;
+    lastY = y;
+    list.style.setProperty('--x-rot', angle + 'deg');
   }
-  xMarkObserver.observe(list);
+  window.addEventListener('scroll', () => {
+    if(!ticking){ ticking = true; requestAnimationFrame(apply); }
+  });
 }
 
 // Scroll-triggered draw-in for the triangle/square/axes figure next to
@@ -1907,8 +1904,8 @@ function observeXMarks(){
 // the end), which needs three states over time per label rather than
 // one, more than a single class toggle plus transition-delay can express
 // - so runValueDiagramReveal schedules it directly with setTimeout, the
-// same way setUlineBlockShown/observeXMarks stagger their own timers
-// elsewhere in this file.
+// same way setUlineBlockShown staggers its own timers elsewhere in this
+// file.
 let valueDiagramTimers = [];
 function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
@@ -3235,9 +3232,14 @@ function runDotSweep(el){
 }
 
 // Hero: plays once, on this page load only (not on language switch, not
-// on scroll).
+// on scroll). Held off until 10s in, not right away - at page load it used
+// to run at the same time as the cursor's blink and the scroll cue's bob,
+// two other hero motions on their own unrelated cycles, and all three
+// competing in the first second read as busy. This delay is separate from
+// runDotSweep's own startDelayMs (the brief pause once it actually
+// starts) - it only pushes back *when* that starts.
 function playHeroDotSweep(){
-  playDotSweep(g('hero-hl'));
+  setTimeout(()=> playDotSweep(g('hero-hl')), 10000);
 }
 
 // CTA: plays once, the first time "Подать заявку" scrolls into the same
@@ -3306,7 +3308,7 @@ function addClassInstant(el, cls){
 render();
 playHeroDotSweep();
 observeCtaDotSweep();
-observeXMarks();
+initXMarkSpin();
 observeValueDiagram();
 updProg(1);
 restoreDraft();
