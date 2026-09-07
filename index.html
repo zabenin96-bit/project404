@@ -1826,7 +1826,17 @@ function observeScrollUnderlines(){
       entries.forEach(entry => {
         const members = scrollUlineBlockMembers.get(entry.target);
         if(!members) return;
-        setUlineBlockShown(entry.target, members, entry.isIntersecting);
+        if(entry.isIntersecting && scrollAnimInitialPass){
+          members.forEach(el => {
+            el.classList.remove('uline-out');
+            el.style.transition = 'none';
+            el.classList.add('uline-in');
+          });
+          void entry.target.offsetHeight;
+          members.forEach(el => { el.style.transition = ''; });
+        } else {
+          setUlineBlockShown(entry.target, members, entry.isIntersecting);
+        }
       });
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
@@ -1852,7 +1862,15 @@ function observeXMarks(){
         const pending = xMarkTimers.get(entry.target);
         if(pending) pending.forEach(clearTimeout);
         const timers = [];
-        if(entry.isIntersecting){
+        if(entry.isIntersecting && scrollAnimInitialPass){
+          items.forEach(li => {
+            const svg = li.querySelector('.x svg');
+            if(svg) svg.style.transition = 'none';
+            li.classList.add('x-drawn');
+          });
+          void list.offsetHeight;
+          items.forEach(li => { const svg = li.querySelector('.x svg'); if(svg) svg.style.transition = ''; });
+        } else if(entry.isIntersecting){
           items.forEach((li, i) => timers.push(setTimeout(()=> li.classList.add('x-drawn'), 250 + i * 130)));
         } else {
           items.forEach((li, i) => timers.push(setTimeout(()=> li.classList.remove('x-drawn'), i * 130)));
@@ -1941,6 +1959,20 @@ function resetValueDiagramReveal(svg){
   clearValueDiagramTimers();
   svg.querySelectorAll('.vd-label').forEach(el => el.classList.remove('vd-lit', 'vd-dim'));
 }
+// Already-in-view-at-load case (see scrollAnimInitialPass): the whole
+// figure jumps straight to its fully-drawn, fully-lit end state - no line
+// draw, no spotlight sequence - with every transition switched off for
+// that one change so nothing visibly animates into place.
+function runValueDiagramInstant(svg){
+  clearValueDiagramTimers();
+  const lines = svg.querySelectorAll('.vd-axis, .vd-line, .vd-mission, .vd-dashdot');
+  const labels = svg.querySelectorAll('.vd-label');
+  [...lines, ...labels].forEach(el => { el.style.transition = 'none'; });
+  svg.classList.add('vd-drawn');
+  labels.forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
+  void svg.getBoundingClientRect();
+  [...lines, ...labels].forEach(el => { el.style.transition = ''; });
+}
 function observeValueDiagram(){
   const svg = g('value-diagram');
   if(!svg) return;
@@ -1951,8 +1983,10 @@ function observeValueDiagram(){
   });
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if(entry.isIntersecting) runValueDiagramReveal(svg);
-      else resetValueDiagramReveal(svg);
+      if(entry.isIntersecting){
+        if(scrollAnimInitialPass) runValueDiagramInstant(svg);
+        else runValueDiagramReveal(svg);
+      } else resetValueDiagramReveal(svg);
     });
   }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   observer.observe(svg);
@@ -2704,7 +2738,8 @@ function initReveal(){
   const io = new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       if(entry.isIntersecting){
-        entry.target.classList.add('in-view');
+        if(scrollAnimInitialPass) addClassInstant(entry.target, 'in-view');
+        else entry.target.classList.add('in-view');
         io.unobserve(entry.target);
       }
     });
@@ -3177,13 +3212,51 @@ function observeCtaDotSweep(){
       entries.forEach(entry => {
         if(entry.isIntersecting && !ctaDotPlayed){
           ctaDotPlayed = true;
-          playDotSweep(entry.target);
+          // Already in view at load: there's no "finished" look for a
+          // traveling dot to jump to, so the correct final state is just
+          // never playing it, same as if it had already run and gone.
+          if(!scrollAnimInitialPass) playDotSweep(entry.target);
           ctaDotObserver.unobserve(entry.target);
         }
       });
     }, { rootMargin: '-40% 0px -40% 0px', threshold: 0 });
   }
   ctaDotObserver.observe(el);
+}
+
+// Every scroll-triggered effect above (reveal fade-ins, underlines,
+// x-marks, the VALUE diagram, the CTA dot-sweep) shares one distinction:
+// an element already sitting in the viewport at page load should just
+// show its finished state, not visibly play the same entrance animation
+// meant for something the reader scrolls to. Each IntersectionObserver's
+// very first callback for a given target reports exactly that starting
+// state, but there's no isIntersecting-only way to tell "this is the
+// initial check" apart from "the reader scrolled here" - both look
+// identical from inside the callback. scrollAnimInitialPass is that
+// distinction: true while the page's first paint is still settling, then
+// flipped false via two chained rAFs (fires after the browser has had two
+// full frames to deliver every observer's initial callback, comfortably
+// before a human could scroll far enough to trigger a real one - a
+// single rAF cut it close on a slow first paint). Every observer below
+// checks it and, only on that first pass, applies its final state with
+// transitions switched off rather than through its normal timed/animated
+// path.
+let scrollAnimInitialPass = true;
+requestAnimationFrame(()=> requestAnimationFrame(()=> { scrollAnimInitialPass = false; }));
+
+// Adds `cls` to `el` (and, since several of these rules put the actual
+// transition on an element's direct children rather than itself - e.g.
+// .reveal-child > * - to those children too) with transitions switched
+// off for that one change, so the resulting state is indistinguishable
+// from having always been there. Forces a reflow between disabling and
+// restoring transitions - without it the browser can coalesce both style
+// writes into one recalc and still animate the change.
+function addClassInstant(el, cls){
+  const affected = [el, ...Array.from(el.children)];
+  affected.forEach(t => { t.style.transition = 'none'; });
+  el.classList.add(cls);
+  void el.offsetHeight;
+  affected.forEach(t => { t.style.transition = ''; });
 }
 
 // ── INIT ──
