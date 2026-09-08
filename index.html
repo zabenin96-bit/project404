@@ -497,16 +497,22 @@ body.lang-switching { opacity: 0; }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  /* Sped up from 1.54s (matched to the wordmark sweep) - the full ~12s
-     sequential cycle read as too slow. Still strictly one line at a time
-     (a half-duration overlap was tried and reported as looking like the
-     previous line got cut off early), just a shorter step. */
   transition-duration: 0.9s;
-  transition-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
-  /* Matches transition-duration - each line fully finishes drawing
-     before the next one starts. VD_LINE_STAGGER_MS below matches this
-     same step for the label spotlight's pacing. */
-  transition-delay: calc(var(--i, 0) * 0.9s);
+  /* linear, not eased - a prior overlap attempt (see the delay comment
+     below) got reported as looking like the previous line was cut off
+     mid-draw. With ease-in-out, a line's tail decelerates right as the
+     next one's head is still accelerating out of its own slow start -
+     two segments both moving at their slowest exactly when they overlap
+     reads as things stalling out, not multiple lines actively building.
+     Linear keeps every segment moving at a constant, visible rate
+     through the whole overlap window instead. */
+  transition-timing-function: linear;
+  /* A third of transition-duration, not the full 0.9s - several lines
+     draw at once (about 3 typically in view) instead of one finishing
+     before the next starts. VD_LINE_STAGGER_MS/VD_LINE_DRAW_MS below
+     match this same delay/duration split for the label spotlight's
+     pacing. */
+  transition-delay: calc(var(--i, 0) * 0.3s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 630px; } .value-diagram .vd-label { font-size: 30px; } }
 
@@ -1913,9 +1919,10 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-// Matches the CSS step on .vd-drawn: strictly sequential, each line's
-// full 0.9s draw before the next one starts.
-const VD_LINE_STAGGER_MS = 900;
+// Matches the CSS split on .vd-drawn: each line starts 0.3s after the
+// previous one (several drawing at once) but still takes the full 0.9s
+// to finish its own draw.
+const VD_LINE_STAGGER_MS = 300;
 const VD_LINE_DRAW_MS = 900;
 // How much earlier than its line's completion a label lights up - reads
 // as the word arriving together with the tail end of its line rather
