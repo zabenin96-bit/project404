@@ -497,7 +497,10 @@ body.lang-switching { opacity: 0; }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  transition-duration: 0.73s;
+  /* Matched to the hero wordmark's own reveal speed: wmSweep (see its
+     keyframes below) is an 11s cycle whose highlight sweeps across
+     "results." during the first 14% of it - 11 * 0.14 = 1.54s. */
+  transition-duration: 1.54s;
   transition-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
   /* Cut down from matching transition-duration (one line fully finishing
      before the next started, no overlap) to a minimal stagger - lines now
