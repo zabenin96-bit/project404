@@ -497,17 +497,16 @@ body.lang-switching { opacity: 0; }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  /* Matched to the hero wordmark's own reveal speed: wmSweep (see its
-     keyframes below) is an 11s cycle whose highlight sweeps across
-     "results." during the first 14% of it - 11 * 0.14 = 1.54s. */
-  transition-duration: 1.54s;
+  /* Sped up from 1.54s (matched to the wordmark sweep) - the full ~12s
+     sequential cycle read as too slow. Still strictly one line at a time
+     (a half-duration overlap was tried and reported as looking like the
+     previous line got cut off early), just a shorter step. */
+  transition-duration: 0.9s;
   transition-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
   /* Matches transition-duration - each line fully finishes drawing
-     before the next one starts (a half-duration overlap was tried and
-     reported as looking like the previous line got cut off early - back
-     to strict one-at-a-time). VD_LINE_STAGGER_MS below matches this same
-     step for the label spotlight's pacing. */
-  transition-delay: calc(var(--i, 0) * 1.54s);
+     before the next one starts. VD_LINE_STAGGER_MS below matches this
+     same step for the label spotlight's pacing. */
+  transition-delay: calc(var(--i, 0) * 0.9s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 630px; } .value-diagram .vd-label { font-size: 30px; } }
 
@@ -1914,14 +1913,14 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-// Matches the CSS step on .vd-drawn: strictly sequential again, each
-// line's full 1.54s draw before the next one starts.
-const VD_LINE_STAGGER_MS = 1540;
-const VD_LINE_DRAW_MS = 1540;
+// Matches the CSS step on .vd-drawn: strictly sequential, each line's
+// full 0.9s draw before the next one starts.
+const VD_LINE_STAGGER_MS = 900;
+const VD_LINE_DRAW_MS = 900;
 // How much earlier than its line's completion a label lights up - reads
 // as the word arriving together with the tail end of its line rather
 // than visibly lagging a beat behind it.
-const VD_LABEL_LEAD_MS = 490;
+const VD_LABEL_LEAD_MS = 285;
 // Shape-vertex labels in the order their line completes (matches the
 // --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
 // Investors=4, Traders=5) - these are the ones that take a turn in the
