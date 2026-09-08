@@ -497,7 +497,9 @@ body.lang-switching { opacity: 0; }
 .value-diagram.vd-drawn .vd-axis, .value-diagram.vd-drawn .vd-line, .value-diagram.vd-drawn .vd-mission, .value-diagram.vd-drawn .vd-dashdot {
   stroke-dashoffset: 0;
   opacity: 1;
-  transition-duration: 0.9s;
+  /* Slowed back down from 0.9s - sped up for dynamism read as rushed;
+     smoothness/aesthetics take priority over pace here. */
+  transition-duration: 1.5s;
   /* linear, not eased - a prior overlap attempt (see the delay comment
      below) got reported as looking like the previous line was cut off
      mid-draw. With ease-in-out, a line's tail decelerates right as the
@@ -507,12 +509,11 @@ body.lang-switching { opacity: 0; }
      Linear keeps every segment moving at a constant, visible rate
      through the whole overlap window instead. */
   transition-timing-function: linear;
-  /* A third of transition-duration, not the full 0.9s - several lines
-     draw at once (about 3 typically in view) instead of one finishing
-     before the next starts. VD_LINE_STAGGER_MS/VD_LINE_DRAW_MS below
-     match this same delay/duration split for the label spotlight's
-     pacing. */
-  transition-delay: calc(var(--i, 0) * 0.3s);
+  /* A third of transition-duration - several lines draw at once (about 3
+     typically in view) instead of one finishing before the next starts.
+     VD_LINE_STAGGER_MS/VD_LINE_DRAW_MS below match this same
+     delay/duration split for the label spotlight's pacing. */
+  transition-delay: calc(var(--i, 0) * 0.5s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 630px; } .value-diagram .vd-label { font-size: 30px; } }
 
@@ -1919,15 +1920,15 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-// Matches the CSS split on .vd-drawn: each line starts 0.3s after the
-// previous one (several drawing at once) but still takes the full 0.9s
+// Matches the CSS split on .vd-drawn: each line starts 0.5s after the
+// previous one (several drawing at once) but still takes the full 1.5s
 // to finish its own draw.
-const VD_LINE_STAGGER_MS = 300;
-const VD_LINE_DRAW_MS = 900;
+const VD_LINE_STAGGER_MS = 500;
+const VD_LINE_DRAW_MS = 1500;
 // How much earlier than its line's completion a label lights up - reads
 // as the word arriving together with the tail end of its line rather
 // than visibly lagging a beat behind it.
-const VD_LABEL_LEAD_MS = 285;
+const VD_LABEL_LEAD_MS = 475;
 // Shape-vertex labels in the order their line completes (matches the
 // --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
 // Investors=4, Traders=5) - these are the ones that take a turn in the
