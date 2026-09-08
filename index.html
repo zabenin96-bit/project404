@@ -502,13 +502,12 @@ body.lang-switching { opacity: 0; }
      "results." during the first 14% of it - 11 * 0.14 = 1.54s. */
   transition-duration: 1.54s;
   transition-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
-  /* Half of transition-duration, not the full 1.54s - the next line now
-     starts partway through the current one instead of waiting for it to
-     fully finish, so exactly two lines are ever in motion at once, while
-     still starting/finishing in --i order (line N+1 never starts before
-     line N does). VD_LINE_STAGGER_MS/VD_LINE_DRAW_MS below match this
-     same delay/duration split for the label spotlight's pacing. */
-  transition-delay: calc(var(--i, 0) * 0.77s);
+  /* Matches transition-duration - each line fully finishes drawing
+     before the next one starts (a half-duration overlap was tried and
+     reported as looking like the previous line got cut off early - back
+     to strict one-at-a-time). VD_LINE_STAGGER_MS below matches this same
+     step for the label spotlight's pacing. */
+  transition-delay: calc(var(--i, 0) * 1.54s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 630px; } .value-diagram .vd-label { font-size: 30px; } }
 
@@ -1915,11 +1914,9 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-// Match the CSS split on .vd-drawn: each line starts 0.77s after the
-// previous one (so exactly two are ever drawing at once) but still takes
-// the full 1.54s to finish its own draw - a label's line finishes at
-// idx * VD_LINE_STAGGER_MS + VD_LINE_DRAW_MS, not some single shared step.
-const VD_LINE_STAGGER_MS = 770;
+// Matches the CSS step on .vd-drawn: strictly sequential again, each
+// line's full 1.54s draw before the next one starts.
+const VD_LINE_STAGGER_MS = 1540;
 const VD_LINE_DRAW_MS = 1540;
 // How much earlier than its line's completion a label lights up - reads
 // as the word arriving together with the tail end of its line rather
