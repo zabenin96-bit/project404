@@ -502,15 +502,13 @@ body.lang-switching { opacity: 0; }
      "results." during the first 14% of it - 11 * 0.14 = 1.54s. */
   transition-duration: 1.54s;
   transition-timing-function: cubic-bezier(0.45, 0, 0.15, 1);
-  /* Cut down from matching transition-duration (one line fully finishing
-     before the next started, no overlap) to a minimal stagger - lines now
-     start in quick succession and their draws overlap, so the figure
-     assembles almost as one continuous motion instead of a strict relay.
-     The label spotlight's own pacing (VD_STEP_MS) is intentionally *not*
-     tied to this anymore - it still advances at a readable pace after the
-     line work is basically done, rather than flickering through 8 words
-     in the same ~1s the lines now take. */
-  transition-delay: calc(var(--i, 0) * 0.08s);
+  /* Back to matching transition-duration - each line fully finishes
+     before the next one starts, so the figure builds up strictly one
+     line at a time, at the same 1.54s pace each line draws at. VD_STEP_MS
+     (the label spotlight's pacing) matches this too now - the whole
+     reveal moves as one sequential motion, not two clocks running side
+     by side. */
+  transition-delay: calc(var(--i, 0) * 1.54s);
 }
 @media (max-width: 700px) { .value-diagram-wrap { grid-column: 1; max-width: 630px; } .value-diagram .vd-label { font-size: 30px; } }
 
@@ -1917,19 +1915,15 @@ function clearValueDiagramTimers(){
   valueDiagramTimers.forEach(clearTimeout);
   valueDiagramTimers = [];
 }
-// Shortened from 733ms - lines now finish drawing in ~1.3s (see the CSS
-// stagger comment on .vd-drawn), and the label sequence used to keep
-// going for another ~4.5s after that on its own separate clock, which
-// read as two animations stitched together rather than one continuous
-// reveal. Still its own pace, independent of the lines, just a tighter
-// one.
-const VD_STEP_MS = 450;
-// How much earlier than its own "slot" a label lights up - a holdover
-// from when this was timed to a line's actual draw completion; now that
-// the two clocks are unrelated it's just a small head start that keeps
-// consecutive words from feeling like they're snapping on with zero
-// overlap.
-const VD_LABEL_LEAD_MS = 140;
+// Matches the CSS stagger on .vd-drawn (each line's own transition-delay
+// step) again - the whole reveal, lines and labels together, moves at one
+// unified sequential pace: a word lights up as its own line finishes,
+// not on some separately-tuned clock.
+const VD_STEP_MS = 1540;
+// How much earlier than its line's completion a label lights up - reads
+// as the word arriving together with the tail end of its line rather
+// than visibly lagging a beat behind it.
+const VD_LABEL_LEAD_MS = 490;
 // Shape-vertex labels in the order their line completes (matches the
 // --i slots in the markup: CGI=0, Creators=1, Designers=2, SEO=3,
 // Investors=4, Traders=5) - these are the ones that take a turn in the
