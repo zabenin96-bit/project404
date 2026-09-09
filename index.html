@@ -461,8 +461,20 @@ body.lang-switching { opacity: 0; }
   fill: none;
   stroke-dasharray: var(--len);
   stroke-dashoffset: var(--len);
+  /* Soft glow instead of a flat hairline - depth against the dark
+     background reads as more considered than a plain wireframe stroke. */
+  filter: drop-shadow(0 0 2.5px rgba(251, 251, 249, 0.4));
   transition: stroke-dashoffset 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transition-delay: calc(var(--i, 0) * 0.1s);
+}
+/* The mission line is the one line that matters most conceptually (it's
+   the one piercing every shape) but used to be visually identical to
+   the other seven - a bit more weight and glow gives it the emphasis
+   its role calls for, without the arrowhead/color treatment tried and
+   rejected earlier for reading as mismatched against the rest. */
+.value-diagram .vd-mission {
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 4px rgba(251, 251, 249, 0.6));
 }
 .value-diagram .vd-dashdot {
   stroke: var(--text);
@@ -470,6 +482,7 @@ body.lang-switching { opacity: 0; }
   stroke-dasharray: 9 4 2 4;
   fill: none;
   opacity: 0;
+  filter: drop-shadow(0 0 2.5px rgba(251, 251, 249, 0.4));
   transition: opacity 0.3s ease;
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
@@ -500,15 +513,17 @@ body.lang-switching { opacity: 0; }
   /* Slowed back down from 0.9s - sped up for dynamism read as rushed;
      smoothness/aesthetics take priority over pace here. */
   transition-duration: 1.5s;
-  /* linear, not eased - a prior overlap attempt (see the delay comment
-     below) got reported as looking like the previous line was cut off
-     mid-draw. With ease-in-out, a line's tail decelerates right as the
-     next one's head is still accelerating out of its own slow start -
-     two segments both moving at their slowest exactly when they overlap
-     reads as things stalling out, not multiple lines actively building.
-     Linear keeps every segment moving at a constant, visible rate
-     through the whole overlap window instead. */
-  transition-timing-function: linear;
+  /* ease-out (fast start, long soft settle - the same curve used for the
+     ×-mark spin-in elsewhere on this page), not linear and not
+     ease-in-out. Linear worked but read as mechanical, not premium.
+     ease-in-out was tried first and reported as looking like the
+     previous line got cut off mid-draw - with it, a line's tail
+     decelerates right as the next one's head is still accelerating out
+     of its own slow start, so two segments are both moving at their
+     slowest exactly when they overlap. ease-out avoids that: the new
+     line always starts at full speed, so it reads as bursting in next to
+     the previous one settling, never two segments stalling together. */
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   /* A third of transition-duration - several lines draw at once (about 3
      typically in view) instead of one finishing before the next starts.
      VD_LINE_STAGGER_MS/VD_LINE_DRAW_MS below match this same
