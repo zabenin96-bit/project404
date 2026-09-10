@@ -825,6 +825,32 @@ body.fs-active #main { transform: none; transition: none; }
    comes back, not the default hero element. */
 .ty-number { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--amber); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; animation: fadeup 0.5s ease; }
 .ty-number-prefix { opacity: 0.55; }
+/* A small stamped-badge beat between the number and the headline - not
+   "APPROVED" (applications go to manual review, not an instant yes/no;
+   claiming otherwise here would contradict the review copy right below
+   it), just confirming what's actually already true at this point: the
+   application landed. Tilt is a permanent style, not just part of the
+   animation, so it still reads as "stamped" even under reduced-motion
+   where the entrance below is stripped and it just appears in place. */
+.ty-stamp {
+  display: inline-block;
+  font-family: var(--font-mark);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--green);
+  border: 2px solid var(--green);
+  border-radius: 4px;
+  padding: 6px 14px;
+  margin-bottom: 24px;
+  transform: rotate(-4deg);
+  animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) 0.4s both;
+}
+@keyframes tyStampIn {
+  from { transform: rotate(-4deg) scale(0); opacity: 0; }
+  to { transform: rotate(-4deg) scale(1); opacity: 1; }
+}
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
 /* Receipt-style detail, now supporting the reward above rather than
@@ -1323,6 +1349,7 @@ body { padding-bottom: 60px; }
     <div class="ty-number-label" id="ty-number-label" style="display:none;">ЗАЯВКА</div>
     <div class="ty-number" id="ty-number" style="display:none;"><span class="ty-number-prefix" id="ty-number-prefix"></span><span id="ty-number-val"></span></div>
     <div class="ty-code" id="ty-code">202</div>
+    <div class="ty-stamp" id="ty-stamp">Заявка принята</div>
     <h2 class="ty-head" id="ty-head">Отправлено, ожидай.</h2>
     <p class="ty-body" id="ty-body">Спасибо за честные ответы.</p>
     <div class="ty-sys">
@@ -1449,6 +1476,7 @@ const C = {
     tyT2:'STATUS',tyV2:'under review',
     tyT3:'NEXT',tyV3:"we'll get back to you either way",
     tyNumberLabel:'APPLICATION', tyNumberPrefix:'#',
+    tyStamp:'Application accepted',
     tyHead:'Submitted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     shareText:'Share it with someone who needs this.',
@@ -1539,6 +1567,7 @@ const C = {
     tyT2:'СТАТУС',tyV2:'на рассмотрении',
     tyT3:'ДАЛЕЕ',tyV3:'ответим в любом случае',
     tyNumberLabel:'ЗАЯВКА', tyNumberPrefix:'#',
+    tyStamp:'Заявка принята',
     tyHead:'Отправлено, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     shareText:'Поделись с тем, кому это надо.',
@@ -1740,6 +1769,7 @@ function render(){
   g('ty-t3').textContent=t('tyT3'); g('ty-v3').textContent=t('tyV3');
   g('ty-number-label').textContent=t('tyNumberLabel');
   updateTyNumber();
+  g('ty-stamp').textContent=t('tyStamp');
   g('ty-head').textContent=t('tyHead');
   g('ty-body').textContent=t('tyBody');
   g('ty-share-text').textContent=t('shareText');
