@@ -832,24 +832,37 @@ body.fs-active #main { transform: none; transition: none; }
    application landed. Tilt is a permanent style, not just part of the
    animation, so it still reads as "stamped" even under reduced-motion
    where the entrance below is stripped and it just appears in place. */
+/* Bigger and angled enough to genuinely lay across the headline below it
+   (like the reference), not just sit as its own tidy badge - position:
+   relative + z-index lifts it above .ty-head in paint order without
+   reordering the markup, and the negative margin-bottom is what pulls it
+   down onto the headline's own box. Left clear of the number above it on
+   purpose - that's the one thing on this screen worth being able to
+   still read/screenshot cleanly. background: var(--bg) so the covered
+   part of the headline is cleanly occluded rather than jumbling two
+   overlapping runs of text together. */
 .ty-stamp {
   display: inline-block;
   font-family: var(--font-mark);
   font-weight: 700;
-  font-size: 13px;
-  letter-spacing: 0.12em;
+  font-size: clamp(18px, 4vw, 26px);
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--green);
   border: 2px solid var(--green);
   border-radius: 4px;
-  padding: 6px 14px;
-  margin-bottom: 24px;
-  transform: rotate(-4deg);
+  padding: 8px 20px;
+  background: var(--bg);
+  position: relative;
+  z-index: 2;
+  margin-top: 6px;
+  margin-bottom: -22px;
+  transform: rotate(-8deg);
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) 0.4s both;
 }
 @keyframes tyStampIn {
-  from { transform: rotate(-4deg) scale(0); opacity: 0; }
-  to { transform: rotate(-4deg) scale(1); opacity: 1; }
+  from { transform: rotate(-8deg) scale(0); opacity: 0; }
+  to { transform: rotate(-8deg) scale(1); opacity: 1; }
 }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
