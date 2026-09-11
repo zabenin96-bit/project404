@@ -593,6 +593,17 @@ body.lang-switching { opacity: 0; }
 
 .q-block { display: none; animation: fadeup 0.25s ease; }
 .q-block.active { display: block; }
+/* Added by swapActiveQuestion() to the outgoing block for a brief window
+   before the actual active-class swap, so it fades out instead of
+   vanishing the instant "Далее"/"Назад" is tapped while the incoming
+   question was still fading/sliding in ~180ms later on its own separate
+   timer - a hard cut immediately followed by a disconnected reveal, not
+   one continuous motion. Opacity only (no transform) - .q-block sits
+   between #test-section.fs-mode and the fixed .q-nav in the tree, and a
+   transform here would make it a containing block for that fixed nav for
+   the transition's duration, the same gotcha documented at length on
+   #test-section.fs-mode and .reveal elsewhere in this file. */
+.q-block.leaving { transition: opacity 0.14s ease; opacity: 0; }
 @keyframes fadeup { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 .q-tag { font-size: 11px; color: var(--dim); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; position: relative; }
@@ -683,7 +694,21 @@ body.lang-switching { opacity: 0; }
      briefly animate through non-none values on the way to it. */
   transform: none;
   transition: none;
-  animation: fsFadeIn 0.35s ease both;
+  /* No fade on this box itself, deliberately - it used to carry the same
+     fsFadeIn as .fs-close below, but that opacity ramp applies to the
+     *whole* fixed layer, background included, so for its whole 0.35s the
+     solid var(--bg) fill covering the page underneath was itself
+     semi-transparent - the hero's headline/CTA stayed visible right
+     through it while the question content was simultaneously fading in
+     on top, doubly-exposed against each other (confirmed by screenshotting
+     the transition frame-by-frame - unreadable, overlapping text for a
+     good chunk of the animation, not remotely a "smooth" cross-dissolve).
+     The backdrop appearing instantly reads as an immediate cut, but
+     against a solid, nearly-black fill that's imperceptible on its own -
+     all the perceived motion here already comes from .progress-wrap and
+     the question content fading/sliding up over it below, which still
+     play in full now that they're doing it against an opaque backdrop
+     instead of a half-transparent one. */
 }
 #test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.3s ease 0.1s both; }
 /* The intro paragraph is only meant for the normal page scroll (visible
@@ -819,10 +844,22 @@ body.fs-active #main { transform: none; transition: none; }
 .q-warn { display: none; font-size: 12px; color: var(--red); margin-top: 12px; letter-spacing: 0.03em; }
 .q-warn.show { display: block; animation: fadeup 0.2s ease; }
 
-.btn-p, .btn-sub { font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 22px; background: var(--text); color: var(--bg); border: none; border-radius: 4px; cursor: pointer; transition: opacity 0.15s; }
+.btn-p, .btn-sub { font-family: var(--font); font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; padding: 9px 22px; background: var(--text); color: var(--bg); border: none; border-radius: 4px; cursor: pointer; transition: opacity 0.15s, transform 0.1s ease; }
 .btn-p:hover, .btn-sub:hover { opacity: 0.82; }
-.btn-b { font-family: var(--font); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; border: none; border-bottom: 1px solid var(--line); color: var(--dim); cursor: pointer; padding: 9px 0; transition: color 0.15s, border-color 0.15s; }
+/* These are the most-tapped elements in the whole product - up to 15+
+   taps across a completed application - and had only :hover, which never
+   fires on a touch screen. -webkit-tap-highlight-color is also switched
+   off globally (see the * rule near the top), so without this there was
+   no feedback at all between a tap landing and the next question's
+   entrance animation actually starting - on any latency at all, a tap
+   reads as unregistered. Safe to give these their own transform despite
+   the .q-nav/containing-block gotchas documented elsewhere in this file -
+   those are about elements *containing* the fixed .q-nav, not about
+   .q-nav's own children transforming themselves. */
+.btn-p:active, .btn-sub:active { opacity: 0.7; transform: scale(0.96); }
+.btn-b { font-family: var(--font); font-size: 13px; letter-spacing: 0.06em; text-transform: uppercase; background: transparent; border: none; border-bottom: 1px solid var(--line); color: var(--dim); cursor: pointer; padding: 9px 0; transition: color 0.15s, border-color 0.15s, opacity 0.1s ease; }
 .btn-b:hover { color: var(--text); border-color: var(--dim); }
+.btn-b:active { opacity: 0.55; }
 
 /* ── THANK YOU ── */
 #ty { display: none; padding: 80px 10vw 120px; border-top: 1px solid var(--line); text-align: center; }
@@ -2393,10 +2430,39 @@ function focusActiveField(blockId){
   if(field) field.focus({preventScroll:true});
 }
 
+// Shared by showBlock/nx/bk - every place that swaps which .q-block is
+// active. Used to be an instant class swap: the outgoing block vanished
+// (display:none) the same frame a nav button was tapped, while the
+// incoming one only started its own fade/slide-up animation ~180ms later
+// (its entrance delay in fs-mode) - a hard cut immediately followed by a
+// disconnected reveal, not one continuous motion. Now the outgoing block
+// gets a brief fade-out first via .leaving, and the actual swap (and
+// whatever the caller wants to run after it - progress bar, scroll,
+// focus) only happens once that's done, so the two blend instead of
+// jump-cutting. Skipped under reduced motion, same as every other
+// transition in this file.
+const Q_LEAVE_MS = 140;
+function swapActiveBlock(toEl, andThen){
+  if(!toEl) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const current = document.querySelector('#test-section .q-block.active');
+  const finish = () => {
+    document.querySelectorAll('#test-section .q-block').forEach(b=>b.classList.remove('active', 'leaving'));
+    toEl.classList.add('active');
+    if(andThen) andThen();
+  };
+  if(reduced || !current || current === toEl){ finish(); return; }
+  current.classList.add('leaving');
+  setTimeout(finish, Q_LEAVE_MS);
+}
+
 function showBlock(id){
-  document.querySelectorAll('#test-section .q-block').forEach(b=>b.classList.remove('active'));
   const el = g(id);
-  if(el){ el.classList.add('active'); el.scrollIntoView({behavior:'smooth', block:'nearest'}); focusActiveField(id); }
+  if(!el) return;
+  swapActiveBlock(el, () => {
+    el.scrollIntoView({behavior:'smooth', block:'nearest'});
+    focusActiveField(id);
+  });
 }
 
 function jumpToQ(n){
@@ -2592,27 +2658,23 @@ function initValidationClear(){
 function nx(n){
   if(!isAnswered(n)){ showWarn(n); return; }
   if(reviewReached){ showReview(); return; }
-  g('q'+n).classList.remove('active');
   const nxEl=g('q'+(n+1));
-  if(nxEl){
-    nxEl.classList.add('active');
+  swapActiveBlock(nxEl, () => {
     maxReachedQ = Math.max(maxReachedQ, n+1);
     updProg(n+1);
     nxEl.scrollIntoView({behavior:'smooth',block:'nearest'});
     focusActiveField('q'+(n+1));
-  }
+  });
   saveDraft();
 }
 
 function bk(n){
-  g('q'+n).classList.remove('active');
   const pv=g('q'+(n-1));
-  if(pv){
-    pv.classList.add('active');
+  swapActiveBlock(pv, () => {
     updProg(n-1);
     pv.scrollIntoView({behavior:'smooth',block:'nearest'});
     focusActiveField('q'+(n-1));
-  }
+  });
   saveDraft();
 }
 
