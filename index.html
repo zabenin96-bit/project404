@@ -3359,6 +3359,20 @@ function runDotSweep(el){
   }
 
   function frame(now){
+    // The hero version of this is fired off a plain 10s timer (see
+    // playHeroDotSweep), with no check on what the reader is actually
+    // looking at by the time it goes off - reported as the dot and its
+    // trail sweeping across nothing inside the fullscreen quiz, because
+    // navigating in via goToApplication() within that window doesn't stop
+    // the timer, and .dot-sweep's z-index (500, well above the quiz's own
+    // UI) puts it on top of the overlay while the #hero-hl text it's
+    // tracing sits hidden underneath. Bailing here - checked every frame,
+    // not just before the first one - covers both landing on an already-
+    // open quiz when the timer fires and opening the quiz mid-sweep.
+    if(document.body.classList.contains('fs-active')){
+      dot.remove();
+      return;
+    }
     if(segStartTime === null) segStartTime = now;
     const rawT = Math.min(1, (now - segStartTime) / segDurationMs);
     const t = easeFor(segIdx)(rawT);
