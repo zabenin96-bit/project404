@@ -832,43 +832,70 @@ body.fs-active #main { transform: none; transition: none; }
    application landed. Tilt is a permanent style, not just part of the
    animation, so it still reads as "stamped" even under reduced-motion
    where the entrance below is stripped and it just appears in place. */
-/* Bigger and angled enough to genuinely lay across the headline below it
-   (like the reference), not just sit as its own tidy badge - position:
-   relative + z-index lifts it above .ty-head in paint order without
-   reordering the markup, and the negative margin-bottom is what pulls it
-   down onto the headline's own box. Left clear of the number above it on
-   purpose - that's the one thing on this screen worth being able to
-   still read/screenshot cleanly. background: var(--bg) so the covered
-   part of the headline is cleanly occluded rather than jumbling two
-   overlapping runs of text together. */
+/* Angled enough to genuinely lay across the headline below it (like the
+   reference), not just sit as its own tidy badge - position: relative +
+   z-index lifts it above .ty-head in paint order without reordering the
+   markup, and the negative margin-bottom is what pulls it down onto the
+   headline's own box. Left clear of the number above it on purpose -
+   that's the one thing on this screen worth being able to still
+   read/screenshot cleanly. Translucent fill (not solid var(--bg)) so the
+   covered part of the headline bleeds through faintly instead of being
+   cleanly cut out - reads as ink stamped onto the page, not a UI element
+   pasted over it. Toned down from an earlier, louder pass (smaller,
+   thinner border, a bit more transparent) and run through an SVG
+   turbulence filter for a slightly uneven, hand-stamped edge instead of
+   a crisp vector rectangle - see #ty-stamp-rough below. */
 .ty-stamp {
   display: inline-block;
   font-family: var(--font-mark);
   font-weight: 700;
-  font-size: clamp(18px, 4vw, 26px);
+  font-size: clamp(16px, 3.5vw, 22px);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--green);
-  border: 2px solid var(--green);
-  border-radius: 4px;
-  padding: 8px 20px;
-  /* Solid var(--bg) here read as a sticker pasted over the headline - a
-     hard rectangular cut with nothing of the covered text showing
-     through. Real stamp ink isn't opaque; letting the headline bleed
-     through faintly is what makes it read as ink stamped onto the page
-     rather than a UI element sitting on top of it. */
-  background: rgba(10, 10, 9, 0.55);
+  /* Amber, not green - the number right above it is already the site's
+     signature amber, and green here read as a borrowed "approved" traffic-
+     light color rather than something that actually belongs to this page.
+     Reusing --red (the ✕ marks' color elsewhere on this page) was
+     considered and ruled out - it means rejection everywhere else on this
+     site, the opposite of what this badge is confirming. */
+  color: var(--amber);
+  border: 1.5px solid var(--amber);
+  border-radius: 3px;
+  padding: 7px 18px;
+  background: rgba(10, 10, 9, 0.5);
   position: relative;
   z-index: 2;
   margin-top: 6px;
-  margin-bottom: -22px;
-  transform: rotate(-8deg);
-  opacity: 0.85;
-  animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) 0.4s both;
+  margin-bottom: -20px;
+  filter: url(#ty-stamp-rough);
+  /* Resting state before the reveal - invisible/collapsed. Left as plain
+     properties (not inside the animation) is deliberate: reduced-motion
+     strips the animation entirely, and initTyStampReveal() below skips
+     straight to adding .stamp-in without it in that case, whose rule
+     then applies as the element's own un-animated style. */
+  transform: rotate(-8deg) scale(0);
+  opacity: 0;
+}
+/* Added by initTyStampReveal() once the stamp has actually scrolled into
+   view, not the instant the thank-you screen is switched on - submitting
+   triggers a smooth scroll down to it that can easily take longer than a
+   fixed CSS animation-delay would guess, and starting the reveal before
+   any of that scrolling has happened meant the animation played out
+   entirely off-screen: by the time the reader arrived the stamp was
+   already just sitting there, no visible "landing" moment at all. */
+.ty-stamp.stamp-in {
+  /* Plain properties alongside the animation, matching where it ends up -
+     under reduced-motion the global killswitch strips the animation
+     itself, and these are what apply instead so the stamp still shows up
+     (just without the motion), rather than staying stuck invisible at
+     the pre-reveal state above. */
+  opacity: 0.8;
+  transform: rotate(-8deg) scale(1);
+  animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes tyStampIn {
   from { transform: rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: rotate(-8deg) scale(1); opacity: 0.85; }
+  to { transform: rotate(-8deg) scale(1); opacity: 0.8; }
 }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
@@ -1362,6 +1389,17 @@ body { padding-bottom: 60px; }
       </ul>
     </div>
   </div>
+
+  <!-- Hidden SVG filter for the thank-you stamp's slightly uneven, hand-
+       stamped edge (see .ty-stamp CSS comment) - feTurbulence/feDisplacementMap
+       distort the crisp rectangle just enough to read as stamped ink
+       rather than a vector badge, without garbling the text inside it. -->
+  <svg width="0" height="0" style="position:absolute;">
+    <filter id="ty-stamp-rough">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.09" numOctaves="2" result="n" seed="7"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </svg>
 
   <!-- THANKYOU -->
   <div id="ty">
@@ -1960,6 +1998,32 @@ function initXMarkSpin(){
   window.addEventListener('scroll', () => {
     if(!ticking){ ticking = true; requestAnimationFrame(apply); }
   });
+}
+
+// Watches #ty-stamp and only adds .stamp-in once it has actually scrolled
+// into view, not the instant #ty switches on - submitForm() immediately
+// follows showing #ty with a smooth scroll down to it, which can easily
+// take longer than a fixed CSS animation-delay would guess, so starting
+// the reveal on a timer meant the stamp had already finished landing by
+// the time the reader arrived, with no visible "landing" moment at all.
+// #ty-stamp sits inside display:none #ty until submit, so this observer's
+// first real intersection check only happens once that becomes visible
+// and the browser has a box to measure. Left running under reduced
+// motion too - the global killswitch already strips the animation itself
+// off .stamp-in, this just still waits for the reader to actually reach
+// it before switching the plain (unanimated) end-state properties on.
+function initTyStampReveal(){
+  const stamp = g('ty-stamp');
+  if(!stamp) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        stamp.classList.add('stamp-in');
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.4 });
+  io.observe(stamp);
 }
 
 // Scroll-triggered draw-in for the triangle/square/axes figure next to
@@ -3345,6 +3409,7 @@ render();
 playHeroDotSweep();
 observeCtaDotSweep();
 initXMarkSpin();
+initTyStampReveal();
 observeValueDiagram();
 updProg(1);
 restoreDraft();
