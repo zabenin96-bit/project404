@@ -496,6 +496,26 @@ body.lang-switching { opacity: 0; }
   transition: opacity 0.3s ease;
   transition-delay: calc(var(--i, 0) * 0.1s);
 }
+/* Light scroll-driven sway - see initValueDiagramSway() and the markup
+   comment above #vd-square-group for why these two are nested and what
+   each origin point is protecting. --vd-square-rot/--vd-triangle-rot are
+   plain angles (no accumulation cap baked into the value itself - the JS
+   clamps them before ever writing the property), so 0deg is exactly the
+   drawn-at-rest position. The 0.15s transition is what turns raw,
+   per-scroll-event angle updates into an actual sway rather than a rigid
+   1:1 pixel-for-pixel follow - short enough to still feel scroll-linked,
+   long enough to round off the step between one rAF-throttled update and
+   the next into continuous motion. */
+#vd-square-group {
+  transform-origin: 308px 280px;
+  transform: rotate(var(--vd-square-rot, 0deg));
+  transition: transform 0.15s ease-out;
+}
+#vd-triangle-group {
+  transform-origin: 222px 482px;
+  transform: rotate(var(--vd-triangle-rot, 0deg));
+  transition: transform 0.15s ease-out;
+}
 /* Labels no longer just fade in once and stay - see runValueDiagramReveal():
    each lights up (.vd-lit) as its line finishes, then dims (.vd-dim) once
    the *next* one lights up, so attention keeps moving along the sequence
@@ -1260,45 +1280,65 @@ body { padding-bottom: 60px; }
           <text class="vd-label" x="486" y="574" text-anchor="end">Specialists</text>
 
           <!-- triangle: Designers -> CGI -> Creators -> (dash-dot, closing) Designers.
-               Each of these 6 shape-vertex labels sits right by its own point
-               again (not a separate list, and not a distant corner tied back
-               by a marker dot) - every position below was found by a script
-               that tries a ring of candidate offsets around the vertex,
-               nearest first, and keeps the first one clear of every line and
-               every other label, so each word could move back next to its
-               shape without reintroducing the overlap bugs earlier passes
-               hit. Designers itself sits a little further from its original
-               spot (still the same corner of the same triangle) because that
-               original point was wedged directly between the Y-axis and the
-               Investors-Traders line with no room for a label of either
-               size - every offset in either direction crossed one or the
-               other. The spotlight sequencing (see runValueDiagramReveal)
-               still settles which word is "live" at any moment. -->
-          <line class="vd-line" style="--i:0" x1="158" y1="188" x2="506" y2="320"></line>
+               quadrilateral overlapping it - tilted rather than axis-aligned,
+               so its sides run diagonally like every other line here instead
+               of reading as a flat, orthogonal box dropped into an otherwise
+               all-diagonal composition. Shares the Creators corner (Designers
+               sits outside it): Creators -> SEO -> Investors -> Traders ->
+               (closing) Creators.
+
+               Both shapes sit in their own <g>, nested - triangle inside
+               square - so the light scroll-driven sway (initValueDiagramSway)
+               composes the way it's meant to: the triangle's own extra
+               rotation adds on top of whatever the square is currently
+               doing, i.e. "triangle sways relative to the square, square
+               sways relative to the diagram" rather than two independent
+               wobbles. #vd-triangle-group rotates around the Creators corner
+               specifically (222,482) - the one point actually shared with
+               the square's own lines - so that exact corner stays put under
+               the triangle's own extra rotation no matter the angle, and
+               only ever inherits whatever the square's rotation does to it
+               (which the square's own lines touching that same corner get
+               too, being under the same transform) - without this, the two
+               shapes' rotations would pull that shared point apart into a
+               visible seam as they swayed. #vd-square-group rotates around
+               its own centroid instead (roughly 308,280) since it has no
+               such shared point of its own to protect.
+
+               Each of the 6 shape-vertex labels below sits right by its own
+               point (not a separate list, and not a distant corner tied back
+               by a marker dot) - every position was found by a script that
+               tries a ring of candidate offsets around the vertex, nearest
+               first, and keeps the first one clear of every line and every
+               other label. They stay outside both <g>s and never rotate
+               themselves - the sway is kept light enough (see
+               initValueDiagramSway) that a label sitting a few px from its
+               point doesn't need to chase it, which is also why the labels
+               don't need moving now that the lines live one level deeper in
+               the tree than before. Designers sits a little further from its
+               own point than the others because that spot was wedged
+               directly between the Y-axis and the Investors-Traders line
+               with no room for a label of either size - every offset in
+               either direction crossed one or the other. The spotlight
+               sequencing (see runValueDiagramReveal) still settles which
+               word is "live" at any moment. -->
+          <g id="vd-square-group">
+            <g id="vd-triangle-group">
+              <line class="vd-line" style="--i:0" x1="158" y1="188" x2="506" y2="320"></line>
+              <line class="vd-line" style="--i:1" x1="506" y1="320" x2="222" y2="482"></line>
+              <line class="vd-dashdot" style="--i:2" x1="222" y1="482" x2="158" y2="188"></line>
+            </g>
+            <line class="vd-line" style="--i:3" x1="222" y1="482" x2="510" y2="365"></line>
+            <line class="vd-line" style="--i:4" x1="510" y1="365" x2="393" y2="78"></line>
+            <line class="vd-line" style="--i:5" x1="393" y1="78" x2="106" y2="194"></line>
+            <line class="vd-line" style="--i:6" x1="106" y1="194" x2="222" y2="482"></line>
+          </g>
           <text class="vd-label" x="546" y="320" text-anchor="start">CGI</text>
-
-          <line class="vd-line" style="--i:1" x1="506" y1="320" x2="222" y2="482"></line>
           <text class="vd-label" x="250" y="504" text-anchor="start">Creators</text>
-
-          <line class="vd-dashdot" style="--i:2" x1="222" y1="482" x2="158" y2="188"></line>
           <text class="vd-label" x="198" y="188" text-anchor="start">Designers</text>
-
-          <!-- quadrilateral overlapping the triangle - tilted rather than
-               axis-aligned, so its sides run diagonally like every other
-               line here instead of reading as a flat, orthogonal box
-               dropped into an otherwise all-diagonal composition. Shares
-               the Creators corner (Designers sits outside it):
-               Creators -> SEO -> Investors -> Traders -> (closing) Creators -->
-          <line class="vd-line" style="--i:3" x1="222" y1="482" x2="510" y2="365"></line>
           <text class="vd-label" x="550" y="365" text-anchor="start">SEO</text>
-
-          <line class="vd-line" style="--i:4" x1="510" y1="365" x2="393" y2="78"></line>
           <text class="vd-label" x="409" y="48" text-anchor="start">Investors</text>
-
-          <line class="vd-line" style="--i:5" x1="393" y1="78" x2="106" y2="194"></line>
           <text class="vd-label" x="106" y="150" text-anchor="middle">Traders</text>
-
-          <line class="vd-line" style="--i:6" x1="106" y1="194" x2="222" y2="482"></line>
 
           <!-- mission: drawn last, starting at the same origin corner the axes
                share, piercing through both shapes - plain, no arrowhead
@@ -2102,6 +2142,53 @@ function initXMarkSpin(){
     angle += (y - lastY) * XMARK_DEG_PER_PX;
     lastY = y;
     list.style.setProperty('--x-rot', angle + 'deg');
+  }
+  window.addEventListener('scroll', () => {
+    if(!ticking){ ticking = true; requestAnimationFrame(apply); }
+  });
+}
+
+// A light back-and-forth sway on the VALUE diagram's triangle/square,
+// separate from the one-time line-draw reveal above - scroll direction
+// and distance drive it, the same mechanism as the x-mark spin above,
+// but clamped to a small range instead of accumulating indefinitely:
+// these two shapes carry labels sitting close by their own points (see
+// the markup comment on #vd-square-group), so this has to read as a
+// gentle rock, never a full spin, or the labels would need to chase
+// their points around. #vd-triangle-group is nested inside
+// #vd-square-group in the markup for exactly this reason - the triangle
+// only ever needs its own *extra* angle written here, since being a
+// child it already inherits the square's rotation for free through
+// ordinary transform composition; writing the combined angle into both
+// would double the square's contribution on the triangle.
+function initValueDiagramSway(){
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduced) return;
+  const svg = g('value-diagram');
+  const squareG = g('vd-square-group');
+  const triangleG = g('vd-triangle-group');
+  if(!svg || !squareG || !triangleG) return;
+  const SQUARE_DEG_PER_PX = 0.025, SQUARE_MAX = 5;
+  const TRIANGLE_DEG_PER_PX = 0.035, TRIANGLE_MAX = 5;
+  let active = false;
+  let lastY = window.scrollY;
+  let squareAngle = 0, triangleExtra = 0;
+  let ticking = false;
+  new IntersectionObserver((entries) => {
+    entries.forEach(entry => { active = entry.isIntersecting; });
+    if(active) lastY = window.scrollY;
+  }, { threshold: 0 }).observe(svg);
+  function clamp(v, max){ return Math.max(-max, Math.min(max, v)); }
+  function apply(){
+    ticking = false;
+    if(!active) return;
+    const y = window.scrollY;
+    const dy = y - lastY;
+    lastY = y;
+    squareAngle = clamp(squareAngle + dy * SQUARE_DEG_PER_PX, SQUARE_MAX);
+    triangleExtra = clamp(triangleExtra + dy * TRIANGLE_DEG_PER_PX, TRIANGLE_MAX);
+    squareG.style.setProperty('--vd-square-rot', squareAngle + 'deg');
+    triangleG.style.setProperty('--vd-triangle-rot', triangleExtra + 'deg');
   }
   window.addEventListener('scroll', () => {
     if(!ticking){ ticking = true; requestAnimationFrame(apply); }
@@ -3564,6 +3651,7 @@ observeCtaDotSweep();
 initXMarkSpin();
 initTyStampReveal();
 observeValueDiagram();
+initValueDiagramSway();
 updProg(1);
 restoreDraft();
 initAutosave();
