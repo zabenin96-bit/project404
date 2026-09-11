@@ -91,7 +91,17 @@ body {
 }
 
 #main { opacity: 0; transform: translateY(6px); transition: opacity 0.18s ease, transform 0.18s ease, background-color 0.4s ease; }
-#main.show { opacity: 1; transform: translateY(0); }
+/* transform: none, not translateY(0) - browsers interpolate the entrance
+   transition to "none" exactly the same as to a 0px translate, but a
+   non-none transform (even an identity one) makes #main a containing
+   block for every position:fixed descendant, breaking their viewport-
+   relative positioning for as long as .show is applied - which, since
+   nothing ever removes it after page load, means permanently. See the
+   body.fs-active #main override below for where this was first caught
+   (fs-mode's own fixed nav elements) - #ty-stamp hit the same thing once
+   it went fixed/centered, so fixing it here instead removes the trap for
+   both and any future fixed-position element under #main. */
+#main.show { opacity: 1; transform: none; }
 
 /* ── LANG ── */
 .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200; pointer-events: none; }
@@ -776,14 +786,15 @@ body.lang-switching { opacity: 0; }
 .fs-close:hover { color: var(--text); }
 body.fs-active { overflow: hidden; }
 body.fs-active .scroll-progress, body.fs-active .statusbar { display: none; }
-/* #main.show (the page's own entrance fade-in) sets transform: translateY(0)
-   - same containing-block gotcha as #test-section's .reveal above, one level
-   further up the tree, so it needs the same override. #main also carries
-   its own transition: transform 0.18s from that same rule, which - without
-   killing it here too - animates this override in over 180ms instead of
-   applying it instantly, so .q-nav gets #main as its containing block for
-   that entire window (confirmed by measurement: thousands of pixels off,
-   the same "static position" fallback fully explained above). */
+/* #main.show (the page's own entrance fade-in) used to set
+   transform: translateY(0) here instead of none, which - being a non-none
+   transform, even an identity one - made #main a containing block for
+   every position:fixed descendant, .q-nav included: same bug as
+   #test-section's .reveal above, one level further up the tree (confirmed
+   by measurement at the time: thousands of pixels off, the same "static
+   position" fallback fully explained above). That's fixed at the source
+   now (see #main.show), so this is just a harmless redundant safety net
+   for fs mode specifically - left in rather than removed. */
 body.fs-active #main { transform: none; transition: none; }
 
 /* ── REVIEW SCREEN ── */
@@ -825,32 +836,41 @@ body.fs-active #main { transform: none; transition: none; }
    comes back, not the default hero element. */
 .ty-number { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--amber); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; animation: fadeup 0.5s ease; }
 .ty-number-prefix { opacity: 0.55; }
-/* A small stamped-badge beat between the number and the headline - not
+/* A stamped-badge beat between the number and the headline - not
    "APPROVED" (applications go to manual review, not an instant yes/no;
    claiming otherwise here would contradict the review copy right below
    it), just confirming what's actually already true at this point: the
    application landed. Tilt is a permanent style, not just part of the
    animation, so it still reads as "stamped" even under reduced-motion
    where the entrance below is stripped and it just appears in place. */
-/* Angled enough to genuinely lay across the headline below it (like the
-   reference), not just sit as its own tidy badge - position: relative +
-   z-index lifts it above .ty-head in paint order without reordering the
-   markup, and the negative margin-bottom is what pulls it down onto the
-   headline's own box. Left clear of the number above it on purpose -
-   that's the one thing on this screen worth being able to still
-   read/screenshot cleanly. Translucent fill (not solid var(--bg)) so the
-   covered part of the headline bleeds through faintly instead of being
-   cleanly cut out - reads as ink stamped onto the page, not a UI element
-   pasted over it. Toned down from an earlier, louder pass (smaller,
-   thinner border, a bit more transparent) and run through an SVG
-   turbulence filter for a slightly uneven, hand-stamped edge instead of
-   a crisp vector rectangle - see #ty-stamp-rough below. The filter itself
-   is applied by .stamp-settled, not here - see that rule for why. */
+/* Fixed and centered on the viewport rather than sitting inline in the
+   document - a deliberate escalation from an earlier inline version so
+   it reads as the moment's own centerpiece instead of one detail among
+   the page's other text. translate(-50%,-50%) does the centering itself;
+   the rotate/scale stay in the same transform so .stamp-in's keyframe
+   only ever adds to it, never replaces it. pointer-events:none since
+   nothing about it is interactive and it now sits on top of everything
+   at z-index 600 - clicks need to reach the content underneath (share
+   buttons, the CTA bar) untouched. No longer needs the old negative-
+   margin trick to lay over the headline - taking it out of flow entirely
+   means it doesn't reserve any space there, so ty-head/ty-body just sit
+   in their own normal flow beneath it. Translucent fill (not solid
+   var(--bg)) so whatever it's currently covering bleeds through faintly
+   instead of being cleanly cut out - reads as ink stamped onto the page,
+   not a UI element pasted over it. Run through an SVG turbulence filter
+   for a slightly uneven, hand-stamped edge instead of a crisp vector
+   rectangle - see #ty-stamp-rough below. The filter itself is applied by
+   .stamp-settled, not here - see that rule for why. */
 .ty-stamp {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 600;
+  pointer-events: none;
   display: inline-block;
   font-family: var(--font-mark);
   font-weight: 700;
-  font-size: clamp(16px, 3.5vw, 22px);
+  font-size: clamp(24px, 7vw, 40px);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   /* Amber, not green - the number right above it is already the site's
@@ -860,29 +880,24 @@ body.fs-active #main { transform: none; transition: none; }
      considered and ruled out - it means rejection everywhere else on this
      site, the opposite of what this badge is confirming. */
   color: var(--amber);
-  border: 1.5px solid var(--amber);
-  border-radius: 3px;
-  padding: 7px 18px;
+  border: 2px solid var(--amber);
+  border-radius: 4px;
+  padding: 12px 26px;
   background: rgba(10, 10, 9, 0.5);
-  position: relative;
-  z-index: 2;
-  margin-top: 6px;
-  margin-bottom: -20px;
   /* Resting state before the reveal - invisible/collapsed. Left as plain
      properties (not inside the animation) is deliberate: reduced-motion
      strips the animation entirely, and initTyStampReveal() below skips
      straight to adding .stamp-in without it in that case, whose rule
      then applies as the element's own un-animated style. */
-  transform: rotate(-8deg) scale(0);
+  transform: translate(-50%, -50%) rotate(-8deg) scale(0);
   opacity: 0;
 }
-/* Added by initTyStampReveal() once the stamp has actually scrolled into
-   view, not the instant the thank-you screen is switched on - submitting
-   triggers a smooth scroll down to it that can easily take longer than a
-   fixed CSS animation-delay would guess, and starting the reveal before
-   any of that scrolling has happened meant the animation played out
-   entirely off-screen: by the time the reader arrived the stamp was
-   already just sitting there, no visible "landing" moment at all. */
+/* Added by initTyStampReveal() via an IntersectionObserver rather than a
+   fixed delay tied to the thank-you screen switching on - now that the
+   stamp is fixed/centered it's technically visible the instant #ty gets
+   a box, but the observer is still the right tool: it fires off actual
+   layout rather than a guessed timeout, so the reveal reliably starts
+   right as the stamp appears rather than racing it. */
 .ty-stamp.stamp-in {
   /* Plain properties alongside the animation, matching where it ends up -
      under reduced-motion the global killswitch strips the animation
@@ -890,12 +905,12 @@ body.fs-active #main { transform: none; transition: none; }
      (just without the motion), rather than staying stuck invisible at
      the pre-reveal state above. */
   opacity: 0.8;
-  transform: rotate(-8deg) scale(1);
+  transform: translate(-50%, -50%) rotate(-8deg) scale(1);
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes tyStampIn {
-  from { transform: rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: rotate(-8deg) scale(1); opacity: 0.8; }
+  from { transform: translate(-50%, -50%) rotate(-8deg) scale(0); opacity: 0; }
+  to { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 0.8; }
 }
 /* Turns the rough-edge filter on only once the entrance has fully
    settled (added by initTyStampReveal() on animationend, or immediately
