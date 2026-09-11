@@ -2184,7 +2184,12 @@ function initValueDiagramSway(){
     if(!active) return;
     const y = window.scrollY;
     const dy = y - lastY;
+    // Kept in sync every frame regardless of vdSwayReady below, so
+    // whatever scrolling happens while the reveal is still playing isn't
+    // sitting there as a pent-up delta that would otherwise snap the sway
+    // straight to its clamp the instant it's allowed to start.
     lastY = y;
+    if(!vdSwayReady) return;
     squareAngle = clamp(squareAngle + dy * SQUARE_DEG_PER_PX, SQUARE_MAX);
     triangleExtra = clamp(triangleExtra + dy * TRIANGLE_DEG_PER_PX, TRIANGLE_MAX);
     squareG.style.setProperty('--vd-square-rot', squareAngle + 'deg');
@@ -2265,6 +2270,15 @@ const VD_LABEL_LEAD_MS = 475;
 // handled separately below since they're the coordinate frame, not part
 // of the called-out sequence.
 const VD_SEQUENCE = ['CGI', 'Creators', 'Designers', 'SEO', 'Investors', 'Traders'];
+// Gates initValueDiagramSway() below - the triangle/square shouldn't start
+// swaying while they're still mid-reveal (still drawing in, labels still
+// stepping through the spotlight sequence), stacking an unrelated rotation
+// on top of that whole choreographed sequence read as fighting it rather
+// than complementing it. Flips true either instantly (already-in-view case,
+// see runValueDiagramInstant) or once the reveal's last line - the mission
+// line, slot 7 - actually finishes drawing (see the timer in
+// runValueDiagramReveal below).
+let vdSwayReady = false;
 function runValueDiagramReveal(svg){
   clearValueDiagramTimers();
   svg.classList.add('vd-drawn');
@@ -2293,6 +2307,7 @@ function runValueDiagramReveal(svg){
   valueDiagramTimers.push(setTimeout(()=> {
     svg.querySelectorAll('.vd-label').forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
   }, finaleAt));
+  valueDiagramTimers.push(setTimeout(()=> { vdSwayReady = true; }, finishAt(7)));
 }
 // Already-in-view-at-load case (see scrollAnimInitialPass): the whole
 // figure jumps straight to its fully-drawn, fully-lit end state - no line
@@ -2307,6 +2322,7 @@ function runValueDiagramInstant(svg){
   labels.forEach(el => { el.classList.remove('vd-dim'); el.classList.add('vd-lit'); });
   void svg.getBoundingClientRect();
   [...lines, ...labels].forEach(el => { el.style.transition = ''; });
+  vdSwayReady = true;
 }
 function observeValueDiagram(){
   const svg = g('value-diagram');
