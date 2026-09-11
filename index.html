@@ -855,10 +855,10 @@ body.fs-active #main { transform: none; transition: none; }
    margin trick to lay over the headline - taking it out of flow entirely
    means it doesn't reserve any space there, so ty-head/ty-body just sit
    in their own normal flow beneath it. Translucent fill (not solid
-   var(--bg)), and at a low opacity, so whatever it's currently covering
-   bleeds through clearly rather than being cut out or crowded out - reads
-   as a faint pass of ink stamped onto the page, not a UI element pasted
-   over it. Run through an SVG turbulence filter for a slightly uneven,
+   var(--bg)) - see its own comment below for why the alpha there is the
+   one that actually controls how much it darkens whatever it's covering,
+   separate from the ink's own opacity in .stamp-in. Run through an SVG
+   turbulence filter for a slightly uneven,
    hand-stamped edge instead of a crisp vector rectangle - see
    #ty-stamp-rough below. The filter itself is applied by .stamp-settled,
    not here - see that rule for why. Sized and kept on one line
@@ -887,7 +887,15 @@ body.fs-active #main { transform: none; transition: none; }
   border: 2px solid var(--amber);
   border-radius: 4px;
   padding: 12px 26px;
-  background: rgba(10, 10, 9, 0.15);
+  /* This alpha is the "transparency" that matters here - how much the
+     dark fill behind the text darkens whatever the stamp is covering.
+     Pushed close to fully transparent so that darkening all but
+     disappears, letting the covered content show through almost
+     untouched. Kept separate from .stamp-in's opacity below, which
+     governs the stamp's own ink (text/border) instead - conflating the
+     two meant turning down the fill also faded the text/border into the
+     same washed-out haze, when only the fill was meant to go see-through. */
+  background: rgba(10, 10, 9, 0.05);
   /* Resting state before the reveal - invisible/collapsed. Left as plain
      properties (not inside the animation) is deliberate: reduced-motion
      strips the animation entirely, and initTyStampReveal() below skips
@@ -908,13 +916,13 @@ body.fs-active #main { transform: none; transition: none; }
      itself, and these are what apply instead so the stamp still shows up
      (just without the motion), rather than staying stuck invisible at
      the pre-reveal state above. */
-  opacity: 0.4;
+  opacity: 0.85;
   transform: translate(-50%, -50%) rotate(-8deg) scale(1);
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes tyStampIn {
   from { transform: translate(-50%, -50%) rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 0.4; }
+  to { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 0.85; }
 }
 /* Turns the rough-edge filter on only once the entrance has fully
    settled (added by initTyStampReveal() on animationend, or immediately
