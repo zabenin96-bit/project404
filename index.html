@@ -855,12 +855,16 @@ body.fs-active #main { transform: none; transition: none; }
    margin trick to lay over the headline - taking it out of flow entirely
    means it doesn't reserve any space there, so ty-head/ty-body just sit
    in their own normal flow beneath it. Translucent fill (not solid
-   var(--bg)) so whatever it's currently covering bleeds through faintly
-   instead of being cleanly cut out - reads as ink stamped onto the page,
-   not a UI element pasted over it. Run through an SVG turbulence filter
-   for a slightly uneven, hand-stamped edge instead of a crisp vector
-   rectangle - see #ty-stamp-rough below. The filter itself is applied by
-   .stamp-settled, not here - see that rule for why. */
+   var(--bg)), and at a low opacity, so whatever it's currently covering
+   bleeds through clearly rather than being cut out or crowded out - reads
+   as a faint pass of ink stamped onto the page, not a UI element pasted
+   over it. Run through an SVG turbulence filter for a slightly uneven,
+   hand-stamped edge instead of a crisp vector rectangle - see
+   #ty-stamp-rough below. The filter itself is applied by .stamp-settled,
+   not here - see that rule for why. Sized and kept on one line
+   (white-space:nowrap) down to small phone widths in the mobile media
+   query below - the base font-size here only ever governs >700px, where
+   it was already confirmed to fit both languages on one line. */
 .ty-stamp {
   position: fixed;
   top: 50%;
@@ -883,7 +887,7 @@ body.fs-active #main { transform: none; transition: none; }
   border: 2px solid var(--amber);
   border-radius: 4px;
   padding: 12px 26px;
-  background: rgba(10, 10, 9, 0.5);
+  background: rgba(10, 10, 9, 0.15);
   /* Resting state before the reveal - invisible/collapsed. Left as plain
      properties (not inside the animation) is deliberate: reduced-motion
      strips the animation entirely, and initTyStampReveal() below skips
@@ -904,13 +908,13 @@ body.fs-active #main { transform: none; transition: none; }
      itself, and these are what apply instead so the stamp still shows up
      (just without the motion), rather than staying stuck invisible at
      the pre-reveal state above. */
-  opacity: 0.8;
+  opacity: 0.4;
   transform: translate(-50%, -50%) rotate(-8deg) scale(1);
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes tyStampIn {
   from { transform: translate(-50%, -50%) rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 0.8; }
+  to { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 0.4; }
 }
 /* Turns the rough-edge filter on only once the entrance has fully
    settled (added by initTyStampReveal() on animationend, or immediately
@@ -1048,6 +1052,14 @@ body { padding-bottom: 60px; }
      big at 320px, where it wrapped on its own, and too small everywhere above 360px,
      where it left the line short. */
   .hero-name { font-size: min(13vw, 118px); white-space: nowrap; }
+  /* Same fix as .hero-name just above: sized to the viewport instead of
+     the clamp() floor it'd otherwise hit at narrow widths, so it stays on
+     one line rather than wrapping mid-word. Checked against both
+     languages' text (English is the longer one) down to a 320px-wide
+     phone, with margin to spare - 6vw hits the same 40px cap the desktop
+     rule uses once the viewport is wide enough, so there's no visible
+     jump right at the breakpoint. */
+  .ty-stamp { font-size: min(6vw, 40px); padding: 10px 5vw; white-space: nowrap; }
   .hero-cursor { height: min(9.5vw, 88px); }
   /* The bordered status card reads as a strong shape and its labels are the
      page's one accent color, so stacked directly under the headline it pulls
