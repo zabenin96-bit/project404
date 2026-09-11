@@ -844,7 +844,8 @@ body.fs-active #main { transform: none; transition: none; }
    pasted over it. Toned down from an earlier, louder pass (smaller,
    thinner border, a bit more transparent) and run through an SVG
    turbulence filter for a slightly uneven, hand-stamped edge instead of
-   a crisp vector rectangle - see #ty-stamp-rough below. */
+   a crisp vector rectangle - see #ty-stamp-rough below. The filter itself
+   is applied by .stamp-settled, not here - see that rule for why. */
 .ty-stamp {
   display: inline-block;
   font-family: var(--font-mark);
@@ -867,7 +868,6 @@ body.fs-active #main { transform: none; transition: none; }
   z-index: 2;
   margin-top: 6px;
   margin-bottom: -20px;
-  filter: url(#ty-stamp-rough);
   /* Resting state before the reveal - invisible/collapsed. Left as plain
      properties (not inside the animation) is deliberate: reduced-motion
      strips the animation entirely, and initTyStampReveal() below skips
@@ -896,6 +896,21 @@ body.fs-active #main { transform: none; transition: none; }
 @keyframes tyStampIn {
   from { transform: rotate(-8deg) scale(0); opacity: 0; }
   to { transform: rotate(-8deg) scale(1); opacity: 0.8; }
+}
+/* Turns the rough-edge filter on only once the entrance has fully
+   settled (added by initTyStampReveal() on animationend, or immediately
+   under reduced motion since nothing animates there). An SVG filter this
+   complex can't run on the compositor, so having it live on an element
+   whose opacity/transform are actively animating forces the browser to
+   re-rasterize the filtered result on the main thread every frame - and
+   that reveal happens to land right in the middle of the page's own
+   smooth-scroll to #ty, so the two competed for the main thread and the
+   scroll itself started stuttering. Static text needs the filter
+   recomputed once, not every frame, so deferring it until after the
+   transform stops moving keeps the scroll smooth without losing the
+   texture in the state that actually stays on screen. */
+.ty-stamp.stamp-settled {
+  filter: url(#ty-stamp-rough);
 }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
@@ -2015,11 +2030,17 @@ function initXMarkSpin(){
 function initTyStampReveal(){
   const stamp = g('ty-stamp');
   if(!stamp) return;
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const io = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if(entry.isIntersecting){
         stamp.classList.add('stamp-in');
         io.disconnect();
+        // Reduced motion never plays the animation, so there's no
+        // animationend to wait for - the filter is safe to turn on right
+        // away since nothing is transforming for it to fight with.
+        if(reduced) stamp.classList.add('stamp-settled');
+        else stamp.addEventListener('animationend', () => stamp.classList.add('stamp-settled'), { once: true });
       }
     });
   }, { threshold: 0.4 });
