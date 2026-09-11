@@ -852,17 +852,23 @@ body.fs-active #main { transform: none; transition: none; }
   border: 2px solid var(--green);
   border-radius: 4px;
   padding: 8px 20px;
-  background: var(--bg);
+  /* Solid var(--bg) here read as a sticker pasted over the headline - a
+     hard rectangular cut with nothing of the covered text showing
+     through. Real stamp ink isn't opaque; letting the headline bleed
+     through faintly is what makes it read as ink stamped onto the page
+     rather than a UI element sitting on top of it. */
+  background: rgba(10, 10, 9, 0.55);
   position: relative;
   z-index: 2;
   margin-top: 6px;
   margin-bottom: -22px;
   transform: rotate(-8deg);
+  opacity: 0.85;
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) 0.4s both;
 }
 @keyframes tyStampIn {
   from { transform: rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: rotate(-8deg) scale(1); opacity: 1; }
+  to { transform: rotate(-8deg) scale(1); opacity: 0.85; }
 }
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
