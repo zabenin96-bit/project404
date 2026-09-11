@@ -51,7 +51,11 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<!-- Special Elite: worn-typewriter face, added just for .ty-stamp - a
+     stamped "APPROVED"-style badge reads as an actual stamp with a face
+     like this in a way the site's own monospace (Space Mono) doesn't;
+     everything else keeps using --font-mark as before. -->
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
@@ -947,7 +951,7 @@ body.fs-active #main { transform: none; transition: none; }
      nowrap here means it always sizes off its own text, overflowing
      .ty-sys's box symmetrically since it's still centered on that area. */
   white-space: nowrap;
-  font-family: var(--font-mark);
+  font-family: 'Special Elite', var(--font-mark);
   font-weight: 700;
   font-size: clamp(24px, 7vw, 40px);
   letter-spacing: 0.08em;
@@ -1442,7 +1446,7 @@ body { padding-bottom: 60px; }
       <div class="q-tag" id="q1l">01 / 8 - ОСНОВЫ</div>
       <div class="q-text" id="q1t">Чем занимаешься? Опиши главный проект или работу одним предложением.</div>
       <p class="q-hint q-hint-top" id="q1-notice">Строго 18+. Подать заявку можно не больше 2 раз в месяц.</p>
-      <textarea class="q-textarea" id="q1v" placeholder="Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов."></textarea>
+      <textarea class="q-textarea" id="q1v" aria-labelledby="q1t" placeholder="Например: веду продакшн-студию, делаю AI-видео для e-commerce брендов."></textarea>
       <div class="q-nav"><button class="btn-p" onclick="nx(1)">Далее →</button></div>
     </div>
 
@@ -1486,21 +1490,21 @@ body { padding-bottom: 60px; }
     <div class="q-block" id="q5">
       <div class="q-tag" id="q5l">05 / 8 - ГЛУБИНА</div>
       <div class="q-text" id="q5t">Расскажи о сложном решении или провале за год. Какой вывод ты сделал(а)?</div>
-      <textarea class="q-textarea" id="q5v"></textarea>
+      <textarea class="q-textarea" id="q5v" aria-labelledby="q5t"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(5)">← Назад</button><button class="btn-p" onclick="nx(5)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q6">
       <div class="q-tag" id="q6l">06 / 8 - ФИЛЬТР</div>
       <div class="q-text" id="q6t">В чём большинство людей в твоей сфере фатально ошибается или заблуждается?</div>
-      <textarea class="q-textarea" id="q6v"></textarea>
+      <textarea class="q-textarea" id="q6v" aria-labelledby="q6t"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(6)">← Назад</button><button class="btn-p" onclick="nx(6)">Далее →</button></div>
     </div>
 
     <div class="q-block" id="q7">
       <div class="q-tag" id="q7l">07 / 8 - ФИЛЬТР</div>
       <div class="q-text" id="q7t">Когда ты помог(ла) кому-то в работе, не ожидая ничего взамен? Что это было?</div>
-      <textarea class="q-textarea" id="q7v"></textarea>
+      <textarea class="q-textarea" id="q7v" aria-labelledby="q7t"></textarea>
       <div class="q-nav"><button class="btn-b" onclick="bk(7)">← Назад</button><button class="btn-p" onclick="nx(7)">Далее →</button></div>
     </div>
 
@@ -1951,10 +1955,17 @@ function render(){
   [[2,'q2o'],[3,'q3o'],[4,'q4o']].forEach(([q,k])=>{
     t(k).forEach((o,i)=>{ const e=g('q'+q+'abcde'[i]); if(e) e.textContent=o; });
   });
-  g('q11n').placeholder=t('q11p1');
-  g('q11c').placeholder=t('q11p2');
-  g('q11link').placeholder=t('q11p3');
-  g('q11loc').placeholder=t('q11p4');
+  // aria-label alongside the placeholder, from the same string - these four
+  // fields ask genuinely different things (name/contact/country/link) so a
+  // shared aria-labelledby pointing at q8t's one heading above them
+  // wouldn't tell a screen reader which is which; placeholder text alone
+  // isn't a reliable accessible name (some assistive tech ignores it).
+  // Reusing the translated placeholder string keeps both in sync on every
+  // language switch for free, same as everywhere else in render().
+  g('q11n').placeholder=t('q11p1'); g('q11n').setAttribute('aria-label', t('q11p1'));
+  g('q11c').placeholder=t('q11p2'); g('q11c').setAttribute('aria-label', t('q11p2'));
+  g('q11link').placeholder=t('q11p3'); g('q11link').setAttribute('aria-label', t('q11p3'));
+  g('q11loc').placeholder=t('q11p4'); g('q11loc').setAttribute('aria-label', t('q11p4'));
   g('q11age18label').textContent=t('age18Label');
   g('q1-notice').textContent=t('ageHint')+' '+t('attemptLimitHint');
   g('q11cl').innerHTML=t('consentLabel');
