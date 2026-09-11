@@ -843,35 +843,53 @@ body.fs-active #main { transform: none; transition: none; }
    application landed. Tilt is a permanent style, not just part of the
    animation, so it still reads as "stamped" even under reduced-motion
    where the entrance below is stripped and it just appears in place. */
-/* Fixed and centered on the viewport rather than sitting inline in the
-   document - a deliberate escalation from an earlier inline version so
-   it reads as the moment's own centerpiece instead of one detail among
-   the page's other text. translate(-50%,-50%) does the centering itself;
-   the rotate/scale stay in the same transform so .stamp-in's keyframe
-   only ever adds to it, never replaces it. pointer-events:none since
-   nothing about it is interactive and it now sits on top of everything
-   at z-index 600 - clicks need to reach the content underneath (share
-   buttons, the CTA bar) untouched. No longer needs the old negative-
-   margin trick to lay over the headline - taking it out of flow entirely
-   means it doesn't reserve any space there, so ty-head/ty-body just sit
-   in their own normal flow beneath it. Translucent fill (not solid
-   var(--bg)) - see its own comment below for why the alpha there is the
-   one that actually controls how much it darkens whatever it's covering,
-   separate from the ink's own opacity in .stamp-in. Run through an SVG
-   turbulence filter for a slightly uneven,
-   hand-stamped edge instead of a crisp vector rectangle - see
-   #ty-stamp-rough below. The filter itself is applied by .stamp-settled,
-   not here - see that rule for why. Sized and kept on one line
-   (white-space:nowrap) down to small phone widths in the mobile media
-   query below - the base font-size here only ever governs >700px, where
-   it was already confirmed to fit both languages on one line. */
+/* Pinned to a specific place in the document - the STATUS row of .ty-sys
+   below - rather than fixed to the viewport. An earlier version was
+   position:fixed and screen-centered, which kept it dead center no
+   matter where the reader scrolled to afterward, covering whatever
+   happened to be there; anchoring it to content instead means it scrolls
+   away with the rest of the confirmation once the reader moves on, the
+   same way everything else on the page behaves. It's a real grid item of
+   #ty-sys (moved there in the markup) but taken out of grid track sizing
+   via position:absolute, with grid-row/grid-column pointing at the
+   STATUS line's row and spanning both columns - see the .ty-sys comment
+   for why that combination was needed instead of just nesting it inside
+   that row directly. align-self/justify-self center it within that
+   area; #ty-sys is the positioned ancestor providing the containing
+   block. pointer-events:none since nothing about it is interactive - it
+   still visually sits over the STATUS text and, once un-settled, over
+   whatever the reader has scrolled to since. No longer needs the old
+   negative-margin trick to lay over the headline - taking it out of flow
+   entirely means it doesn't reserve any space there. Translucent fill
+   (not solid var(--bg)) - see its own comment below for why the alpha
+   there is the one that actually controls how much it darkens whatever
+   it's covering, separate from the ink's own opacity in .stamp-in. Run
+   through an SVG turbulence filter for a slightly uneven, hand-stamped
+   edge instead of a crisp vector rectangle - see #ty-stamp-rough below.
+   The filter itself is applied by .stamp-settled, not here - see that
+   rule for why. Sized and kept on one line (white-space:nowrap) down to
+   small phone widths in the mobile media query below - the base
+   font-size here only ever governs >700px, where it was already
+   confirmed to fit both languages on one line. */
 .ty-stamp {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  z-index: 600;
+  position: absolute;
+  grid-row: 2;
+  grid-column: 1 / -1;
+  align-self: center;
+  justify-self: center;
+  z-index: 2;
   pointer-events: none;
   display: inline-block;
+  /* Without this, an absolutely-positioned grid item with width:auto
+     shrink-to-fits within its *grid area's* own width - here, .ty-sys's
+     narrow content width (sized to the receipt lines' text), not the
+     viewport. That's fine below 700px, where the mobile override already
+     forces nowrap for its own reason (fitting the narrowest phones), but
+     above it this was silently wrapping the stamp to two lines against
+     .ty-sys's width instead of rendering on one at its intended size -
+     nowrap here means it always sizes off its own text, overflowing
+     .ty-sys's box symmetrically since it's still centered on that area. */
+  white-space: nowrap;
   font-family: var(--font-mark);
   font-weight: 700;
   font-size: clamp(24px, 7vw, 40px);
@@ -901,15 +919,14 @@ body.fs-active #main { transform: none; transition: none; }
      strips the animation entirely, and initTyStampReveal() below skips
      straight to adding .stamp-in without it in that case, whose rule
      then applies as the element's own un-animated style. */
-  transform: translate(-50%, -50%) rotate(-8deg) scale(0);
+  transform: rotate(-8deg) scale(0);
   opacity: 0;
 }
 /* Added by initTyStampReveal() via an IntersectionObserver rather than a
-   fixed delay tied to the thank-you screen switching on - now that the
-   stamp is fixed/centered it's technically visible the instant #ty gets
-   a box, but the observer is still the right tool: it fires off actual
-   layout rather than a guessed timeout, so the reveal reliably starts
-   right as the stamp appears rather than racing it. */
+   fixed delay tied to the thank-you screen switching on, so the reveal
+   fires off the stamp's own actual layout (i.e. once it has genuinely
+   scrolled into view) rather than a guessed timeout racing the page's
+   own smooth-scroll to #ty. */
 .ty-stamp.stamp-in {
   /* Plain properties alongside the animation, matching where it ends up -
      under reduced-motion the global killswitch strips the animation
@@ -917,12 +934,12 @@ body.fs-active #main { transform: none; transition: none; }
      (just without the motion), rather than staying stuck invisible at
      the pre-reveal state above. */
   opacity: 0.85;
-  transform: translate(-50%, -50%) rotate(-8deg) scale(1);
+  transform: rotate(-8deg) scale(1);
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes tyStampIn {
-  from { transform: translate(-50%, -50%) rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: translate(-50%, -50%) rotate(-8deg) scale(1); opacity: 0.85; }
+  from { transform: rotate(-8deg) scale(0); opacity: 0; }
+  to { transform: rotate(-8deg) scale(1); opacity: 0.85; }
 }
 /* Turns the rough-edge filter on only once the entrance has fully
    settled (added by initTyStampReveal() on animationend, or immediately
@@ -949,7 +966,11 @@ body.fs-active #main { transform: none; transition: none; }
    lining up in a column. inline-grid shrinks to its content and #ty's
    own text-align:center places the whole block, tags and values both
    staying aligned across rows. */
-.ty-sys { display: inline-grid; grid-template-columns: auto auto; column-gap: 12px; row-gap: 5px; margin-top: 36px; }
+/* position:relative makes this the containing block .ty-stamp resolves
+   its grid-row/grid-column area against (see .ty-stamp's own comment) -
+   without it, an absolutely-positioned grid child falls back to a more
+   distant positioned ancestor instead of this grid's own lines. */
+.ty-sys { position: relative; display: inline-grid; grid-template-columns: auto auto; column-gap: 12px; row-gap: 5px; margin-top: 36px; }
 .ty-sys .line { display: contents; font-size: 12px; color: var(--dim); }
 .ty-sys .tag { color: var(--green); }
 .ty-share { margin-top: 40px; }
@@ -1447,7 +1468,7 @@ body { padding-bottom: 60px; }
   <svg width="0" height="0" style="position:absolute;">
     <filter id="ty-stamp-rough">
       <feTurbulence type="fractalNoise" baseFrequency="0.02 0.09" numOctaves="2" result="n" seed="7"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="2.5" xChannelSelector="R" yChannelSelector="G"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
     </filter>
   </svg>
 
@@ -1456,13 +1477,13 @@ body { padding-bottom: 60px; }
     <div class="ty-number-label" id="ty-number-label" style="display:none;">ЗАЯВКА</div>
     <div class="ty-number" id="ty-number" style="display:none;"><span class="ty-number-prefix" id="ty-number-prefix"></span><span id="ty-number-val"></span></div>
     <div class="ty-code" id="ty-code">202</div>
-    <div class="ty-stamp" id="ty-stamp">Заявка принята</div>
     <h2 class="ty-head" id="ty-head">Отправлено, ожидай.</h2>
     <p class="ty-body" id="ty-body">Спасибо за честные ответы.</p>
     <div class="ty-sys">
       <div class="line"><span class="tag" id="ty-t1">ПОЛУЧЕНО</span><span id="ty-v1"> заявка записана - ожидает проверки</span></div>
       <div class="line"><span class="tag" id="ty-t2">СТАТУС</span><span id="ty-v2"> на рассмотрении</span></div>
       <div class="line"><span class="tag" id="ty-t3">ДАЛЕЕ</span><span id="ty-v3"> ответим в любом случае</span></div>
+      <div class="ty-stamp" id="ty-stamp">Заявка принята</div>
     </div>
     <div class="ty-share">
       <p class="ty-share-text" id="ty-share-text">Поделись с тем, кому это надо.</p>
