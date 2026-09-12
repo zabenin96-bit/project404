@@ -3459,18 +3459,21 @@ function easeOutSine(t){ return Math.sin((t * Math.PI) / 2); }
 // delay at each line jump - and a short final line (few words) spent
 // most of its brief duration inside that dip on both sides at once,
 // reported as the sweep visibly braking right at the end.
-function playDotSweep(el){
+function playDotSweep(el, speedMult){
   if(!el) return;
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if(reduced) return;
   if(document.fonts && document.fonts.status !== 'loaded'){
-    document.fonts.ready.then(()=> runDotSweep(el));
+    document.fonts.ready.then(()=> runDotSweep(el, speedMult));
   } else {
-    runDotSweep(el);
+    runDotSweep(el, speedMult);
   }
 }
 
-function runDotSweep(el){
+// speedMult defaults to 1 (the CTA sweep's own pace) - the hero call below
+// passes 2 to run twice as fast there specifically, without touching the
+// shared pxToMs/totalDurationMs formula the CTA sweep still relies on.
+function runDotSweep(el, speedMult = 1){
   const range = document.createRange();
   range.selectNodeContents(el);
   // Converted to document coordinates every time this runs, to match the
@@ -3499,8 +3502,8 @@ function runDotSweep(el){
   const halfLeading = Math.max(0, (lineHeight - fontSize) / 2);
 
   const totalWidth = rects.reduce((sum, r) => sum + r.width, 0);
-  const pxToMs = 3;
-  const totalDurationMs = Math.max(800, totalWidth * pxToMs);
+  const pxToMs = 3 / speedMult;
+  const totalDurationMs = Math.max(800 / speedMult, totalWidth * pxToMs);
   const startDelayMs = 400;
   const yOffset = 3;
   const trailMaxLen = 60;
@@ -3616,9 +3619,11 @@ function runDotSweep(el){
 // two other hero motions on their own unrelated cycles, and all three
 // competing in the first second read as busy. This delay is separate from
 // runDotSweep's own startDelayMs (the brief pause once it actually
-// starts) - it only pushes back *when* that starts.
+// starts) - it only pushes back *when* that starts. Runs at 2x the CTA
+// sweep's own pace (see runDotSweep's speedMult) - just this instance,
+// the CTA one elsewhere on the page is unaffected.
 function playHeroDotSweep(){
-  setTimeout(()=> playDotSweep(g('hero-hl')), 7000);
+  setTimeout(()=> playDotSweep(g('hero-hl'), 2), 7000);
 }
 
 // CTA: plays once, the first time "Подать заявку" scrolls into the same
