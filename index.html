@@ -2179,8 +2179,20 @@ function initValueDiagramSway(){
   const squareG = g('vd-square-group');
   const triangleG = g('vd-triangle-group');
   if(!svg || !squareG || !triangleG) return;
-  const SQUARE_DEG_PER_PX = 0.025, SQUARE_MAX = 5;
-  const TRIANGLE_DEG_PER_PX = 0.035, TRIANGLE_MAX = 5;
+  // Reported live (a real, wide desktop render) with the shapes rotated
+  // enough that labels - always static, never rotating themselves, see the
+  // markup comment above - ended up sitting visibly off from the point
+  // they're meant to sit next to, on top of neighboring lines rather than
+  // beside them. The diagram's own size varies a lot by viewport, and the
+  // px displacement a given rotation produces scales right along with it,
+  // so 5deg that looked fine in earlier testing at typical widths read as
+  // too much once the diagram rendered larger. Cut both maximums to 2deg
+  // (worst case ~4deg combined on the triangle) and scaled the per-px
+  // rates down by the same ratio, so the sway still takes roughly the same
+  // amount of scrolling to reach its (now smaller) limit rather than
+  // maxing out almost immediately.
+  const SQUARE_DEG_PER_PX = 0.01, SQUARE_MAX = 2;
+  const TRIANGLE_DEG_PER_PX = 0.014, TRIANGLE_MAX = 2;
   let active = false;
   let lastY = window.scrollY;
   let squareAngle = 0, triangleExtra = 0;
