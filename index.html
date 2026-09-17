@@ -694,7 +694,14 @@ body.lang-switching { opacity: 0; }
    where the eye already expects motion to come from - the nav bar living
    at the bottom edge of the screen. */
 @keyframes fsFadeIn { from { opacity: 0; } to { opacity: 1; } }
-@keyframes fsSlideUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+/* Travels further and settles faster than a typical fade-up (was 28px/
+   ~0.4-0.6s total) - the ask was for the opening to actually read as a
+   fast scroll down into the anketa, not a gentle nudge. A bigger distance
+   covered in less time is exactly what raises the felt speed; the
+   ease-out curve on the elements using this (unchanged) is what keeps the
+   landing itself soft despite the higher speed, so it's fast without
+   feeling like a hard stop. */
+@keyframes fsSlideUp { from { opacity: 0; transform: translateY(64px); } to { opacity: 1; transform: translateY(0); } }
 #test-section.fs-mode {
   position: fixed;
   inset: 0;
@@ -734,12 +741,12 @@ body.lang-switching { opacity: 0; }
      play in full now that they're doing it against an opaque backdrop
      instead of a half-transparent one. */
 }
-#test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.3s ease 0.1s both; }
+#test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.2s ease 0.05s both; }
 /* The intro paragraph is only meant for the normal page scroll (visible
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
 #test-section.fs-mode .section-grid { display: none; }
-#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideUp 0.4s cubic-bezier(.16,.8,.24,1) 0.1s both; }
+#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideUp 0.22s cubic-bezier(.16,.8,.24,1) 0.04s both; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
    that ~0.25s it would become the containing block instead of the viewport,
@@ -757,7 +764,7 @@ body.lang-switching { opacity: 0; }
    spacing before a CTA, not as a broken empty middle. */
 #test-section.fs-mode .q-block.active { margin: 40px 0 0; }
 #test-section.fs-mode .q-block.active > *:not(.q-nav) {
-  animation: fsSlideUp 0.42s cubic-bezier(.16,.8,.24,1) 0.18s both;
+  animation: fsSlideUp 0.26s cubic-bezier(.16,.8,.24,1) 0.08s both;
 }
 #test-section.fs-mode .q-nav {
   position: fixed;
@@ -792,7 +799,7 @@ body.lang-switching { opacity: 0; }
    is the whole point: the nav bar should read as one static element that
    never moves or blinks, even though it's actually swapped out under it. */
 #test-section.fs-mode.fs-entering .q-nav {
-  animation: fsFadeIn 0.3s ease 0.24s both;
+  animation: fsFadeIn 0.2s ease 0.14s both;
 }
 /* Fullscreen is now the primary place people click "Далее" - give the
    primary action the same amber accent as the hero CTA instead of the
@@ -2996,7 +3003,7 @@ function enterFsMode(){
   section.scrollTop = 0;
   section.style.setProperty('--kb-inset', '0px');
   clearTimeout(fsEnterTimer);
-  fsEnterTimer = setTimeout(()=>section.classList.remove('fs-entering'), 600);
+  fsEnterTimer = setTimeout(()=>section.classList.remove('fs-entering'), 400);
 }
 
 function exitFsMode(){
