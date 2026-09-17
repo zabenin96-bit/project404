@@ -2997,27 +2997,43 @@ function stickyBtnClick(){
 //
 // #test-section's own place in the document is far down the page (past
 // About/Value/Format/Reject/Rules/Process, right before FAQ), so actually
-// scrolling there before switching into fs-mode would take a while and
-// tear through a run of unrelated sections first - not what "fast scroll
-// down" was after. This instead scrolls the CURRENT view down a fixed,
-// short distance - real window scroll, not just an internal element
-// sliding into place - so the reader genuinely sees the page move before
-// the anketa takes over, then restores the exact scroll position on exit
-// so closing the quiz doesn't strand them somewhere they never scrolled
-// to themselves.
+// scrolling all the way there before switching into fs-mode would tear
+// through a long run of unrelated sections first - not the point. This
+// instead scrolls the CURRENT view down a fixed distance (a few screens'
+// worth, see fsScrollDownDistance) - real window scroll, not just an
+// internal element sliding into place - so the reader genuinely watches
+// the page move before the anketa takes over, then restores the exact
+// scroll position on exit so closing the quiz doesn't strand them
+// somewhere they never scrolled to themselves.
 let preFsScrollY = null;
-// 420px/260ms read as a blip that was over before it registered - long
-// enough to be real scrollY movement (confirmed), too short to actually
-// be seen as one. Distance and duration both roughly doubled.
-const FS_SCROLL_DOWN_PX = 900;
-const FS_SCROLL_DOWN_MS = 480;
+// Went 420px/260ms -> 900px/480ms already and still read as one quick
+// flick before the anketa cut in - a fixed px distance also means the
+// same "length" feels shorter on a taller viewport, where more of it is
+// just scrolling content already on screen rather than genuinely moving
+// past it. Sized off viewport height instead (~2.4 screens' worth) so it
+// reads as comparably long everywhere, with duration scaled up to match
+// rather than just moving further in the same short window.
+function fsScrollDownDistance(){ return Math.round(window.innerHeight * 2.4); }
+const FS_SCROLL_DOWN_MS = 900;
+// Bumped from 480ms to 900ms to match the longer distance above - long
+// enough now that exitFsMode() undoing its own scroll restore mid-flight
+// (not reachable through the close button today, since fs-mode/.fs-close
+// don't exist until this finishes and calls enterFsMode - but cheap to
+// make correct regardless) needs this loop to actually stop touching
+// scrollY rather than fighting that restore on its very next frame.
+// fsScrollAnimToken is that cancellation: exitFsMode() bumps it, any
+// in-flight tick() sees its own token is stale and quits instead of
+// scheduling another frame.
+let fsScrollAnimToken = 0;
 function animateScrollDown(distancePx, durationMs, onDone){
+  const myToken = ++fsScrollAnimToken;
   const startY = window.scrollY;
   const maxY = document.documentElement.scrollHeight - window.innerHeight;
   const targetY = Math.min(startY + distancePx, Math.max(startY, maxY));
   if(targetY <= startY){ onDone(); return; }
   const start = performance.now();
   function tick(now){
+    if(myToken !== fsScrollAnimToken) return;
     const t = Math.min(1, (now - start) / durationMs);
     const eased = 1 - Math.pow(1 - t, 3);
     // Explicit behavior:'instant' per step - html has scroll-behavior:
@@ -3050,7 +3066,12 @@ function exitFsMode(){
   section.classList.remove('fs-mode', 'fs-entering');
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
-  // Undoes the short scroll-down animateScrollDown() played on the way in.
+  // Stops any still-running animateScrollDown() from this specific open -
+  // not reachable today through the close button (see its own comment),
+  // but without this an in-flight tick() would keep calling scrollTo on
+  // its own schedule and undo the restore below on its very next frame.
+  fsScrollAnimToken++;
+  // Undoes the scroll-down animateScrollDown() played on the way in.
   // Instant, not re-animated - the entrance scroll was the featured
   // moment; this is just putting the reader back exactly where they
   // scrolled to themselves, which reads as "closing" rather than a second
@@ -3094,7 +3115,7 @@ function goToApplication(){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   preFsScrollY = window.scrollY;
   if(reduced){ enterFsMode(); return; }
-  animateScrollDown(FS_SCROLL_DOWN_PX, FS_SCROLL_DOWN_MS, enterFsMode);
+  animateScrollDown(fsScrollDownDistance(), FS_SCROLL_DOWN_MS, enterFsMode);
 }
 
 async function submitForm(){
