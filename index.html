@@ -3006,8 +3006,11 @@ function stickyBtnClick(){
 // so closing the quiz doesn't strand them somewhere they never scrolled
 // to themselves.
 let preFsScrollY = null;
-const FS_SCROLL_DOWN_PX = 420;
-const FS_SCROLL_DOWN_MS = 260;
+// 420px/260ms read as a blip that was over before it registered - long
+// enough to be real scrollY movement (confirmed), too short to actually
+// be seen as one. Distance and duration both roughly doubled.
+const FS_SCROLL_DOWN_PX = 900;
+const FS_SCROLL_DOWN_MS = 480;
 function animateScrollDown(distancePx, durationMs, onDone){
   const startY = window.scrollY;
   const maxY = document.documentElement.scrollHeight - window.innerHeight;
