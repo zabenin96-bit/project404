@@ -2994,6 +2994,40 @@ function stickyBtnClick(){
 // The step-by-step form takes over the viewport instead of living inline
 // in the page's scroll - see the CSS comment above #test-section.fs-mode
 // for why. exitFsMode() is also the "✕" button's handler.
+//
+// #test-section's own place in the document is far down the page (past
+// About/Value/Format/Reject/Rules/Process, right before FAQ), so actually
+// scrolling there before switching into fs-mode would take a while and
+// tear through a run of unrelated sections first - not what "fast scroll
+// down" was after. This instead scrolls the CURRENT view down a fixed,
+// short distance - real window scroll, not just an internal element
+// sliding into place - so the reader genuinely sees the page move before
+// the anketa takes over, then restores the exact scroll position on exit
+// so closing the quiz doesn't strand them somewhere they never scrolled
+// to themselves.
+let preFsScrollY = null;
+const FS_SCROLL_DOWN_PX = 420;
+const FS_SCROLL_DOWN_MS = 260;
+function animateScrollDown(distancePx, durationMs, onDone){
+  const startY = window.scrollY;
+  const maxY = document.documentElement.scrollHeight - window.innerHeight;
+  const targetY = Math.min(startY + distancePx, Math.max(startY, maxY));
+  if(targetY <= startY){ onDone(); return; }
+  const start = performance.now();
+  function tick(now){
+    const t = Math.min(1, (now - start) / durationMs);
+    const eased = 1 - Math.pow(1 - t, 3);
+    // Explicit behavior:'instant' per step - html has scroll-behavior:
+    // smooth globally, and without overriding it here each of these
+    // per-frame calls would itself kick off a native smooth-scroll toward
+    // a constantly-moving target instead of landing exactly where this
+    // rAF loop's own easing puts it, fighting itself into a stutter.
+    window.scrollTo({ top: startY + (targetY - startY) * eased, behavior: 'instant' });
+    if(t < 1) requestAnimationFrame(tick);
+    else onDone();
+  }
+  requestAnimationFrame(tick);
+}
 let fsEnterTimer = null;
 function enterFsMode(){
   const section = g('test-section');
@@ -3013,6 +3047,15 @@ function exitFsMode(){
   section.classList.remove('fs-mode', 'fs-entering');
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
+  // Undoes the short scroll-down animateScrollDown() played on the way in.
+  // Instant, not re-animated - the entrance scroll was the featured
+  // moment; this is just putting the reader back exactly where they
+  // scrolled to themselves, which reads as "closing" rather than a second
+  // motion worth watching.
+  if(preFsScrollY !== null){
+    window.scrollTo({ top: preFsScrollY, behavior: 'instant' });
+    preFsScrollY = null;
+  }
 }
 
 // Mobile browsers keep position:fixed anchored to the full layout viewport,
@@ -3045,7 +3088,10 @@ function goToApplication(){
   // into the anketa (hero, teaser, sticky bar) goes through here, so the
   // guard only needs to live in one place.
   if(applicationSubmitted){ window.open('https://t.me/CreativesManager', '_blank', 'noopener'); return; }
-  enterFsMode();
+  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  preFsScrollY = window.scrollY;
+  if(reduced){ enterFsMode(); return; }
+  animateScrollDown(FS_SCROLL_DOWN_PX, FS_SCROLL_DOWN_MS, enterFsMode);
 }
 
 async function submitForm(){
