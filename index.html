@@ -724,22 +724,26 @@ body.lang-switching { opacity: 0; }
      transitions transform over 0.6s and entering fullscreen would otherwise
      briefly animate through non-none values on the way to it. */
   transform: none;
+  /* No CSS transition on opacity - goToApplication() drives it directly,
+     one style write per rAF frame in step with the scroll animation's own
+     eased progress (see animateScrollDown's onProgress), so it needs to
+     apply immediately each time rather than smoothing toward a value that
+     already moved on by the next frame - the same reasoning as
+     window.scrollTo's own behavior:'instant' there. */
   transition: none;
-  /* No fade on this box itself, deliberately - it used to carry the same
-     fsFadeIn as .fs-close below, but that opacity ramp applies to the
-     *whole* fixed layer, background included, so for its whole 0.35s the
-     solid var(--bg) fill covering the page underneath was itself
-     semi-transparent - the hero's headline/CTA stayed visible right
-     through it while the question content was simultaneously fading in
-     on top, doubly-exposed against each other (confirmed by screenshotting
-     the transition frame-by-frame - unreadable, overlapping text for a
-     good chunk of the animation, not remotely a "smooth" cross-dissolve).
-     The backdrop appearing instantly reads as an immediate cut, but
-     against a solid, nearly-black fill that's imperceptible on its own -
-     all the perceived motion here already comes from .progress-wrap and
-     the question content fading/sliding up over it below, which still
-     play in full now that they're doing it against an opaque backdrop
-     instead of a half-transparent one. */
+  /* This box's own opacity used to be a fixed 0.35s CSS animation
+     (fsFadeIn) independent of anything else, and that was the problem:
+     the *whole* fixed layer, solid background included, was itself
+     semi-transparent for that whole span on its own unrelated clock,
+     while the hero underneath and the question content on top were each
+     doing their own thing on *their* own clocks - three unsynchronized
+     motions landing on top of each other read as broken, overlapping
+     text (confirmed by screenshotting it frame-by-frame). Scrubbing
+     opacity to the real scroll's progress instead - so the anketa
+     visibly fades in over the *same* motion that's visibly scrolling the
+     hero away, one motion instead of three - is what turns that same
+     "backdrop you can see through" into the cross-dissolve it always was
+     supposed to read as. */
 }
 #test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.2s ease 0.05s both; }
 /* The intro paragraph is only meant for the normal page scroll (visible
@@ -3025,12 +3029,18 @@ const FS_SCROLL_DOWN_MS = 900;
 // in-flight tick() sees its own token is stale and quits instead of
 // scheduling another frame.
 let fsScrollAnimToken = 0;
-function animateScrollDown(distancePx, durationMs, onDone){
+// onProgress(eased) - optional, called every frame with the same eased
+// 0..1 value driving the scroll itself, so the anketa's own opacity (see
+// goToApplication()) can be scrubbed in lockstep with the scroll instead
+// of only appearing once it finishes - "proявляется во время скролла"
+// specifically asked for the fade to happen *during* the motion, not
+// right after it.
+function animateScrollDown(distancePx, durationMs, onDone, onProgress){
   const myToken = ++fsScrollAnimToken;
   const startY = window.scrollY;
   const maxY = document.documentElement.scrollHeight - window.innerHeight;
   const targetY = Math.min(startY + distancePx, Math.max(startY, maxY));
-  if(targetY <= startY){ onDone(); return; }
+  if(targetY <= startY){ if(onProgress) onProgress(1); onDone(); return; }
   const start = performance.now();
   function tick(now){
     if(myToken !== fsScrollAnimToken) return;
@@ -3042,6 +3052,7 @@ function animateScrollDown(distancePx, durationMs, onDone){
     // a constantly-moving target instead of landing exactly where this
     // rAF loop's own easing puts it, fighting itself into a stutter.
     window.scrollTo({ top: startY + (targetY - startY) * eased, behavior: 'instant' });
+    if(onProgress) onProgress(eased);
     if(t < 1) requestAnimationFrame(tick);
     else onDone();
   }
@@ -3066,6 +3077,7 @@ function exitFsMode(){
   section.classList.remove('fs-mode', 'fs-entering');
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
+  section.style.removeProperty('opacity');
   // Stops any still-running animateScrollDown() from this specific open -
   // not reachable today through the close button (see its own comment),
   // but without this an in-flight tick() would keep calling scrollTo on
@@ -3115,7 +3127,19 @@ function goToApplication(){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   preFsScrollY = window.scrollY;
   if(reduced){ enterFsMode(); return; }
-  animateScrollDown(fsScrollDownDistance(), FS_SCROLL_DOWN_MS, enterFsMode);
+  // .fs-mode goes on right away (not just at the end, inside enterFsMode)
+  // so the anketa exists as a real fixed overlay for the whole scroll,
+  // starting invisible - its opacity is then scrubbed in step with the
+  // scroll's own progress below, so it genuinely proявляется (fades in)
+  // *during* the motion rather than popping in once it stops. Safe to add
+  // this early despite body.fs-active (the part that actually locks page
+  // scroll) not being set until enterFsMode() at the end - .fs-mode itself
+  // carries no scroll-lock of its own, only fs-active does.
+  const section = g('test-section');
+  if(section){ section.classList.add('fs-mode'); section.style.opacity = '0'; }
+  animateScrollDown(fsScrollDownDistance(), FS_SCROLL_DOWN_MS, enterFsMode, (eased) => {
+    if(section) section.style.opacity = String(eased);
+  });
 }
 
 async function submitForm(){
