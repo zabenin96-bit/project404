@@ -3045,7 +3045,15 @@ function animateScrollDown(distancePx, durationMs, onDone, onProgress){
   function tick(now){
     if(myToken !== fsScrollAnimToken) return;
     const t = Math.min(1, (now - start) / durationMs);
-    const eased = 1 - Math.pow(1 - t, 3);
+    // ease-in-out, not ease-out - ease-out's whole point is a fast start
+    // (steepest right at t=0), which is exactly what read as an abrupt
+    // jolt into motion rather than smooth. Easing both ends instead ramps
+    // up into it and eases back out of it, no sudden start or hard stop -
+    // safe to use here (unlike the VALUE diagram's own line-draw, which
+    // deliberately avoids ease-in-out because *overlapping, staggered*
+    // segments both go slowest at once where they overlap - there's only
+    // one motion here, nothing to stall against).
+    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
     // Explicit behavior:'instant' per step - html has scroll-behavior:
     // smooth globally, and without overriding it here each of these
     // per-frame calls would itself kick off a native smooth-scroll toward
