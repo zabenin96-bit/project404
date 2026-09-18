@@ -3018,14 +3018,12 @@ let preFsScrollY = null;
 // reads as comparably long everywhere, with duration scaled up to match
 // rather than just moving further in the same short window.
 function fsScrollDownDistance(){ return Math.round(window.innerHeight * 2.4); }
-const FS_SCROLL_DOWN_MS = 900;
-// Bumped from 480ms to 900ms to match the longer distance above - long
-// enough now that exitFsMode() undoing its own scroll restore mid-flight
-// (not reachable through the close button today, since fs-mode/.fs-close
-// don't exist until this finishes and calls enterFsMode - but cheap to
-// make correct regardless) needs this loop to actually stop touching
-// scrollY rather than fighting that restore on its very next frame.
-// fsScrollAnimToken is that cancellation: exitFsMode() bumps it, any
+// Duration went 260ms -> 480ms -> 900ms across earlier rounds and still
+// read as too fast/abrupt even with the ease-in-out curve below - this
+// round was specifically about wanting more time to actually watch it
+// happen, not more ground covered, so distance stays the same here.
+const FS_SCROLL_DOWN_MS = 1600;
+// fsScrollAnimToken is a cancellation token: exitFsMode() bumps it, any
 // in-flight tick() sees its own token is stale and quits instead of
 // scheduling another frame.
 let fsScrollAnimToken = 0;
