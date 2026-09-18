@@ -3073,15 +3073,26 @@ function animateScrollDown(distancePx, durationMs, onDone, onProgress){
   requestAnimationFrame(tick);
 }
 let fsEnterTimer = null;
-function enterFsMode(){
+// withFlourish controls the .fs-entering class - the one-shot CSS fade/
+// slide-up on .fs-close, .progress-wrap, the active question and .q-nav.
+// It only belongs on the reduced-motion path (called directly, with
+// nothing else providing an entrance) - on the normal path this runs as
+// animateScrollDown's onDone, by which point the section is already at
+// opacity:1 from the scroll-linked fade itself. Re-adding fs-entering
+// there used to restart those elements' own opacity from 0 on top of an
+// already-fully-visible parent - a second, independent flash right after
+// the first fade finished, which is exactly what read as the "Далее"
+// button blinking.
+function enterFsMode(withFlourish = true){
   const section = g('test-section');
   if(!section) return;
-  section.classList.add('fs-mode', 'fs-entering');
+  section.classList.add('fs-mode');
+  if(withFlourish) section.classList.add('fs-entering');
   document.body.classList.add('fs-active');
   section.scrollTop = 0;
   section.style.setProperty('--kb-inset', '0px');
   clearTimeout(fsEnterTimer);
-  fsEnterTimer = setTimeout(()=>section.classList.remove('fs-entering'), 400);
+  if(withFlourish) fsEnterTimer = setTimeout(()=>section.classList.remove('fs-entering'), 400);
 }
 
 function exitFsMode(){
@@ -3151,7 +3162,7 @@ function goToApplication(){
   // carries no scroll-lock of its own, only fs-active does.
   const section = g('test-section');
   if(section){ section.classList.add('fs-mode'); section.style.opacity = '0'; }
-  animateScrollDown(fsScrollDownDistance(), FS_SCROLL_DOWN_MS, enterFsMode, (eased) => {
+  animateScrollDown(fsScrollDownDistance(), FS_SCROLL_DOWN_MS, () => enterFsMode(false), (eased) => {
     if(section) section.style.opacity = String(eased);
   });
 }
