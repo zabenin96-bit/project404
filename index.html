@@ -3043,15 +3043,23 @@ function animateScrollDown(distancePx, durationMs, onDone, onProgress){
   function tick(now){
     if(myToken !== fsScrollAnimToken) return;
     const t = Math.min(1, (now - start) / durationMs);
-    // ease-in-out, not ease-out - ease-out's whole point is a fast start
-    // (steepest right at t=0), which is exactly what read as an abrupt
-    // jolt into motion rather than smooth. Easing both ends instead ramps
-    // up into it and eases back out of it, no sudden start or hard stop -
-    // safe to use here (unlike the VALUE diagram's own line-draw, which
-    // deliberately avoids ease-in-out because *overlapping, staggered*
-    // segments both go slowest at once where they overlap - there's only
-    // one motion here, nothing to stall against).
-    const eased = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+    // Critically-damped-spring curve, not a symmetric ease-in-out tween.
+    // A mirrored cubic (old version) accelerates and decelerates by the
+    // same mathematical rule run forwards then backwards - two identical
+    // halves glued together, which is what makes a tween read as
+    // "mechanical" even when it's technically smooth. Real spring motion
+    // isn't symmetric: it still *starts* at zero velocity (so no jolt -
+    // same requirement that ruled out plain ease-out before), rises to
+    // its peak speed early, then spends most of the duration gently
+    // decaying into the rest position. That quick-rise/long-settle shape
+    // is the actual signature behind Apple's sheet/card transitions, not
+    // duration by itself. SPRING_OMEGA controls how early the peak speed
+    // lands (higher = snappier rise, longer settle tail); the response is
+    // normalized so it still lands exactly on 1 at t=1 despite the
+    // underlying formula only approaching 1 asymptotically.
+    const SPRING_OMEGA = 8;
+    const spring = (x) => 1 - (1 + SPRING_OMEGA * x) * Math.exp(-SPRING_OMEGA * x);
+    const eased = spring(t) / spring(1);
     // Explicit behavior:'instant' per step - html has scroll-behavior:
     // smooth globally, and without overriding it here each of these
     // per-frame calls would itself kick off a native smooth-scroll toward
