@@ -726,7 +726,7 @@ body.lang-switching { opacity: 0; }
   transform: none;
   /* No CSS transition on opacity - goToApplication() drives it directly,
      one style write per rAF frame in step with the scroll animation's own
-     eased progress (see animateScrollDown's onProgress), so it needs to
+     eased progress (see animateScrollTo's onProgress), so it needs to
      apply immediately each time rather than smoothing toward a value that
      already moved on by the next frame - the same reasoning as
      window.scrollTo's own behavior:'instant' there. */
@@ -2999,30 +2999,51 @@ function stickyBtnClick(){
 // in the page's scroll - see the CSS comment above #test-section.fs-mode
 // for why. exitFsMode() is also the "✕" button's handler.
 //
-// #test-section's own place in the document is far down the page (past
-// About/Value/Format/Reject/Rules/Process, right before FAQ), so actually
-// scrolling all the way there before switching into fs-mode would tear
-// through a long run of unrelated sections first - not the point. This
-// instead scrolls the CURRENT view down a fixed distance (a few screens'
-// worth, see fsScrollDownDistance) - real window scroll, not just an
-// internal element sliding into place - so the reader genuinely watches
-// the page move before the anketa takes over, then restores the exact
-// scroll position on exit so closing the quiz doesn't strand them
-// somewhere they never scrolled to themselves.
+// Earlier versions scrolled a fixed, made-up distance (~2.4 screens) rather
+// than #test-section's own real position in the document - the animation
+// looked the same regardless of where the click actually happened, so it
+// always landed on an arbitrary spot with no relationship to any real
+// content, which read as "the page just stopped somewhere for no reason."
+// This instead scrolls to the section's own true position - a real
+// destination, not a fake one - so the motion has an actual place it's
+// going, then restores the exact prior scroll position on exit so closing
+// the quiz doesn't strand the reader somewhere they never scrolled to
+// themselves. The section does sit far down the page (past About/Value/
+// Format/Reject/Rules/Process, right before FAQ), so this deliberately
+// does NOT try to sell that distance as a slow, scenic "journey" through
+// those sections - see fsScrollDuration below - it's a quick, direct trip,
+// not a tour.
 let preFsScrollY = null;
-// Went 420px/260ms -> 900px/480ms already and still read as one quick
-// flick before the anketa cut in - a fixed px distance also means the
-// same "length" feels shorter on a taller viewport, where more of it is
-// just scrolling content already on screen rather than genuinely moving
-// past it. Sized off viewport height instead (~2.4 screens' worth) so it
-// reads as comparably long everywhere, with duration scaled up to match
-// rather than just moving further in the same short window.
-function fsScrollDownDistance(){ return Math.round(window.innerHeight * 2.4); }
-// Duration went 260ms -> 480ms -> 900ms across earlier rounds and still
-// read as too fast/abrupt even with the ease-in-out curve below - this
-// round was specifically about wanting more time to actually watch it
-// happen, not more ground covered, so distance stays the same here.
-const FS_SCROLL_DOWN_MS = 1600;
+// #test-section becomes position:fixed the moment .fs-mode is added (see
+// goToApplication below), which pulls it out of the page's normal flow -
+// so its true document position has to be read BEFORE that happens, or
+// this would be measuring where the section ends up floating afterward,
+// not where it actually sits in the page. clearance mirrors
+// scrollPastHero's own offset (the fixed lang bar's height + a little
+// breathing room) for the same reason: without it the section's first
+// line lands hidden behind that bar.
+function fsScrollTargetY(section){
+  const langBar = document.querySelector('.lang-bar');
+  const clearance = (langBar ? langBar.getBoundingClientRect().height : 0) + 12;
+  const rect = section.getBoundingClientRect();
+  const rawTarget = rect.top + window.scrollY - clearance;
+  const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+  return Math.max(0, Math.min(rawTarget, maxY));
+}
+// Real distances here vary wildly by entry point (the teaser CTA sits
+// right above the section - near zero - the hero CTA is screens away), so
+// a fixed duration either drags on short hops or rushes long ones. Scaling
+// duration with distance instead keeps the *speed* consistent - always a
+// quick, direct trip rather than a scenic one - while still giving every
+// distance enough time to read as motion rather than a cut. Clamped so it
+// never dips below a perceptible minimum or stretches into the "long
+// journey" feel this was specifically trying to avoid.
+const FS_SCROLL_PX_PER_MS = 6.5;
+const FS_SCROLL_MIN_MS = 260;
+const FS_SCROLL_MAX_MS = 700;
+function fsScrollDuration(distancePx){
+  return Math.max(FS_SCROLL_MIN_MS, Math.min(FS_SCROLL_MAX_MS, Math.round(distancePx / FS_SCROLL_PX_PER_MS)));
+}
 // Critically-damped-spring curve, not a symmetric ease-in-out tween. A
 // mirrored cubic accelerates and decelerates by the same mathematical rule
 // run forwards then backwards - two identical halves glued together, which
@@ -3034,7 +3055,7 @@ const FS_SCROLL_DOWN_MS = 1600;
 // transitions, not duration by itself. SPRING_OMEGA controls how early the
 // peak speed lands (higher = snappier rise, longer settle tail); the result
 // is normalized so it still lands exactly on 1 at x=1 despite the underlying
-// formula only approaching 1 asymptotically. Shared (not just animateScrollDown's
+// formula only approaching 1 asymptotically. Shared (not just animateScrollTo's
 // own scroll-position use) so goToApplication's later-starting fade below can
 // reuse the exact same curve shape for its own, separately-timed rise.
 const SPRING_OMEGA = 8;
@@ -3046,16 +3067,17 @@ function springProgress(x){
 // in-flight tick() sees its own token is stale and quits instead of
 // scheduling another frame.
 let fsScrollAnimToken = 0;
+// Animates toward an absolute document Y (fsScrollTargetY's result), not a
+// relative distance - goToApplication needs a real destination, not "however
+// far from wherever the click happened to occur."
 // onProgress(eased, t) - optional, called every frame with the eased 0..1
 // scroll-position value AND the raw linear-time fraction it was derived
 // from, so a caller wanting to key off elapsed time (goToApplication's fade
 // below) doesn't have to reverse-engineer it back out of the eased value.
-function animateScrollDown(distancePx, durationMs, onDone, onProgress){
+function animateScrollTo(targetY, durationMs, onDone, onProgress){
   const myToken = ++fsScrollAnimToken;
   const startY = window.scrollY;
-  const maxY = document.documentElement.scrollHeight - window.innerHeight;
-  const targetY = Math.min(startY + distancePx, Math.max(startY, maxY));
-  if(targetY <= startY){ if(onProgress) onProgress(1, 1); onDone(); return; }
+  if(targetY === startY){ if(onProgress) onProgress(1, 1); onDone(); return; }
   const start = performance.now();
   function tick(now){
     if(myToken !== fsScrollAnimToken) return;
@@ -3078,7 +3100,7 @@ let fsEnterTimer = null;
 // slide-up on .fs-close, .progress-wrap, the active question and .q-nav.
 // It only belongs on the reduced-motion path (called directly, with
 // nothing else providing an entrance) - on the normal path this runs as
-// animateScrollDown's onDone, by which point the section is already at
+// animateScrollTo's onDone, by which point the section is already at
 // opacity:1 from the scroll-linked fade itself. Re-adding fs-entering
 // there used to restart those elements' own opacity from 0 on top of an
 // already-fully-visible parent - a second, independent flash right after
@@ -3104,12 +3126,12 @@ function exitFsMode(){
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
   section.style.removeProperty('opacity');
-  // Stops any still-running animateScrollDown() from this specific open -
+  // Stops any still-running animateScrollTo() from this specific open -
   // not reachable today through the close button (see its own comment),
   // but without this an in-flight tick() would keep calling scrollTo on
   // its own schedule and undo the restore below on its very next frame.
   fsScrollAnimToken++;
-  // Undoes the scroll-down animateScrollDown() played on the way in.
+  // Undoes the scroll-down animateScrollTo() played on the way in.
   // Instant, not re-animated - the entrance scroll was the featured
   // moment; this is just putting the reader back exactly where they
   // scrolled to themselves, which reads as "closing" rather than a second
@@ -3153,6 +3175,13 @@ function goToApplication(){
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   preFsScrollY = window.scrollY;
   if(reduced){ enterFsMode(); return; }
+  const section = g('test-section');
+  if(!section){ enterFsMode(); return; }
+  // Has to be read before .fs-mode goes on below - that switches the
+  // section to position:fixed, pulling it out of the document flow it's
+  // being measured in right here.
+  const targetY = fsScrollTargetY(section);
+  const distance = Math.abs(targetY - window.scrollY);
   // .fs-mode goes on right away (not just at the end, inside enterFsMode)
   // so the anketa exists as a real fixed overlay for the whole scroll,
   // starting invisible - its opacity is then scrubbed off the scroll's own
@@ -3163,8 +3192,8 @@ function goToApplication(){
   // actually locks page scroll) not being set until enterFsMode() at the
   // end - .fs-mode itself carries no scroll-lock of its own, only
   // fs-active does.
-  const section = g('test-section');
-  if(section){ section.classList.add('fs-mode'); section.style.opacity = '0'; }
+  section.classList.add('fs-mode');
+  section.style.opacity = '0';
   // How far into the animation's duration (not distance) before the anketa
   // starts revealing itself. Gating on elapsed time rather than scroll
   // distance matters here specifically because the spring scroll curve
@@ -3177,8 +3206,7 @@ function goToApplication(){
   // over the back majority of the animation while the scroll is still
   // gently settling into place - genuinely sequential, not compressed.
   const FS_FADE_START_AT = 0.35;
-  animateScrollDown(fsScrollDownDistance(), FS_SCROLL_DOWN_MS, () => enterFsMode(false), (eased, t) => {
-    if(!section) return;
+  animateScrollTo(targetY, fsScrollDuration(distance), () => enterFsMode(false), (eased, t) => {
     const fade = t <= FS_FADE_START_AT ? 0 : springProgress((t - FS_FADE_START_AT) / (1 - FS_FADE_START_AT));
     section.style.opacity = String(fade);
   });
