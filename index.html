@@ -3004,16 +3004,17 @@ function stickyBtnClick(){
 // looked the same regardless of where the click actually happened, so it
 // always landed on an arbitrary spot with no relationship to any real
 // content, which read as "the page just stopped somewhere for no reason."
-// This instead scrolls to the section's own true position - a real
-// destination, not a fake one - so the motion has an actual place it's
-// going, then restores the exact prior scroll position on exit so closing
-// the quiz doesn't strand the reader somewhere they never scrolled to
-// themselves. The section does sit far down the page (past About/Value/
-// Format/Reject/Rules/Process, right before FAQ), so this deliberately
-// does NOT try to sell that distance as a slow, scenic "journey" through
-// those sections - see fsScrollDuration below - it's a quick, direct trip,
-// not a tour.
-let preFsScrollY = null;
+// This instead scrolls to a real destination - the Process section right
+// before test-section (see fsScrollTargetY) - so the motion has an actual
+// place it's going. Closing lands the reader back at that same place
+// rather than wherever they happened to be scrolled to when they first
+// clicked - that's now the meaningful "home base" for applying, not the
+// reader's arbitrary prior position. The section does sit far down the
+// page (past About/Value/Format/Reject/Rules/Process, right before FAQ),
+// so this deliberately does NOT try to sell that distance as a slow,
+// scenic "journey" through those sections - see fsScrollDuration below -
+// it's a quick, direct trip, not a tour.
+let fsCloseScrollY = null;
 // #test-section becomes position:fixed the moment .fs-mode is added (see
 // goToApplication below), which pulls it out of the page's normal flow -
 // so its true document position has to be read BEFORE that happens, or
@@ -3138,14 +3139,16 @@ function exitFsMode(){
   // but without this an in-flight tick() would keep calling scrollTo on
   // its own schedule and undo the restore below on its very next frame.
   fsScrollAnimToken++;
-  // Undoes the scroll-down animateScrollTo() played on the way in.
-  // Instant, not re-animated - the entrance scroll was the featured
-  // moment; this is just putting the reader back exactly where they
-  // scrolled to themselves, which reads as "closing" rather than a second
+  // Lands back at the same Process-section level the entrance scrolled to
+  // (fsCloseScrollY, set in goToApplication), not the reader's original
+  // pre-click position - closing the form should leave them where applying
+  // actually lives, not bounce them back to the hero. Instant, not
+  // re-animated - the entrance scroll was the featured moment; this is just
+  // putting the reader back, which reads as "closing" rather than a second
   // motion worth watching.
-  if(preFsScrollY !== null){
-    window.scrollTo({ top: preFsScrollY, behavior: 'instant' });
-    preFsScrollY = null;
+  if(fsCloseScrollY !== null){
+    window.scrollTo({ top: fsCloseScrollY, behavior: 'instant' });
+    fsCloseScrollY = null;
   }
 }
 
@@ -3180,15 +3183,16 @@ function goToApplication(){
   // guard only needs to live in one place.
   if(applicationSubmitted){ window.open('https://t.me/CreativesManager', '_blank', 'noopener'); return; }
   const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  preFsScrollY = window.scrollY;
-  if(reduced){ enterFsMode(); return; }
   const section = g('test-section');
-  if(!section){ enterFsMode(); return; }
   // Has to be read before .fs-mode goes on below - that switches the
   // section to position:fixed, pulling it out of the document flow it's
-  // being measured in right here.
-  const targetY = fsScrollTargetY(section);
-  const distance = Math.abs(targetY - window.scrollY);
+  // being measured in right here. Doubles as the close-time destination
+  // (see exitFsMode), so it's computed up front regardless of path -
+  // reduced motion never scrolls, but should still close back to the same
+  // place a full entrance would have landed on.
+  fsCloseScrollY = section ? fsScrollTargetY(section) : window.scrollY;
+  if(reduced || !section){ enterFsMode(); return; }
+  const distance = Math.abs(fsCloseScrollY - window.scrollY);
   // .fs-mode goes on right away (not just at the end, inside enterFsMode)
   // so the anketa exists as a real fixed overlay for the whole scroll,
   // starting invisible - its opacity is then scrubbed off the scroll's own
@@ -3213,7 +3217,7 @@ function goToApplication(){
   // over the back majority of the animation while the scroll is still
   // gently settling into place - genuinely sequential, not compressed.
   const FS_FADE_START_AT = 0.35;
-  animateScrollTo(targetY, fsScrollDuration(distance), () => enterFsMode(false), (eased, t) => {
+  animateScrollTo(fsCloseScrollY, fsScrollDuration(distance), () => enterFsMode(false), (eased, t) => {
     const fade = t <= FS_FADE_START_AT ? 0 : springProgress((t - FS_FADE_START_AT) / (1 - FS_FADE_START_AT));
     section.style.opacity = String(fade);
   });
