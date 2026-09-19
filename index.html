@@ -3025,7 +3025,14 @@ let preFsScrollY = null;
 function fsScrollTargetY(section){
   const langBar = document.querySelector('.lang-bar');
   const clearance = (langBar ? langBar.getBoundingClientRect().height : 0) + 12;
-  const rect = section.getBoundingClientRect();
+  // Lands on the Process section (test-section's immediate previous
+  // sibling - the "// ПРОЦЕСС" 01/02/03 steps) instead of test-section's
+  // own top: arriving there shows that context together with test-section's
+  // own intro pitch ("// ОТБОР" + its Подать заявку button) right below it,
+  // rather than scrolling straight past both into test-section with that
+  // context already off-screen.
+  const anchor = section.previousElementSibling || section;
+  const rect = anchor.getBoundingClientRect();
   const rawTarget = rect.top + window.scrollY - clearance;
   const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
   return Math.max(0, Math.min(rawTarget, maxY));
