@@ -186,7 +186,7 @@ body.lang-switching { opacity: 0; }
   pointer-events: none;
   clip-path: inset(0 0 0 100%);
   animation: wmSweep 11s ease-in-out infinite;
-  animation-delay: 3s;
+  animation-delay: 1s;
   will-change: clip-path;
 }
 @keyframes wmSweep {
@@ -3899,20 +3899,20 @@ function runDotSweep(el, speedMult = 1, trailMaxLenPx = 60){
 }
 
 // Hero: plays once, on this page load only (not on language switch, not
-// on scroll). Held off until 3.5s in, not right away - at page load it
-// used to run at the same time as the cursor's blink and the scroll cue's
-// bob, two other hero motions on their own unrelated cycles, and all three
-// competing in the first second read as busy. Went 7s -> 3.5s (2x earlier)
-// once that was no longer a concern in practice. This delay is separate
-// from runDotSweep's own startDelayMs (the brief pause once it actually
-// starts) - it only pushes back *when* that starts. Runs at 1.25x the CTA
-// sweep's own pace (went 2x -> 1.5x -> 1.25x, still faster than the CTA
-// one's 1x but eased back further for a gentler feel) with a 120px trail
-// (2x the CTA one's 60px) - both just for this instance, via
-// runDotSweep's speedMult/trailMaxLenPx - the CTA sweep elsewhere on the
-// page is unaffected either way.
+// on scroll). Held off a bit, not right away - at page load it used to
+// run at the same time as the cursor's blink and the scroll cue's bob,
+// two other hero motions on their own unrelated cycles, and all three
+// competing in the first second read as busy. Went 7s -> 3.5s -> 1.5s
+// (earlier each round) once that was no longer a concern in practice.
+// This delay is separate from runDotSweep's own startDelayMs (the brief
+// pause once it actually starts) - it only pushes back *when* that
+// starts. Runs at 1.25x the CTA sweep's own pace (went 2x -> 1.5x ->
+// 1.25x, still faster than the CTA one's 1x but eased back further for a
+// gentler feel) with a 120px trail (2x the CTA one's 60px) - both just
+// for this instance, via runDotSweep's speedMult/trailMaxLenPx - the CTA
+// sweep elsewhere on the page is unaffected either way.
 function playHeroDotSweep(){
-  setTimeout(()=> playDotSweep(g('hero-hl'), 1.25, 120), 3500);
+  setTimeout(()=> playDotSweep(g('hero-hl'), 1.25, 120), 1500);
 }
 
 // CTA: plays once, the first time "Подать заявку" scrolls into the same
