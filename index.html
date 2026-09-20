@@ -3041,14 +3041,16 @@ function fsScrollTargetY(section){
 // Real distances here vary wildly by entry point (the teaser CTA sits
 // right above the section - near zero - the hero CTA is screens away), so
 // a fixed duration either drags on short hops or rushes long ones. Scaling
-// duration with distance instead keeps the *speed* consistent - always a
-// quick, direct trip rather than a scenic one - while still giving every
-// distance enough time to read as motion rather than a cut. Clamped so it
-// never dips below a perceptible minimum or stretches into the "long
-// journey" feel this was specifically trying to avoid.
-const FS_SCROLL_PX_PER_MS = 6.5;
-const FS_SCROLL_MIN_MS = 260;
-const FS_SCROLL_MAX_MS = 700;
+// duration with distance instead keeps the *speed* consistent across every
+// entry point. Went 6.5px/ms (260-700ms) -> 4.2px/ms (380-950ms) - the
+// faster version read as rushed rather than premium; slower gives the
+// spring curve room to actually show its rise-and-settle shape instead of
+// snapping through it. Still clamped, not left unbounded, so a very long
+// distance doesn't stretch into an actual scenic "journey" - just a
+// noticeably more deliberate one than before.
+const FS_SCROLL_PX_PER_MS = 4.2;
+const FS_SCROLL_MIN_MS = 380;
+const FS_SCROLL_MAX_MS = 950;
 function fsScrollDuration(distancePx){
   return Math.max(FS_SCROLL_MIN_MS, Math.min(FS_SCROLL_MAX_MS, Math.round(distancePx / FS_SCROLL_PX_PER_MS)));
 }
