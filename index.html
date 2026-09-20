@@ -651,11 +651,43 @@ body.lang-switching { opacity: 0; }
 .q-textarea.filled, .q-input.filled { border-color: var(--green); }
 
 .q-opts { display: flex; flex-direction: column; max-width: 580px; }
-.q-opt { display: flex; align-items: center; gap: 14px; padding: 11px 0; border-bottom: 1px solid var(--line); cursor: pointer; }
+.q-opt {
+  display: flex; align-items: center; gap: 14px; padding: 11px 0;
+  border-bottom: 1px solid var(--line); cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.15s, border-color 0.15s, box-shadow 0.15s, padding 0.15s, margin 0.15s;
+}
 .q-opt:first-child { border-top: 1px solid var(--line); }
 .q-opt input { flex-shrink: 0; accent-color: var(--amber); width: 13px; height: 13px; cursor: pointer; }
 .q-opt span { font-size: 14px; color: var(--dim); line-height: 1.5; transition: color 0.15s; }
-.q-opt:hover span, .q-opt.sel span { color: var(--text); }
+.q-opt:hover span { color: var(--text); }
+/* Selected answer: rounded, bordered, filled chip (same 4px radius and
+   amber tone as the site's buttons) instead of just a plain divided list
+   row - padding/margin grow and shrink together by the same amount, so
+   the chip's edges expand out past the text column on select without the
+   text itself shifting. The outline is an inset box-shadow, not an actual
+   border - a real border would add its own width to the box (1px on top
+   specifically, since the row's resting border-top is 0 except on
+   :first-child), nudging every option below it down by a pixel the
+   instant one gets selected; box-shadow paints inside the existing box
+   instead, so nothing else moves. border-color:transparent just hides
+   this row's own plain divider line(s) (var(--line)) so they don't cut a
+   hard square edge across the new rounded corners. This is a persistent
+   look, not just the browser's own transient :focus-within outline
+   (already amber, already rounded now thanks to .q-opt's own
+   border-radius, but gone the moment focus moves elsewhere - e.g. tapping
+   "Далее" right after - which left the row as an unbordered fill only).
+   Text goes to a brighter #fff on select specifically - not just
+   var(--text) (#fbfbf9, what hover already uses) - so the persisted
+   choice reads as more emphasized than a transient hover. */
+.q-opt.sel {
+  background: rgba(217, 154, 63, 0.08);
+  border-color: transparent;
+  box-shadow: 0 0 0 1px var(--amber) inset;
+  padding: 11px 14px;
+  margin: 0 -14px;
+}
+.q-opt.sel span { color: #fff; }
 
 .q-nav { display: flex; gap: 16px; margin-top: 28px; align-items: flex-start; }
 .q-hint { font-size: 12px; color: var(--dim); margin-top: 10px; }
