@@ -962,7 +962,7 @@ body.fs-active #main { transform: none; transition: none; }
      .ty-sys's box symmetrically since it's still centered on that area. */
   white-space: nowrap;
   font-family: 'Special Elite', var(--font-mark);
-  font-weight: 700;
+  font-weight: 900;
   font-size: clamp(24px, 7vw, 40px);
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -971,9 +971,14 @@ body.fs-active #main { transform: none; transition: none; }
      light color rather than something that actually belongs to this page.
      Reusing --red (the ✕ marks' color elsewhere on this page) was
      considered and ruled out - it means rejection everywhere else on this
-     site, the opposite of what this badge is confirming. */
-  color: var(--amber);
-  border: 2px solid var(--amber);
+     site, the opposite of what this badge is confirming. Dulled down from
+     plain var(--amber) (#d99a3f) - a 60/40 blend with --dim (#97968c, the
+     page's own muted secondary-text tone) desaturates it toward a faded,
+     worn-ink amber instead of the vivid accent color used for live UI
+     elsewhere, which suits a stamp better than a bright, attention-grabbing
+     hue. */
+  color: #bf985e;
+  border: 2px solid #bf985e;
   border-radius: 4px;
   padding: 12px 26px;
   /* This alpha is the "transparency" that matters here - how much the
@@ -1003,14 +1008,15 @@ body.fs-active #main { transform: none; transition: none; }
      under reduced-motion the global killswitch strips the animation
      itself, and these are what apply instead so the stamp still shows up
      (just without the motion), rather than staying stuck invisible at
-     the pre-reveal state above. */
-  opacity: 0.85;
+     the pre-reveal state above. Went 0.85 -> 0.6 - a more see-through ink
+     reads closer to a real worn rubber stamp, not a solid printed badge. */
+  opacity: 0.6;
   transform: rotate(-8deg) scale(1);
   animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
 }
 @keyframes tyStampIn {
   from { transform: rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: rotate(-8deg) scale(1); opacity: 0.85; }
+  to { transform: rotate(-8deg) scale(1); opacity: 0.6; }
 }
 /* Turns the rough-edge filter on only once the entrance has fully
    settled (added by initTyStampReveal() on animationend, or immediately
