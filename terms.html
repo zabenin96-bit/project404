@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, shrink-to-fit=no">
@@ -218,7 +218,7 @@ const C = {
 
 function paramLang(){
   const p = new URLSearchParams(location.search).get('lang');
-  return p === 'en' ? 'en' : 'ru';
+  return p === 'ru' ? 'ru' : 'en';
 }
 
 let lang = paramLang();
