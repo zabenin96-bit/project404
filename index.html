@@ -724,32 +724,41 @@ body.lang-switching { opacity: 0; }
      transitions transform over 0.6s and entering fullscreen would otherwise
      briefly animate through non-none values on the way to it. */
   transform: none;
-  /* No CSS transition on opacity - goToApplication() drives it directly,
-     one style write per rAF frame in step with the scroll animation's own
-     eased progress (see animateScrollTo's onProgress), so it needs to
-     apply immediately each time rather than smoothing toward a value that
-     already moved on by the next frame - the same reasoning as
-     window.scrollTo's own behavior:'instant' there. */
+  /* No CSS transition on opacity - goToApplication() drives it directly.
+     This box's own opacity went through two earlier designs: first a fixed
+     0.35s CSS animation independent of everything else (a semi-transparent
+     backdrop let the hero bleed through the question content on top - two
+     unsynchronized clocks reading as broken, overlapping text), then a
+     scroll-linked cross-dissolve (opacity scrubbed continuously off the
+     scroll's own eased progress). Now it's neither: the backdrop switches
+     from 0 to 1 in a single instant step once the scroll is far enough
+     along (see goToApplication's FS_REVEAL_AT), no fade at all - what
+     animates instead is the *content* riding up from below (.progress-wrap
+     and the active question, both safe to transform - see the comment by
+     .fs-scrolling below), which reads as a sheet presenting itself rather
+     than a cross-dissolve. transition:none keeps that instant step
+     actually instant instead of smoothing toward it. */
   transition: none;
-  /* This box's own opacity used to be a fixed 0.35s CSS animation
-     (fsFadeIn) independent of anything else, and that was the problem:
-     the *whole* fixed layer, solid background included, was itself
-     semi-transparent for that whole span on its own unrelated clock,
-     while the hero underneath and the question content on top were each
-     doing their own thing on *their* own clocks - three unsynchronized
-     motions landing on top of each other read as broken, overlapping
-     text (confirmed by screenshotting it frame-by-frame). Scrubbing
-     opacity to the real scroll's progress instead - so the anketa
-     visibly fades in over the *same* motion that's visibly scrolling the
-     hero away, one motion instead of three - is what turns that same
-     "backdrop you can see through" into the cross-dissolve it always was
-     supposed to read as. */
 }
 #test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.2s ease 0.05s both; }
 /* The intro paragraph is only meant for the normal page scroll (visible
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
 #test-section.fs-mode .section-grid { display: none; }
+/* .fs-scrolling suppresses .progress-wrap's and the active question's own
+   fsSlideUp keyframes (below) specifically during goToApplication's JS-
+   driven entrance - a still-applying CSS animation (even just holding its
+   final frame via fill-mode) outranks a plain inline style in the cascade,
+   so without this, the per-frame transform goToApplication writes to
+   these same elements would simply be overridden by the keyframe's own
+   frozen end value and never actually show. Question-to-question, once
+   .fs-scrolling is gone (see enterFsMode), the keyframes below run
+   normally again - that per-question flourish is a different, much
+   shorter motion this was never meant to touch. */
+#test-section.fs-mode.fs-scrolling .progress-wrap,
+#test-section.fs-mode.fs-scrolling .q-block.active > *:not(.q-nav) {
+  animation: none;
+}
 #test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideUp 0.22s cubic-bezier(.16,.8,.24,1) 0.04s both; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
@@ -3124,6 +3133,17 @@ function enterFsMode(withFlourish = true){
   document.body.classList.add('fs-active');
   section.scrollTop = 0;
   section.style.setProperty('--kb-inset', '0px');
+  // Entrance is done (either the scroll-linked one just finished, or there
+  // was never one on the reduced-motion path) - drop .fs-scrolling and the
+  // inline transforms goToApplication was writing, so .progress-wrap and
+  // the active question's own CSS fsSlideUp keyframe are back in control
+  // for every question change from here on. Harmless to call unconditionally:
+  // classList.remove on an absent class, and clearing a transform that was
+  // never set, are both no-ops.
+  section.classList.remove('fs-scrolling');
+  const progressWrap = section.querySelector('.progress-wrap');
+  if(progressWrap) progressWrap.style.removeProperty('transform');
+  section.querySelectorAll('.q-block.active > *:not(.q-nav)').forEach(el => el.style.removeProperty('transform'));
   clearTimeout(fsEnterTimer);
   if(withFlourish) fsEnterTimer = setTimeout(()=>section.classList.remove('fs-entering'), 400);
 }
@@ -3132,10 +3152,15 @@ function exitFsMode(){
   const section = g('test-section');
   if(!section) return;
   clearTimeout(fsEnterTimer);
-  section.classList.remove('fs-mode', 'fs-entering');
+  section.classList.remove('fs-mode', 'fs-entering', 'fs-scrolling');
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
   section.style.removeProperty('opacity');
+  // Defensive, for the same still-in-flight-entrance case as the token bump
+  // below: clears any transform goToApplication's onProgress left mid-rise.
+  const progressWrap = section.querySelector('.progress-wrap');
+  if(progressWrap) progressWrap.style.removeProperty('transform');
+  section.querySelectorAll('.q-block.active > *:not(.q-nav)').forEach(el => el.style.removeProperty('transform'));
   // Stops any still-running animateScrollTo() from this specific open -
   // not reachable today through the close button (see its own comment),
   // but without this an in-flight tick() would keep calling scrollTo on
@@ -3197,31 +3222,48 @@ function goToApplication(){
   const distance = Math.abs(fsCloseScrollY - window.scrollY);
   // .fs-mode goes on right away (not just at the end, inside enterFsMode)
   // so the anketa exists as a real fixed overlay for the whole scroll,
-  // starting invisible - its opacity is then scrubbed off the scroll's own
-  // progress below, but only past FS_FADE_START_AT of the distance, so the
-  // scroll itself is the first thing seen and the anketa only begins
-  // proявляться (fading in) once it's genuinely underway, not from frame
-  // one. Safe to add this early despite body.fs-active (the part that
+  // starting invisible. .fs-scrolling suppresses the content's own CSS
+  // entrance keyframes for now (see that selector's comment) - this
+  // function drives the same elements itself, in step with the scroll.
+  // Safe to add both this early despite body.fs-active (the part that
   // actually locks page scroll) not being set until enterFsMode() at the
   // end - .fs-mode itself carries no scroll-lock of its own, only
   // fs-active does.
-  section.classList.add('fs-mode');
+  section.classList.add('fs-mode', 'fs-scrolling');
   section.style.opacity = '0';
+  const progressWrap = section.querySelector('.progress-wrap');
+  const questionChildren = section.querySelectorAll('.q-block.active > *:not(.q-nav)');
   // How far into the animation's duration (not distance) before the anketa
-  // starts revealing itself. Gating on elapsed time rather than scroll
-  // distance matters here specifically because the spring scroll curve
-  // front-loads most of its *distance* into its first third - gating the
-  // fade on distance covered meant it only ever got to start once the
-  // scroll had nearly arrived, compressing the whole reveal into a rushed
-  // ~150ms once it did start (looked like a pop, not a fade). Keying off
-  // time instead spreads the reveal across a real, even span: scroll is the
-  // only thing visible for the opening stretch, then the anketa eases in
-  // over the back majority of the animation while the scroll is still
-  // gently settling into place - genuinely sequential, not compressed.
-  const FS_FADE_START_AT = 0.35;
+  // reveals itself. Gating on elapsed time rather than scroll distance
+  // matters here specifically because the spring scroll curve front-loads
+  // most of its *distance* into its first third - gating on distance
+  // covered instead meant the reveal only ever got to start once the
+  // scroll had nearly arrived, compressing it into a rushed ~150ms. Keying
+  // off time instead spreads it across a real, even span: scroll is the
+  // only thing visible for the opening stretch, then the anketa presents
+  // itself over the back majority of the animation while the scroll is
+  // still gently settling into place - genuinely sequential, not
+  // compressed.
+  const FS_REVEAL_AT = 0.35;
+  // How far below their resting spot the content starts, in px - matches
+  // fsSlideUp's own distance (see its keyframe) so the initial entrance and
+  // the per-question flourish that takes over right after it read as the
+  // same motion, not two different distances glued together.
+  const FS_RISE_PX = 64;
   animateScrollTo(fsCloseScrollY, fsScrollDuration(distance), () => enterFsMode(false), (eased, t) => {
-    const fade = t <= FS_FADE_START_AT ? 0 : springProgress((t - FS_FADE_START_AT) / (1 - FS_FADE_START_AT));
-    section.style.opacity = String(fade);
+    if(t <= FS_REVEAL_AT){
+      section.style.opacity = '0';
+      return;
+    }
+    // Backdrop switches to fully opaque the instant the reveal starts - no
+    // fade, on purpose (see the CSS comment on #test-section.fs-mode) -
+    // what's visibly animating from here is the content rising into place,
+    // not the backdrop's own transparency.
+    section.style.opacity = '1';
+    const rise = springProgress((t - FS_REVEAL_AT) / (1 - FS_REVEAL_AT));
+    const offset = (1 - rise) * FS_RISE_PX;
+    if(progressWrap) progressWrap.style.transform = `translateY(${offset}px)`;
+    questionChildren.forEach(el => { el.style.transform = `translateY(${offset}px)`; });
   });
 }
 
