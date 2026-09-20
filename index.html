@@ -734,10 +734,10 @@ body.lang-switching { opacity: 0; }
      from 0 to 1 in a single instant step once the scroll is far enough
      along (see goToApplication's FS_REVEAL_AT), no fade at all - what
      animates instead is the *content* riding up from below (.progress-wrap
-     and the active question, both safe to transform - see the comment by
-     .fs-scrolling below), which reads as a sheet presenting itself rather
-     than a cross-dissolve. transition:none keeps that instant step
-     actually instant instead of smoothing toward it. */
+     and the active question, both safe to transform - see goToApplication),
+     which reads as a sheet presenting itself rather than a cross-dissolve.
+     transition:none keeps that instant step actually instant instead of
+     smoothing toward it. */
   transition: none;
 }
 #test-section.fs-mode .fs-close { display: flex; animation: fsFadeIn 0.2s ease 0.05s both; }
@@ -745,20 +745,6 @@ body.lang-switching { opacity: 0; }
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
 #test-section.fs-mode .section-grid { display: none; }
-/* .fs-scrolling suppresses .progress-wrap's and the active question's own
-   fsSlideUp keyframes (below) specifically during goToApplication's JS-
-   driven entrance - a still-applying CSS animation (even just holding its
-   final frame via fill-mode) outranks a plain inline style in the cascade,
-   so without this, the per-frame transform goToApplication writes to
-   these same elements would simply be overridden by the keyframe's own
-   frozen end value and never actually show. Question-to-question, once
-   .fs-scrolling is gone (see enterFsMode), the keyframes below run
-   normally again - that per-question flourish is a different, much
-   shorter motion this was never meant to touch. */
-#test-section.fs-mode.fs-scrolling .progress-wrap,
-#test-section.fs-mode.fs-scrolling .q-block.active > *:not(.q-nav) {
-  animation: none;
-}
 #test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideUp 0.22s cubic-bezier(.16,.8,.24,1) 0.04s both; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
@@ -1272,7 +1258,7 @@ body { padding-bottom: 60px; }
     </div>
 
     <div class="hero-copy">
-      <p class="hero-body" id="hero-body">Анкета - теперь способ попасть в лист ожидания.</p>
+      <p class="hero-body" id="hero-body">Чтобы попасть в лист ожидания - заполни анкету.</p>
       <a href="#test-section" class="hero-cta" id="hero-cta" onclick="goToApplication(); return false;"><span id="hero-cta-text">Подать заявку</span></a>
     </div>
 
@@ -1637,7 +1623,7 @@ const C = {
     reviewTag:'REVIEW YOUR ANSWERS', reviewHeading:'Review your answers before sending.',
     reviewEdit:'Edit', reviewProgress:'Review', skipReview:'Submit',
     heroHl:'A closed community for founders, creative leaders, and specialists in adjacent fields.',
-    heroBody:'The application is now the way onto the waitlist.',
+    heroBody:'To get on the waitlist - fill out the application.',
     heroCta:'Apply',
     scrollCueLabel:'Scroll down',
     abPre:'// ABOUT',
@@ -1728,7 +1714,7 @@ const C = {
     reviewTag:'ПРОВЕРКА ОТВЕТОВ', reviewHeading:'Проверь ответы перед отправкой.',
     reviewEdit:'Изменить', reviewProgress:'Проверка', skipReview:'Отправить',
     heroHl:'Закрытое сообщество для фаундеров, креативных лидеров и специалистов смежных сфер.',
-    heroBody:'Анкета - теперь способ попасть в лист ожидания.',
+    heroBody:'Чтобы попасть в лист ожидания - заполни анкету.',
     heroCta:'Подать заявку',
     scrollCueLabel:'Прокрутить вниз',
     abPre:'// О НАС',
@@ -3051,15 +3037,16 @@ function fsScrollTargetY(section){
 // right above the section - near zero - the hero CTA is screens away), so
 // a fixed duration either drags on short hops or rushes long ones. Scaling
 // duration with distance instead keeps the *speed* consistent across every
-// entry point. Went 6.5px/ms (260-700ms) -> 4.2px/ms (380-950ms) - the
-// faster version read as rushed rather than premium; slower gives the
-// spring curve room to actually show its rise-and-settle shape instead of
-// snapping through it. Still clamped, not left unbounded, so a very long
-// distance doesn't stretch into an actual scenic "journey" - just a
-// noticeably more deliberate one than before.
-const FS_SCROLL_PX_PER_MS = 4.2;
-const FS_SCROLL_MIN_MS = 380;
-const FS_SCROLL_MAX_MS = 950;
+// entry point. Went 6.5px/ms (260-700ms) -> 4.2px/ms (380-950ms) -> 3.6px/ms
+// (420-1100ms) across two rounds of "still too fast" - each faster version
+// read as rushed rather than premium; slower gives the spring curve room to
+// actually show its rise-and-settle shape instead of snapping through it.
+// Still clamped, not left unbounded, so a very long distance doesn't
+// stretch into an actual scenic "journey" - just a noticeably more
+// deliberate one than before.
+const FS_SCROLL_PX_PER_MS = 3.6;
+const FS_SCROLL_MIN_MS = 420;
+const FS_SCROLL_MAX_MS = 1100;
 function fsScrollDuration(distancePx){
   return Math.max(FS_SCROLL_MIN_MS, Math.min(FS_SCROLL_MAX_MS, Math.round(distancePx / FS_SCROLL_PX_PER_MS)));
 }
@@ -3134,13 +3121,12 @@ function enterFsMode(withFlourish = true){
   section.scrollTop = 0;
   section.style.setProperty('--kb-inset', '0px');
   // Entrance is done (either the scroll-linked one just finished, or there
-  // was never one on the reduced-motion path) - drop .fs-scrolling and the
-  // inline transforms goToApplication was writing, so .progress-wrap and
-  // the active question's own CSS fsSlideUp keyframe are back in control
-  // for every question change from here on. Harmless to call unconditionally:
-  // classList.remove on an absent class, and clearing a transform that was
-  // never set, are both no-ops.
-  section.classList.remove('fs-scrolling');
+  // was never one on the reduced-motion path) - clear the inline transform
+  // goToApplication was writing on .progress-wrap and the active question's
+  // children (harmless no-op if there was none, e.g. reduced motion).
+  // Their inline animation:none (also set by goToApplication) deliberately
+  // stays - see that comment for why removing it would replay the CSS
+  // keyframe a second time on content that already finished rising.
   const progressWrap = section.querySelector('.progress-wrap');
   if(progressWrap) progressWrap.style.removeProperty('transform');
   section.querySelectorAll('.q-block.active > *:not(.q-nav)').forEach(el => el.style.removeProperty('transform'));
@@ -3152,7 +3138,7 @@ function exitFsMode(){
   const section = g('test-section');
   if(!section) return;
   clearTimeout(fsEnterTimer);
-  section.classList.remove('fs-mode', 'fs-entering', 'fs-scrolling');
+  section.classList.remove('fs-mode', 'fs-entering');
   document.body.classList.remove('fs-active');
   section.style.removeProperty('--kb-inset');
   section.style.removeProperty('opacity');
@@ -3222,17 +3208,40 @@ function goToApplication(){
   const distance = Math.abs(fsCloseScrollY - window.scrollY);
   // .fs-mode goes on right away (not just at the end, inside enterFsMode)
   // so the anketa exists as a real fixed overlay for the whole scroll,
-  // starting invisible. .fs-scrolling suppresses the content's own CSS
-  // entrance keyframes for now (see that selector's comment) - this
-  // function drives the same elements itself, in step with the scroll.
-  // Safe to add both this early despite body.fs-active (the part that
-  // actually locks page scroll) not being set until enterFsMode() at the
-  // end - .fs-mode itself carries no scroll-lock of its own, only
+  // starting invisible. Safe to add this early despite body.fs-active (the
+  // part that actually locks page scroll) not being set until enterFsMode()
+  // at the end - .fs-mode itself carries no scroll-lock of its own, only
   // fs-active does.
-  section.classList.add('fs-mode', 'fs-scrolling');
+  section.classList.add('fs-mode');
   section.style.opacity = '0';
   const progressWrap = section.querySelector('.progress-wrap');
   const questionChildren = section.querySelectorAll('.q-block.active > *:not(.q-nav)');
+  // .progress-wrap and the active question's own fsSlideUp keyframe (see
+  // its CSS) need to be OFF for this entrance - this function drives the
+  // same elements itself, in step with the scroll, and a still-applying
+  // CSS animation outranks a plain inline style in the cascade, so without
+  // this every transform written below would just be overridden by the
+  // keyframe's own frozen end value and never actually show.
+  //
+  // This used to be done with a class (.fs-scrolling) removed again once
+  // the entrance finished - but removing a suppressing class is itself a
+  // match change, and a CSS animation restarts from its `from` keyframe
+  // whenever its binding newly resolves to non-none, exactly like adding
+  // it fresh. So the content would rise into place once here, then - the
+  // instant enterFsMode() dropped the suppressing class - immediately
+  // replay the *whole* keyframe from scratch on top of itself: a second,
+  // unwanted drop-and-rise right after the first one, which is what read
+  // as the anketa "jumping" back down and up again.
+  //
+  // Inline animation:none instead, left in place for good on these exact
+  // elements (see enterFsMode - only the transform gets cleared, not this)
+  // sidesteps the whole restart mechanism: there's no later moment where
+  // the suppression is lifted for THESE nodes, so nothing can replay. The
+  // one tradeoff is Q1 specifically won't get its own per-question
+  // fsSlideUp flourish if the reader backs up to it later - every other
+  // question still does, since their elements are never touched here.
+  if(progressWrap) progressWrap.style.animation = 'none';
+  questionChildren.forEach(el => { el.style.animation = 'none'; });
   // How far into the animation's duration (not distance) before the anketa
   // reveals itself. Gating on elapsed time rather than scroll distance
   // matters here specifically because the spring scroll curve front-loads
