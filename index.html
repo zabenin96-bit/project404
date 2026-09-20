@@ -691,21 +691,21 @@ body.lang-switching { opacity: 0; }
    run of the animation, same gotcha as .reveal below - confirmed by
    measurement to throw .q-nav thousands of pixels off (its computed
    "static position" fallback with no ancestor left at true viewport size).
-   So opacity-only here; the slide-up instead lands on the progress bar and
+   So opacity-only here; the slide instead lands on the progress bar and
    each question's own content (tag/text/field/hint), which never contain
-   .q-nav and so can't trigger the same bug. Sliding those up from the
-   bottom (rather than the plain fade the background itself gets) matches
-   where the eye already expects motion to come from - the nav bar living
-   at the bottom edge of the screen. */
+   .q-nav and so can't trigger the same bug. */
 @keyframes fsFadeIn { from { opacity: 0; } to { opacity: 1; } }
-/* Travels further and settles faster than a typical fade-up (was 28px/
-   ~0.4-0.6s total) - the ask was for the opening to actually read as a
-   fast scroll down into the anketa, not a gentle nudge. A bigger distance
-   covered in less time is exactly what raises the felt speed; the
-   ease-out curve on the elements using this (unchanged) is what keeps the
-   landing itself soft despite the higher speed, so it's fast without
-   feeling like a hard stop. */
-@keyframes fsSlideUp { from { opacity: 0; transform: translateY(64px); } to { opacity: 1; transform: translateY(0); } }
+/* fsSlideLeft is question-to-question navigation's own motion (see its
+   selectors below) - the very first arrival into the anketa is a
+   different, separately-timed rise handled entirely in JS (see
+   goToApplication), not this keyframe. Right-to-left instead of the
+   original bottom-up: advancing a step reads as moving forward through a
+   sequence, which a horizontal entrance (the next step arriving from the
+   right, same direction "Далее" itself points) matches better than a
+   vertical one - "Назад" still reuses the same keyframe rather than
+   mirroring it, since the content changing at all already reads as
+   navigation regardless of which literal edge it comes from. */
+@keyframes fsSlideLeft { from { opacity: 0; transform: translateX(64px); } to { opacity: 1; transform: translateX(0); } }
 #test-section.fs-mode {
   position: fixed;
   inset: 0;
@@ -749,7 +749,7 @@ body.lang-switching { opacity: 0; }
    while browsing before the CTA is clicked) - once fullscreen takes over,
    the progress bar and question move up to be the first thing visible. */
 #test-section.fs-mode .section-grid { display: none; }
-#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideUp 0.22s cubic-bezier(.16,.8,.24,1) 0.04s both; }
+#test-section.fs-mode .progress-wrap { margin-top: 0; animation: fsSlideLeft 0.22s cubic-bezier(.16,.8,.24,1) 0.04s both; }
 /* .q-block's own fadeup entrance animation also moves through non-none
    transform values while it plays - since it's .q-nav's direct parent, for
    that ~0.25s it would become the containing block instead of the viewport,
@@ -767,7 +767,7 @@ body.lang-switching { opacity: 0; }
    spacing before a CTA, not as a broken empty middle. */
 #test-section.fs-mode .q-block.active { margin: 40px 0 0; }
 #test-section.fs-mode .q-block.active > *:not(.q-nav) {
-  animation: fsSlideUp 0.26s cubic-bezier(.16,.8,.24,1) 0.08s both;
+  animation: fsSlideLeft 0.26s cubic-bezier(.16,.8,.24,1) 0.08s both;
 }
 #test-section.fs-mode .q-nav {
   position: fixed;
@@ -3226,7 +3226,7 @@ function goToApplication(){
   section.style.opacity = '0';
   const progressWrap = section.querySelector('.progress-wrap');
   const questionChildren = section.querySelectorAll('.q-block.active > *:not(.q-nav)');
-  // .progress-wrap and the active question's own fsSlideUp keyframe (see
+  // .progress-wrap and the active question's own fsSlideLeft keyframe (see
   // its CSS) need to be OFF for this entrance - this function drives the
   // same elements itself, in step with the scroll, and a still-applying
   // CSS animation outranks a plain inline style in the cascade, so without
@@ -3248,7 +3248,7 @@ function goToApplication(){
   // sidesteps the whole restart mechanism: there's no later moment where
   // the suppression is lifted for THESE nodes, so nothing can replay. The
   // one tradeoff is Q1 specifically won't get its own per-question
-  // fsSlideUp flourish if the reader backs up to it later - every other
+  // fsSlideLeft flourish if the reader backs up to it later - every other
   // question still does, since their elements are never touched here.
   if(progressWrap) progressWrap.style.animation = 'none';
   questionChildren.forEach(el => { el.style.animation = 'none'; });
@@ -3265,9 +3265,10 @@ function goToApplication(){
   // compressed.
   const FS_REVEAL_AT = 0.35;
   // How far below their resting spot the content starts, in px - matches
-  // fsSlideUp's own distance (see its keyframe) so the initial entrance and
-  // the per-question flourish that takes over right after it read as the
-  // same motion, not two different distances glued together.
+  // fsSlideLeft's own distance (see its keyframe), even though the axis
+  // differs (this rises, fsSlideLeft now slides in from the right) - just
+  // keeping the magnitude consistent between the two rather than picking
+  // an unrelated number for each.
   const FS_RISE_PX = 64;
   animateScrollTo(fsCloseScrollY, fsScrollDuration(distance), () => enterFsMode(false), (eased, t) => {
     if(t <= FS_REVEAL_AT){
