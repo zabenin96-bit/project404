@@ -3212,6 +3212,121 @@ function exitFsMode(){
   }
 }
 
+// Swipe-to-close: dragging down closes the anketa, alongside the existing
+// "✕" button (kept, not replaced - the only reliable close for mouse and
+// keyboard users, and touch users can still tap it too). Only arms once
+// the reader is already scrolled to the very top of the section's own
+// content (section.scrollTop <= 0) - anywhere else, a downward drag is
+// just them scrolling back up through the form, so native scroll is left
+// completely alone there. Also requires the touch to start off any
+// interactive control (inputs, textarea, buttons, links, answer options,
+// the nav bar) so tapping or dragging on the form itself never gets
+// mistaken for a swipe. Closes on a large, deliberate distance
+// (SWIPE_CLOSE_PX) rather than a quick-flick/velocity shortcut - amplitude
+// only, specifically so it can't trigger by accident while genuinely
+// using the form.
+function initFsSwipeToClose(){
+  const SWIPE_CLOSE_PX = 140;
+  const SWIPE_VISUAL_CAP_PX = 220;
+  let startX = null, startY = null, lastDy = 0, dragging = false, armed = false;
+  let progressWrap = null, questionChildren = [];
+
+  function isInteractiveTarget(el){
+    return !!(el.closest && el.closest('input, textarea, button, a, .q-opt, .q-nav'));
+  }
+
+  // Content only, never the backdrop's own opacity - fading #test-section
+  // out mid-drag would let whatever page content sits behind it show
+  // through, the same double-exposure look that was already found and
+  // fixed once this session for the entrance (see the CSS comment on
+  // #test-section.fs-mode). The backdrop stays solid the whole drag; only
+  // the content visibly sliding down and away is the feedback.
+  function applyDrag(dy){
+    const offset = Math.min(SWIPE_VISUAL_CAP_PX, Math.max(0, dy));
+    if(progressWrap) progressWrap.style.transform = `translateY(${offset}px)`;
+    questionChildren.forEach(el => { el.style.transform = `translateY(${offset}px)`; });
+  }
+
+  // withSnap animates back to rest instead of just resetting instantly -
+  // used when the reader lets go under the threshold, so it reads as
+  // "sprung back" rather than teleporting.
+  function clearDrag(withSnap){
+    const els = [progressWrap, ...questionChildren].filter(Boolean);
+    if(withSnap){
+      els.forEach(el => { el.style.transition = 'transform 0.2s cubic-bezier(.16,.8,.24,1)'; });
+    }
+    els.forEach(el => el.style.removeProperty('transform'));
+    if(withSnap){
+      setTimeout(() => {
+        els.forEach(el => el.style.removeProperty('transition'));
+      }, 220);
+    }
+    progressWrap = null; questionChildren = [];
+  }
+
+  document.addEventListener('touchstart', (e) => {
+    if(!document.body.classList.contains('fs-active')) return;
+    const section = g('test-section');
+    if(!section || section.scrollTop > 0) return;
+    if(isInteractiveTarget(e.target)) return;
+    const t = e.touches[0];
+    startX = t.clientX; startY = t.clientY; lastDy = 0;
+    dragging = false;
+    armed = true;
+    progressWrap = section.querySelector('.progress-wrap');
+    questionChildren = [...section.querySelectorAll('.q-block.active > *:not(.q-nav)')];
+  }, { passive: true });
+
+  document.addEventListener('touchmove', (e) => {
+    if(!armed || startY === null) return;
+    const t = e.touches[0];
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
+    if(dy <= 0){
+      // Not a downward drag - nothing of ours to own here, leave native
+      // scroll completely alone.
+      return;
+    }
+    // Any downward movement while armed (scrollTop was already 0, off any
+    // interactive control) is claimed immediately, even before deciding
+    // below whether it's deliberate enough to actually engage the visual
+    // drag - confirmed in testing that a downward drag left unclaimed at
+    // the browser level, even one that then turns out to be mostly
+    // horizontal, is enough for Chrome's own pull-to-refresh/overscroll
+    // navigation to fire ahead of that decision and reload the page mid-
+    // form. Reduced-motion is irrelevant here - this isn't decorative
+    // motion, it's stopping the browser from doing something destructive.
+    e.preventDefault();
+    if(!dragging){
+      // Only visually engages once the drag is clearly a deliberate,
+      // mostly-vertical move - a few px of jitter or a mostly-horizontal
+      // drag (text selection, a stray swipe) never shows any feedback or
+      // counts toward the close threshold, even though the browser's own
+      // competing gesture is already suppressed above.
+      if(dy < 12 || Math.abs(dx) > dy * 1.2) return;
+      dragging = true;
+    }
+    lastDy = dy;
+    applyDrag(dy);
+  }, { passive: false });
+
+  function endDrag(){
+    if(!armed) return;
+    const wasDragging = dragging;
+    const finalDy = lastDy;
+    armed = false; dragging = false; startX = null; startY = null; lastDy = 0;
+    if(!wasDragging) return;
+    if(finalDy >= SWIPE_CLOSE_PX){
+      clearDrag(false);
+      exitFsMode();
+    } else {
+      clearDrag(true);
+    }
+  }
+  document.addEventListener('touchend', endDrag);
+  document.addEventListener('touchcancel', endDrag);
+}
+
 // Mobile browsers keep position:fixed anchored to the full layout viewport,
 // not the shorter one left after the on-screen keyboard opens - so a
 // naively fixed nav bar ends up hidden behind the keyboard. visualViewport
@@ -3985,6 +4100,7 @@ initXMarkSpin();
 initTyStampReveal();
 observeValueDiagram();
 initValueDiagramSway();
+initFsSwipeToClose();
 updProg(1);
 restoreDraft();
 initAutosave();
