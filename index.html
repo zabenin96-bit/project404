@@ -106,25 +106,6 @@ body {
    it went fixed/centered, so fixing it here instead removes the trap for
    both and any future fixed-position element under #main. */
 #main.show { opacity: 1; transform: none; }
-/* Motion-blur during the CTA's scroll-to-Process-section animation (see
-   goToApplication) - a "long exposure" feel for how fast the page is
-   moving, scaled to the scroll's own real per-frame velocity each frame
-   and back to 0 once it settles. --scroll-blur lives on #main (updated
-   there, once per frame, rather than on each element individually) and
-   each child reads it into its own filter - never #main's own filter,
-   since filter (like transform - see the comment above) makes its host
-   element a containing block for position:fixed descendants, and
-   #test-section (with its own fixed .q-nav) is one of #main's children.
-   Scoping filter to the *siblings* individually instead, with
-   #test-section excluded from ever getting the rule at all, means blur
-   only ever touches elements with no positioned descendants of their own
-   to break - .q-nav never even enters the picture. .scroll-blurring
-   (added only for the scroll's duration) keeps the will-change hint from
-   sitting on every section permanently doing nothing. */
-#main.scroll-blurring > *:not(#test-section) {
-  filter: blur(var(--scroll-blur, 0px));
-  will-change: filter;
-}
 
 /* ── LANG ── */
 .scroll-progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 200; pointer-events: none; }
@@ -3213,11 +3194,6 @@ function exitFsMode(){
   const progressWrap = section.querySelector('.progress-wrap');
   if(progressWrap) progressWrap.style.removeProperty('transform');
   section.querySelectorAll('.q-block.active > *:not(.q-nav)').forEach(el => el.style.removeProperty('transform'));
-  // Same defensive cleanup for the scroll-blur (see goToApplication) - a
-  // close mid-scroll would otherwise leave #main's siblings blurred at
-  // whatever value the last frame left behind.
-  const mainEl = g('main');
-  if(mainEl){ mainEl.classList.remove('scroll-blurring'); mainEl.style.removeProperty('--scroll-blur'); }
   // Stops any still-running animateScrollTo() from this specific open -
   // not reachable today through the close button (see its own comment),
   // but without this an in-flight tick() would keep calling scrollTo on
@@ -3285,15 +3261,6 @@ function goToApplication(){
   // fs-active does.
   section.classList.add('fs-mode');
   section.style.opacity = '0';
-  // Motion blur on the rest of the page while it's actually moving fast -
-  // see the CSS comment on #main.scroll-blurring for why this lives on
-  // #main's *children* (via a custom property #main itself just carries),
-  // never on #main directly.
-  const mainEl = g('main');
-  if(mainEl) mainEl.classList.add('scroll-blurring');
-  let lastBlurY = window.scrollY;
-  const MAX_SCROLL_BLUR_PX = 8;
-  const SCROLL_BLUR_FACTOR = 0.08;
   const progressWrap = section.querySelector('.progress-wrap');
   const questionChildren = section.querySelectorAll('.q-block.active > *:not(.q-nav)');
   // .progress-wrap and the active question's own fsSlideLeft keyframe (see
@@ -3340,23 +3307,7 @@ function goToApplication(){
   // keeping the magnitude consistent between the two rather than picking
   // an unrelated number for each.
   const FS_RISE_PX = 64;
-  animateScrollTo(fsCloseScrollY, fsScrollDuration(distance), () => {
-    if(mainEl){ mainEl.classList.remove('scroll-blurring'); mainEl.style.removeProperty('--scroll-blur'); }
-    enterFsMode(false);
-  }, (eased, t) => {
-    if(mainEl){
-      // window.scrollTo already ran for this frame (animateScrollTo calls
-      // it before invoking onProgress), so window.scrollY here is this
-      // frame's real, already-applied position - the delta against last
-      // frame's is this frame's actual scroll speed, not a value derived
-      // from the easing math (which the spring curve's own shape would
-      // make a less direct stand-in for how fast the page really just
-      // moved).
-      const y = window.scrollY;
-      const blurPx = Math.min(MAX_SCROLL_BLUR_PX, Math.abs(y - lastBlurY) * SCROLL_BLUR_FACTOR);
-      lastBlurY = y;
-      mainEl.style.setProperty('--scroll-blur', blurPx.toFixed(2) + 'px');
-    }
+  animateScrollTo(fsCloseScrollY, fsScrollDuration(distance), () => enterFsMode(false), (eased, t) => {
     if(t <= FS_REVEAL_AT){
       section.style.opacity = '0';
       return;
