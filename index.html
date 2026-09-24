@@ -3015,15 +3015,22 @@ function flagQ11Empty(target){
 // hero, without hardcoding which section that is. scrollIntoView's plain
 // block:'start' lines the section up with the very top of the viewport -
 // but the lang switcher sits fixed there over everything, regardless of
-// scroll position, so the section's first line(s) landed hidden behind it.
-// Scrolling to an explicit offset (the lang bar's own height, plus a
-// little breathing room) instead clears it every time.
+// scroll position, so the section's first line(s) landed hidden behind it
+// (real risk on mobile specifically - the next section's own label spans
+// full width there, under the lang bar's own horizontal range; on desktop
+// the label sits in a left column the lang bar, pinned top-right, never
+// reaches). Scrolling to an explicit offset instead clears it every time.
+// The offset is the lang bar's own height minus its bottom padding (14px,
+// itself just empty space below the RU/EN buttons' real visible text, not
+// content that needs protecting) - was the full height plus another 12px
+// on top of that, which landed noticeably past the lang bar with a gap
+// that read as stopping short of the top rather than arriving at it.
 function scrollPastHero(){
   const hero = document.querySelector('.hero');
   const next = hero && hero.nextElementSibling;
   if(!next) return;
   const langBar = document.querySelector('.lang-bar');
-  const clearance = (langBar ? langBar.getBoundingClientRect().height : 0) + 12;
+  const clearance = Math.max(0, (langBar ? langBar.getBoundingClientRect().height : 0) - 14);
   const targetY = next.getBoundingClientRect().top + window.scrollY - clearance;
   window.scrollTo({ top: targetY, behavior: 'smooth' });
 }
