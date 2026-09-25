@@ -3981,7 +3981,18 @@ function runDotSweep(el, speedMult = 1, trailMaxLenPx = 60){
     dot.style.transform = `translate(${x}px, ${y}px)`;
     dot.style.setProperty('--trail-len', Math.min(trailMaxLen, traveledPx) + 'px');
 
-    if(prefetchedFor !== segIdx && rawT > 0.5 && segIdx + 1 < lineCount){
+    // Went 0.5 -> 0.9 (prefetch fires much closer to the actual line jump,
+    // not at the segment's midpoint) - reported as the trail growing to a
+    // visibly different length on different lines specifically after a
+    // long time away from the site (a slow, uncached font fetch means
+    // more can still be settling elsewhere on the page by the time this
+    // runs, so a line's own width read here could go stale by the time
+    // it's actually used for that line's whole run). Same root cause
+    // primeFirstSegment already fixed for line 0 - this shrinks the same
+    // staleness window for every line after it, without reverting all the
+    // way to measuring exactly on the jump frame itself (the stutter this
+    // prefetch exists to avoid in the first place).
+    if(prefetchedFor !== segIdx && rawT > 0.9 && segIdx + 1 < lineCount){
       rects = measureAll();
       lineCount = rects.length;
       nextRect = rects[segIdx + 1] || null;
