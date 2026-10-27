@@ -51,11 +51,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Special Elite: worn-typewriter face, added just for .ty-stamp - a
-     stamped "APPROVED"-style badge reads as an actual stamp with a face
-     like this in a way the site's own monospace (Space Mono) doesn't;
-     everything else keeps using --font-mark as before. -->
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
 
 <style>
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
@@ -944,132 +940,6 @@ body.fs-active #main { transform: none; transition: none; }
    comes back, not the default hero element. */
 .ty-number { font-family: var(--font-mark); font-size: clamp(64px, 11vw, 130px); font-weight: 700; color: var(--amber); line-height: 0.88; letter-spacing: -0.02em; margin-bottom: 28px; animation: fadeup 0.5s ease; }
 .ty-number-prefix { opacity: 0.55; }
-/* A stamped-badge beat between the number and the headline - not
-   "APPROVED" (applications go to manual review, not an instant yes/no;
-   claiming otherwise here would contradict the review copy right below
-   it), just confirming what's actually already true at this point: the
-   application landed. Tilt is a permanent style, not just part of the
-   animation, so it still reads as "stamped" even under reduced-motion
-   where the entrance below is stripped and it just appears in place. */
-/* Pinned to a specific place in the document - the STATUS row of .ty-sys
-   below - rather than fixed to the viewport. An earlier version was
-   position:fixed and screen-centered, which kept it dead center no
-   matter where the reader scrolled to afterward, covering whatever
-   happened to be there; anchoring it to content instead means it scrolls
-   away with the rest of the confirmation once the reader moves on, the
-   same way everything else on the page behaves. It's a real grid item of
-   #ty-sys (moved there in the markup) but taken out of grid track sizing
-   via position:absolute, with grid-row/grid-column pointing at the
-   STATUS line's row and spanning both columns - see the .ty-sys comment
-   for why that combination was needed instead of just nesting it inside
-   that row directly. align-self/justify-self center it within that
-   area; #ty-sys is the positioned ancestor providing the containing
-   block. pointer-events:none since nothing about it is interactive - it
-   still visually sits over the STATUS text and, once un-settled, over
-   whatever the reader has scrolled to since. No longer needs the old
-   negative-margin trick to lay over the headline - taking it out of flow
-   entirely means it doesn't reserve any space there. Translucent fill
-   (not solid var(--bg)) - see its own comment below for why the alpha
-   there is the one that actually controls how much it darkens whatever
-   it's covering, separate from the ink's own opacity in .stamp-in. Run
-   through an SVG turbulence filter for a slightly uneven, hand-stamped
-   edge instead of a crisp vector rectangle - see #ty-stamp-rough below.
-   The filter itself is applied by .stamp-settled, not here - see that
-   rule for why. Sized and kept on one line (white-space:nowrap) down to
-   small phone widths in the mobile media query below - the base
-   font-size here only ever governs >700px, where it was already
-   confirmed to fit both languages on one line. */
-.ty-stamp {
-  position: absolute;
-  grid-row: 2;
-  grid-column: 1 / -1;
-  align-self: center;
-  justify-self: center;
-  z-index: 2;
-  pointer-events: none;
-  display: inline-block;
-  /* Without this, an absolutely-positioned grid item with width:auto
-     shrink-to-fits within its *grid area's* own width - here, .ty-sys's
-     narrow content width (sized to the receipt lines' text), not the
-     viewport. That's fine below 700px, where the mobile override already
-     forces nowrap for its own reason (fitting the narrowest phones), but
-     above it this was silently wrapping the stamp to two lines against
-     .ty-sys's width instead of rendering on one at its intended size -
-     nowrap here means it always sizes off its own text, overflowing
-     .ty-sys's box symmetrically since it's still centered on that area. */
-  white-space: nowrap;
-  font-family: 'Special Elite', var(--font-mark);
-  font-weight: 900;
-  font-size: clamp(24px, 7vw, 40px);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  /* Amber, not green - the number right above it is already the site's
-     signature amber, and green here read as a borrowed "approved" traffic-
-     light color rather than something that actually belongs to this page.
-     Reusing --red (the ✕ marks' color elsewhere on this page) was
-     considered and ruled out - it means rejection everywhere else on this
-     site, the opposite of what this badge is confirming. Dulled down from
-     plain var(--amber) (#d99a3f) - a 60/40 blend with --dim (#97968c, the
-     page's own muted secondary-text tone) desaturates it toward a faded,
-     worn-ink amber instead of the vivid accent color used for live UI
-     elsewhere, which suits a stamp better than a bright, attention-grabbing
-     hue. */
-  color: #bf985e;
-  border: 2px solid #bf985e;
-  border-radius: 4px;
-  padding: 12px 26px;
-  /* This alpha is the "transparency" that matters here - how much the
-     dark fill behind the text darkens whatever the stamp is covering.
-     Pushed close to fully transparent so that darkening all but
-     disappears, letting the covered content show through almost
-     untouched. Kept separate from .stamp-in's opacity below, which
-     governs the stamp's own ink (text/border) instead - conflating the
-     two meant turning down the fill also faded the text/border into the
-     same washed-out haze, when only the fill was meant to go see-through. */
-  background: rgba(10, 10, 9, 0.05);
-  /* Resting state before the reveal - invisible/collapsed. Left as plain
-     properties (not inside the animation) is deliberate: reduced-motion
-     strips the animation entirely, and initTyStampReveal() below skips
-     straight to adding .stamp-in without it in that case, whose rule
-     then applies as the element's own un-animated style. */
-  transform: rotate(-8deg) scale(0);
-  opacity: 0;
-}
-/* Added by initTyStampReveal() via an IntersectionObserver rather than a
-   fixed delay tied to the thank-you screen switching on, so the reveal
-   fires off the stamp's own actual layout (i.e. once it has genuinely
-   scrolled into view) rather than a guessed timeout racing the page's
-   own smooth-scroll to #ty. */
-.ty-stamp.stamp-in {
-  /* Plain properties alongside the animation, matching where it ends up -
-     under reduced-motion the global killswitch strips the animation
-     itself, and these are what apply instead so the stamp still shows up
-     (just without the motion), rather than staying stuck invisible at
-     the pre-reveal state above. Went 0.85 -> 0.6 - a more see-through ink
-     reads closer to a real worn rubber stamp, not a solid printed badge. */
-  opacity: 0.6;
-  transform: rotate(-8deg) scale(1);
-  animation: tyStampIn 0.5s cubic-bezier(.34,1.56,.64,1) both;
-}
-@keyframes tyStampIn {
-  from { transform: rotate(-8deg) scale(0); opacity: 0; }
-  to { transform: rotate(-8deg) scale(1); opacity: 0.6; }
-}
-/* Turns the rough-edge filter on only once the entrance has fully
-   settled (added by initTyStampReveal() on animationend, or immediately
-   under reduced motion since nothing animates there). An SVG filter this
-   complex can't run on the compositor, so having it live on an element
-   whose opacity/transform are actively animating forces the browser to
-   re-rasterize the filtered result on the main thread every frame - and
-   that reveal happens to land right in the middle of the page's own
-   smooth-scroll to #ty, so the two competed for the main thread and the
-   scroll itself started stuttering. Static text needs the filter
-   recomputed once, not every frame, so deferring it until after the
-   transform stops moving keeps the scroll smooth without losing the
-   texture in the state that actually stays on screen. */
-.ty-stamp.stamp-settled {
-  filter: url(#ty-stamp-rough);
-}
 .ty-head { font-size: clamp(16px, 2vw, 22px); font-weight: 700; color: var(--text); margin-bottom: 12px; }
 .ty-body { font-size: 15px; color: var(--dim); line-height: 1.9; max-width: 440px; margin: 0 auto; }
 /* Receipt-style detail, now supporting the reward above rather than
@@ -1080,11 +950,7 @@ body.fs-active #main { transform: none; transition: none; }
    lining up in a column. inline-grid shrinks to its content and #ty's
    own text-align:center places the whole block, tags and values both
    staying aligned across rows. */
-/* position:relative makes this the containing block .ty-stamp resolves
-   its grid-row/grid-column area against (see .ty-stamp's own comment) -
-   without it, an absolutely-positioned grid child falls back to a more
-   distant positioned ancestor instead of this grid's own lines. */
-.ty-sys { position: relative; display: inline-grid; grid-template-columns: auto auto; column-gap: 12px; row-gap: 5px; margin-top: 36px; }
+.ty-sys { display: inline-grid; grid-template-columns: auto auto; column-gap: 12px; row-gap: 5px; margin-top: 36px; }
 .ty-sys .line { display: contents; font-size: 12px; color: var(--dim); }
 .ty-sys .tag { color: var(--green); }
 .ty-share { margin-top: 40px; }
@@ -1202,7 +1068,6 @@ body { padding-bottom: 60px; }
      phone, with margin to spare - 6vw hits the same 40px cap the desktop
      rule uses once the viewport is wide enough, so there's no visible
      jump right at the breakpoint. */
-  .ty-stamp { font-size: min(6vw, 40px); padding: 10px 5vw; white-space: nowrap; }
   .hero-cursor { height: min(9.5vw, 88px); }
   /* The bordered status card reads as a strong shape and its labels are the
      page's one accent color, so stacked directly under the headline it pulls
@@ -1595,17 +1460,6 @@ body { padding-bottom: 60px; }
     </div>
   </div>
 
-  <!-- Hidden SVG filter for the thank-you stamp's slightly uneven, hand-
-       stamped edge (see .ty-stamp CSS comment) - feTurbulence/feDisplacementMap
-       distort the crisp rectangle just enough to read as stamped ink
-       rather than a vector badge, without garbling the text inside it. -->
-  <svg width="0" height="0" style="position:absolute;">
-    <filter id="ty-stamp-rough">
-      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.09" numOctaves="2" result="n" seed="7"/>
-      <feDisplacementMap in="SourceGraphic" in2="n" scale="1.2" xChannelSelector="R" yChannelSelector="G"/>
-    </filter>
-  </svg>
-
   <!-- THANKYOU -->
   <div id="ty">
     <div class="ty-number-label" id="ty-number-label" style="display:none;">ЗАЯВКА</div>
@@ -1617,7 +1471,6 @@ body { padding-bottom: 60px; }
       <div class="line"><span class="tag" id="ty-t1">ПОЛУЧЕНО</span><span id="ty-v1"> заявка записана - ожидает проверки</span></div>
       <div class="line"><span class="tag" id="ty-t2">СТАТУС</span><span id="ty-v2"> на рассмотрении</span></div>
       <div class="line"><span class="tag" id="ty-t3">ДАЛЕЕ</span><span id="ty-v3"> ответим в любом случае</span></div>
-      <div class="ty-stamp" id="ty-stamp">Заявка принята</div>
     </div>
     <div class="ty-share">
       <p class="ty-share-text" id="ty-share-text">Поделись с тем, кому это надо.</p>
@@ -1738,7 +1591,6 @@ const C = {
     tyT2:'STATUS',tyV2:'under review',
     tyT3:'NEXT',tyV3:"we'll get back to you either way",
     tyNumberLabel:'APPLICATION', tyNumberPrefix:'#',
-    tyStamp:'Application received',
     tyHead:'Submitted. Please wait.',
     tyBody:"Thanks for the honest answers.",
     shareText:'Share it with someone who needs this.',
@@ -1829,7 +1681,6 @@ const C = {
     tyT2:'СТАТУС',tyV2:'на рассмотрении',
     tyT3:'ДАЛЕЕ',tyV3:'ответим в любом случае',
     tyNumberLabel:'ЗАЯВКА', tyNumberPrefix:'#',
-    tyStamp:'Заявка принята',
     tyHead:'Отправлено, ожидай.',
     tyBody:'Спасибо за честные ответы.',
     shareText:'Поделись с тем, кому это надо.',
@@ -2038,7 +1889,6 @@ function render(){
   g('ty-t3').textContent=t('tyT3'); g('ty-v3').textContent=t('tyV3');
   g('ty-number-label').textContent=t('tyNumberLabel');
   updateTyNumber();
-  g('ty-stamp').textContent=t('tyStamp');
   g('ty-head').textContent=t('tyHead');
   g('ty-body').textContent=t('tyBody');
   g('ty-share-text').textContent=t('shareText');
@@ -2274,38 +2124,6 @@ function initValueDiagramSway(){
   window.addEventListener('scroll', () => {
     if(!ticking){ ticking = true; requestAnimationFrame(apply); }
   });
-}
-
-// Watches #ty-stamp and only adds .stamp-in once it has actually scrolled
-// into view, not the instant #ty switches on - submitForm() immediately
-// follows showing #ty with a smooth scroll down to it, which can easily
-// take longer than a fixed CSS animation-delay would guess, so starting
-// the reveal on a timer meant the stamp had already finished landing by
-// the time the reader arrived, with no visible "landing" moment at all.
-// #ty-stamp sits inside display:none #ty until submit, so this observer's
-// first real intersection check only happens once that becomes visible
-// and the browser has a box to measure. Left running under reduced
-// motion too - the global killswitch already strips the animation itself
-// off .stamp-in, this just still waits for the reader to actually reach
-// it before switching the plain (unanimated) end-state properties on.
-function initTyStampReveal(){
-  const stamp = g('ty-stamp');
-  if(!stamp) return;
-  const reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if(entry.isIntersecting){
-        stamp.classList.add('stamp-in');
-        io.disconnect();
-        // Reduced motion never plays the animation, so there's no
-        // animationend to wait for - the filter is safe to turn on right
-        // away since nothing is transforming for it to fight with.
-        if(reduced) stamp.classList.add('stamp-settled');
-        else stamp.addEventListener('animationend', () => stamp.classList.add('stamp-settled'), { once: true });
-      }
-    });
-  }, { threshold: 0.4 });
-  io.observe(stamp);
 }
 
 // Scroll-triggered draw-in for the triangle/square/axes figure next to
@@ -4115,7 +3933,6 @@ render();
 playHeroDotSweep();
 observeCtaDotSweep();
 initXMarkSpin();
-initTyStampReveal();
 observeValueDiagram();
 initValueDiagramSway();
 initFsSwipeToClose();
